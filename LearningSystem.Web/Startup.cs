@@ -53,6 +53,20 @@
                     options.User.RequireUniqueEmail = true;
                 });
 
+            // External Authentication with Facebook & Google
+            services
+                .AddAuthentication()
+                .AddFacebook(options =>
+                {
+                    options.AppId = this.Configuration["Authentication:Facebook:AppId"];
+                    options.AppSecret = this.Configuration["Authentication:Facebook:AppSecret"];
+                })
+                .AddGoogle(options =>
+                {
+                    options.ClientId = this.Configuration["Authentication:Google:ClientId"];
+                    options.ClientSecret = this.Configuration["Authentication:Google:ClientSecret"];
+                });
+
             // App Services
             services.AddDomainServices();
 
@@ -90,7 +104,7 @@
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             // Database Migrations
-            app.UseDatabaseMigration();
+            app.UseDatabaseMigration(this.Configuration["AdminPassword"]);
 
             if (env.IsDevelopment())
             {

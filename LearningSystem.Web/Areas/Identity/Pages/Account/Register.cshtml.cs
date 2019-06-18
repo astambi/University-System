@@ -40,6 +40,11 @@
 
         public class InputModel
         {
+            [Required]
+            [EmailAddress]
+            [Display(Name = "Email")]
+            public string Email { get; set; }
+
             // Custom User
             [Required]
             [StringLength(DataConstants.UserUsernameMaxLength,
@@ -49,18 +54,14 @@
             public string UserName { get; set; }
 
             [Required]
-            [EmailAddress]
-            [Display(Name = "Email")]
-            public string Email { get; set; }
-
-            [Required]
             [StringLength(DataConstants.UserNameMaxLength,
                 ErrorMessage = DataConstants.StringMinMaxLength,
                 MinimumLength = DataConstants.UserNameMinLength)]
             public string Name { get; set; }
 
+            [Required]
             [DataType(DataType.Date)]
-            public DateTime Birthdate { get; set; }
+            public DateTime? Birthdate { get; set; }
 
             [Required]
             [StringLength(100,
@@ -90,7 +91,7 @@
                     UserName = this.Input.UserName,
                     Email = this.Input.Email,
                     Name = this.Input.Name,
-                    Birthdate = this.Input.Birthdate
+                    Birthdate = (DateTime)this.Input.Birthdate
                 };
 
                 var result = await this._userManager.CreateAsync(user, this.Input.Password);

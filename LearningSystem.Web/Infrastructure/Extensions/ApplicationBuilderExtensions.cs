@@ -13,16 +13,14 @@
     {
         private const string AdminUsername = "admin";
         private const string AdminEmail = "admin@admin.com";
-        private const string AdminPassword = "admin123123";
+        //private const string AdminPassword = "admin123123";
 
-        public static IApplicationBuilder UseDatabaseMigration(this IApplicationBuilder app)
+        public static IApplicationBuilder UseDatabaseMigration(this IApplicationBuilder app, string adminPassword)
         {
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
                 // Migrate Database
-                serviceScope
-                    .ServiceProvider
-                    .GetService<LearningSystemDbContext>()
+                serviceScope.ServiceProvider.GetService<LearningSystemDbContext>()
                     .Database
                     .Migrate();
 
@@ -31,7 +29,7 @@
                     .Run(async () =>
                     {
                         await SeedRoles(serviceScope);
-                        await SeedAdminUser(serviceScope);
+                        await SeedAdminUser(serviceScope, adminPassword);
                     })
                     .GetAwaiter()
                     .GetResult();
@@ -40,7 +38,7 @@
             return app;
         }
 
-        private static async Task SeedAdminUser(IServiceScope serviceScope)
+        private static async Task SeedAdminUser(IServiceScope serviceScope, string adminPassword)
         {
             var userManager = serviceScope.ServiceProvider.GetService<UserManager<User>>();
 
@@ -59,7 +57,7 @@
                     Birthdate = DateTime.UtcNow
                 };
 
-                var result = await userManager.CreateAsync(adminUser, AdminPassword);
+                var result = await userManager.CreateAsync(adminUser, adminPassword);
             }
 
             if (adminUser.Id != null)

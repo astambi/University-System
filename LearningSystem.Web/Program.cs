@@ -10,7 +10,7 @@
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
             => WebHost
-            .CreateDefaultBuilder(args)
+            .CreateDefaultBuilder(args) // calls AddUserSecrets in Development environment
             .UseStartup<Startup>();
     }
 }

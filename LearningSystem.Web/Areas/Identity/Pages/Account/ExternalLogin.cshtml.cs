@@ -1,8 +1,11 @@
 ﻿namespace LearningSystem.Web.Areas.Identity.Pages.Account
 {
+    using System;
     using System.ComponentModel.DataAnnotations;
+    using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using LearningSystem.Data;
     using LearningSystem.Data.Models;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
@@ -42,6 +45,24 @@
             [Required]
             [EmailAddress]
             public string Email { get; set; }
+
+            // Custom User
+            [Required]
+            [StringLength(DataConstants.UserUsernameMaxLength,
+                ErrorMessage = DataConstants.StringMinMaxLength,
+                MinimumLength = DataConstants.UserNameMinLength)]
+            [Display(Name = "Username")]
+            public string UserName { get; set; }
+
+            [Required]
+            [StringLength(DataConstants.UserNameMaxLength,
+                ErrorMessage = DataConstants.StringMinMaxLength,
+                MinimumLength = DataConstants.UserNameMinLength)]
+            public string Name { get; set; }
+
+            [Required]
+            [DataType(DataType.Date)]
+            public DateTime? Birthdate { get; set; }
         }
 
         public IActionResult OnGetAsync() => this.RedirectToPage("./Login");
@@ -85,11 +106,19 @@
                 // If the user does not have an account, then ask the user to create an account.
                 this.ReturnUrl = returnUrl;
                 this.LoginProvider = info.LoginProvider;
+
                 if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
                 {
+                    // Custom User
+                    var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+                    var name = info.Principal.FindFirstValue(ClaimTypes.Name);
+
                     this.Input = new InputModel
                     {
-                        Email = info.Principal.FindFirstValue(ClaimTypes.Email)
+                        Email = email,
+                        // Custom User
+                        UserName = email?.Split('@').First(), // suggest username from email
+                        Name = name
                     };
                 }
                 return this.Page();
@@ -109,7 +138,15 @@
 
             if (this.ModelState.IsValid)
             {
-                var user = new User { UserName = this.Input.Email, Email = this.Input.Email };
+                var user = new User
+                {
+                    // Custom User
+                    UserName = this.Input.UserName ?? this.Input.Email,
+                    Email = this.Input.Email,
+                    Name = this.Input.Name,
+                    Birthdate = (DateTime)this.Input.Birthdate
+                };
+
                 var result = await this._userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {

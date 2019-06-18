@@ -2,20 +2,28 @@
 {
     using System;
     using System.Linq;
+    using System.Reflection;
     using AutoMapper;
     using LearningSystem.Common.Mapping;
 
     public class AutoMapperProfile : Profile
     {
-        private const string SolutionAssemblyName = "LearningSystem";
         private const string ModelSuffix = "model";
+        private readonly string SolutionAssemblyName;
 
         public AutoMapperProfile()
         {
+            this.SolutionAssemblyName = Assembly
+                .GetExecutingAssembly()
+                .GetName()
+                .Name // LearningSystem.Web
+                .Split('.')
+                .First(); // LearningSystem
+
             var assemblies = AppDomain
                 .CurrentDomain
                 .GetAssemblies()
-                .Where(a => a.GetName().Name.Contains(SolutionAssemblyName))
+                .Where(a => a.GetName().Name.Contains(this.SolutionAssemblyName))
                 .ToList();
 
             var modelTypes = assemblies

@@ -30,6 +30,9 @@
         public bool ShowRemoveButton { get; set; }
 
         [TempData]
+        public string ErrorMessage { get; set; } // error msg for invalid external login
+
+        [TempData]
         public string StatusMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
@@ -96,7 +99,13 @@
             var result = await this._userManager.AddLoginAsync(user, info);
             if (!result.Succeeded)
             {
-                throw new InvalidOperationException($"Unexpected error occurred adding external login for user with ID '{user.Id}'.");
+                // Error Message for adding external provider login
+                this.StatusMessage = string.Join(Environment.NewLine,
+                    result.Errors.Select(e => e.Description).ToList());
+
+                return this.RedirectToPage();
+
+                //throw new InvalidOperationException($"Unexpected error occurred adding external login for user with ID '{user.Id}'.");
             }
 
             // Clear the existing external cookie to ensure a clean login process
