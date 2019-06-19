@@ -2,7 +2,7 @@
 {
     using System;
     using System.Threading.Tasks;
-    using Data;
+    using LearningSystem.Data;
     using LearningSystem.Data.Models;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Identity;
@@ -11,10 +11,6 @@
 
     public static class ApplicationBuilderExtensions
     {
-        private const string AdminUsername = "admin";
-        private const string AdminEmail = "admin@admin.com";
-        //private const string AdminPassword = "admin123123";
-
         public static IApplicationBuilder UseDatabaseMigration(this IApplicationBuilder app, string adminPassword)
         {
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
@@ -42,7 +38,7 @@
         {
             var userManager = serviceScope.ServiceProvider.GetService<UserManager<User>>();
 
-            var adminUser = await userManager.FindByEmailAsync(AdminEmail);
+            var adminUser = await userManager.FindByEmailAsync(WebConstants.AdminEmail);
 
             // Create Admin User
             if (adminUser == null)
@@ -50,8 +46,8 @@
                 adminUser = new User
                 {
                     // IdentityUser
-                    UserName = AdminUsername,
-                    Email = AdminEmail,
+                    UserName = WebConstants.AdminUsername,
+                    Email = WebConstants.AdminEmail,
                     // Custom User
                     Name = WebConstants.AdministratorRole,
                     Birthdate = DateTime.UtcNow

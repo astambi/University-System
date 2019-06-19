@@ -1,0 +1,33 @@
+﻿@model AdminUserListingViewModel
+@{
+    ViewData["Title"] = "User Administration";
+}
+
+<h1>User administration</h1>
+
+<section>
+    <article class="row font-weight-bold border-bottom p-2">
+        <div class="col-md-3">Username</div>
+        <div class="col-md-4">Name / Email</div>
+        <div class="col-md-5">Add / Remove Role</div>
+    </article>
+    @foreach (var user in Model.Users)
+    {
+        var model = Model.RoleFormModel;
+        model.UserId = user.Id;
+        <article class="d-flex flex-wrap py-1 box-shadow border-bottom">
+            <div class="col-md-3 font-weight-bold">@user.Username</div>
+            <div class="col-md-4">@user.Name (@user.Email)</div>
+            <div class="col-md-5 d-flex flex-wrap justify-content-between">
+                @{ model.Action = FormAction.Add; }
+                <partial name="_UserRoleFormPartial" model="model" />
+                @{ model.Action = FormAction.Remove; }
+                <partial name="_UserRoleFormPartial" model="model" />
+            </div>
+        </article>
+    }
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

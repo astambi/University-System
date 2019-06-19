@@ -13,7 +13,7 @@
 
         public const int CourseNameMaxLength = 50;
         public const int CourseDescriptionMaxLength = 2000;
-        public const string CourseEndDate = "The Course Start date must precede End date.";
+        public const string CourseEndDate = "The Course End date cannot precede Start date.";
 
         public const int UserNameMinLength = 2;
         public const int UserNameMaxLength = 100;

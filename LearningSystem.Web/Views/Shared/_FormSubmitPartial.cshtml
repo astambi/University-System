@@ -1,0 +1,16 @@
+﻿@model FormAction
+
+@{
+    var cssStyle = WebConstants.PrimaryStyle;
+    switch (Model)
+    {
+        case FormAction.Create: cssStyle = WebConstants.CreateStyle; break;
+        case FormAction.Edit: cssStyle = WebConstants.EditStyle; break;
+        case FormAction.Delete: cssStyle = WebConstants.DeleteStyle; break;
+        default: break;
+    }
+}
+
+<div class="form-group">
+    <input type="submit" value="@Model" class="btn btn-block btn-outline-@cssStyle" />
+</div>

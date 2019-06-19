@@ -41,7 +41,8 @@
                .Entity<Course>()
                .HasOne(c => c.Trainer)
                .WithMany(t => t.Trainings)
-               .HasForeignKey(c => c.TrainerId);
+               .HasForeignKey(c => c.TrainerId)
+               .OnDelete(DeleteBehavior.Restrict); // Required Trainer
 
             builder
                 .Entity<Article>()

@@ -23,12 +23,8 @@
 
 
   <ItemGroup>
-    <Folder Include="Areas\Admin\Controllers\" />
-    <Folder Include="Areas\Admin\Data\" />
-    <Folder Include="Areas\Admin\Models\" />
-    <Folder Include="Areas\Admin\Views\" />
+    <Folder Include="Areas\Admin\Views\Shared\" />
     <Folder Include="Areas\Blog\Controllers\" />
-    <Folder Include="Areas\Blog\Data\" />
     <Folder Include="Areas\Blog\Models\" />
     <Folder Include="Areas\Blog\Views\" />
     <Folder Include="Infrastructure\Helpers\" />

@@ -18,12 +18,12 @@
             ErrorMessage = DataConstants.StringMaxLength)]
         public string Description { get; set; }
 
+        [Required]
         public string TrainerId { get; set; }
 
         public User Trainer { get; set; }
 
         [DataType(DataType.Date)]
-
         [Display(Name = "Start date")]
         public DateTime StartDate { get; set; }
 
