@@ -6,11 +6,11 @@
     <input asp-for="Action" hidden />
     <div class="d-flex">
         <select name="Role" asp-items="@Model.Roles" class="form-control"></select>
-        @if (Model.Action == FormAction.Add)
+        @if (Model.Action == FormActionEnum.Add)
         {
             <button type="submit" class="btn btn-outline-primary"><i class="fa fa-plus"></i></button>
         }
-        else if (Model.Action == FormAction.Remove)
+        else if (Model.Action == FormActionEnum.Remove)
         {
             <button type="submit" class="btn btn-outline-danger"><i class="fa fa-minus"></i></button>
         }

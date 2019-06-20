@@ -88,7 +88,7 @@
 
             var model = this.mapper.Map<CourseFormModel>(course);
             model.Trainers = await this.GetTrainers();
-            model.Action = FormAction.Edit;
+            model.Action = FormActionEnum.Edit;
 
             return this.View(CourseFormView, model);
         }

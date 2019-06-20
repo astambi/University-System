@@ -6,22 +6,22 @@
 <h1>User administration</h1>
 
 <section>
-    <article class="row font-weight-bold border-bottom p-2">
-        <div class="col-md-3">Username</div>
-        <div class="col-md-4">Name / Email</div>
-        <div class="col-md-5">Add / Remove Role</div>
-    </article>
+    <header class="row p-2">
+        <div class="col-md-3"><i class="fa fa-user"></i> Username</div>
+        <div class="col-md-4">Name / <i class="fa fa-envelope"></i> Email</div>
+        <div class="col-md-5"><i class="fa fa-tag"></i> Roles</div>
+    </header>
     @foreach (var user in Model.Users)
     {
         var model = Model.RoleFormModel;
         model.UserId = user.Id;
-        <article class="d-flex flex-wrap py-1 box-shadow border-bottom">
-            <div class="col-md-3 font-weight-bold">@user.Username</div>
+        <article class="d-flex flex-wrap box-shadow py-2 my-1">
+            <div class="col-md-3">@user.Username</div>
             <div class="col-md-4">@user.Name (@user.Email)</div>
             <div class="col-md-5 d-flex flex-wrap justify-content-between">
-                @{ model.Action = FormAction.Add; }
+                @{ model.Action = FormActionEnum.Add; }
                 <partial name="_UserRoleFormPartial" model="model" />
-                @{ model.Action = FormAction.Remove; }
+                @{ model.Action = FormActionEnum.Remove; }
                 <partial name="_UserRoleFormPartial" model="model" />
             </div>
         </article>

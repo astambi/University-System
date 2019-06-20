@@ -1,27 +1,12 @@
-﻿@if (TempData.ContainsKey(WebConstants.TempDataSuccessMessageKey))
+﻿@if (TempData.ContainsKey(WebConstants.TempDataErrorMessageKey))
 {
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        @TempData[WebConstants.TempDataSuccessMessageKey]
-    </div>
+    <partial name="_NotificationEntryPartial" model="NotificationEnum.Error" />
 }
-@if (TempData.ContainsKey(WebConstants.TempDataErrorMessageKey))
+@if (TempData.ContainsKey(WebConstants.TempDataSuccessMessageKey))
 {
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        @TempData[WebConstants.TempDataErrorMessageKey]
-    </div>
+    <partial name="_NotificationEntryPartial" model="NotificationEnum.Success" />
 }
 @if (TempData.ContainsKey(WebConstants.TempDataInfoMessageKey))
 {
-    <div class="alert alert-info alert-dismissible fade show" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        @TempData[WebConstants.TempDataInfoMessageKey]
-    </div>
+    <partial name="_NotificationEntryPartial" model="NotificationEnum.Info" />
 }

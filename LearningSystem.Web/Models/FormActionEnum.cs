@@ -1,6 +1,6 @@
 ﻿namespace LearningSystem.Web.Models
 {
-    public enum FormAction
+    public enum FormActionEnum
     {
         Create = 0,
         Edit = 1,

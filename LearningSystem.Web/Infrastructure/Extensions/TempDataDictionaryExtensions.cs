@@ -27,5 +27,17 @@
                 Environment.NewLine,
                 result.Errors.Select(e => e.Description).ToList());
         }
+
+        public static void AddInfoMessages(this ITempDataDictionary tempData, IdentityResult result)
+        {
+            if (result.Succeeded)
+            {
+                return;
+            }
+
+            tempData[WebConstants.TempDataInfoMessageKey] = string.Join(
+                Environment.NewLine,
+                result.Errors.Select(e => e.Description).ToList());
+        }
     }
 }

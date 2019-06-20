@@ -1,0 +1,26 @@
+﻿@model NotificationEnum
+
+@{
+    var cssStyle = string.Empty;
+    var tempDataKey = string.Empty;
+    switch (Model)
+    {
+        case NotificationEnum.Success:
+            tempDataKey = WebConstants.TempDataSuccessMessageKey;
+            cssStyle = WebConstants.SuccessStyle; break;
+        case NotificationEnum.Error:
+            tempDataKey = WebConstants.TempDataErrorMessageKey;
+            cssStyle = WebConstants.ErrorStyle; break;
+        case NotificationEnum.Info:
+            tempDataKey = WebConstants.TempDataInfoMessageKey;
+            cssStyle = WebConstants.InfoStyle; break;
+        default: break;
+    }
+}
+
+<div class="alert alert-@cssStyle alert-dismissible fade show" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    @TempData[tempDataKey]
+</div>

@@ -9,8 +9,8 @@
         // Student Role => default role for registered users
 
         // Admin
-        public const string AdminUsername = "admin";
         public const string AdminEmail = "admin@admin.com";
+        public const string AdminUsername = "admin";
 
         // Areas
         public const string AdminArea = "Admin";
@@ -24,26 +24,29 @@
         public const string AuthGoogleClientSecret = "Authentication:Google:ClientSecret";
 
         // TempData Keys
-        public const string TempDataSuccessMessageKey = "SuccessMessage";
         public const string TempDataErrorMessageKey = "ErrorMessage";
         public const string TempDataInfoMessageKey = "InfoMessage";
+        public const string TempDataSuccessMessageKey = "SuccessMessage";
 
-        // Project
-        public const string HomeController = "Home";
+        // Controllers
         public const string CoursesController = "Courses";
+        public const string HomeController = "Home";
         public const string UsersController = "Users";
 
-        //Style
-        public const string PrimaryStyle = "primary";
+        // Styles
         public const string CreateStyle = "success";
-        public const string EditStyle = "warning";
         public const string DeleteStyle = "danger";
+        public const string EditStyle = "warning";
+        public const string ErrorStyle = "danger";
+        public const string InfoStyle = "info";
+        public const string PrimaryStyle = "primary";
+        public const string SuccessStyle = "success";
 
         // Notifications
         public const string InvalidIdentityOrRoleMsg = "Invalid identity or role.";
         public const string InvalidUserMsg = "Invalid user.";
-        public const string CourseNotFoundMsg = "Course not found.";
         public const string CourseCreatedMsg = "Course created successfully.";
+        public const string CourseNotFoundMsg = "Course not found.";
         public const string CourseUpdatedMsg = "Course updated successfully.";
         public const string UserAddedToRoleMsg = "User {0} added to role {1}.";
         public const string UserRemovedFromRoleMsg = "User {0} removed from role {1}.";

@@ -4,7 +4,7 @@
     using LearningSystem.Common.Mapping;
     using LearningSystem.Data.Models;
 
-    public class CourseEditServiceModel : IMapFrom<Course>
+    public class CourseServiceModel : IMapFrom<Course>
     {
         public int Id { get; set; }
 

@@ -1,12 +1,14 @@
-﻿@model FormAction
+﻿@model FormActionEnum
 
 @{
     var cssStyle = WebConstants.PrimaryStyle;
     switch (Model)
     {
-        case FormAction.Create: cssStyle = WebConstants.CreateStyle; break;
-        case FormAction.Edit: cssStyle = WebConstants.EditStyle; break;
-        case FormAction.Delete: cssStyle = WebConstants.DeleteStyle; break;
+        case FormActionEnum.Create: cssStyle = WebConstants.CreateStyle; break;
+        case FormActionEnum.Edit: cssStyle = WebConstants.EditStyle; break;
+        case FormActionEnum.Delete: cssStyle = WebConstants.DeleteStyle; break;
+        case FormActionEnum.Add: cssStyle = WebConstants.CreateStyle; break;
+        case FormActionEnum.Remove: cssStyle = WebConstants.DeleteStyle; break;
         default: break;
     }
 }

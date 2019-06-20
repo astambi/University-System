@@ -65,8 +65,8 @@
 
             switch (model.Action)
             {
-                case FormAction.Add: await this.AddUserToRole(user, model.Role); break;
-                case FormAction.Remove: await this.RemoveUserFromRole(user, model.Role); break;
+                case FormActionEnum.Add: await this.AddUserToRole(user, model.Role); break;
+                case FormActionEnum.Remove: await this.RemoveUserFromRole(user, model.Role); break;
                 default: break;
             }
 
@@ -82,7 +82,7 @@
             }
             else
             {
-                this.TempData.AddErrorMessages(result);
+                this.TempData.AddInfoMessages(result);
             }
         }
 
@@ -95,7 +95,7 @@
             }
             else
             {
-                this.TempData.AddErrorMessages(result);
+                this.TempData.AddInfoMessages(result);
             }
         }
     }
