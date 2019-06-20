@@ -10,7 +10,7 @@
     using LearningSystem.Web.Models;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
-    public class CourseFormModel : IValidatableObject, IMapFrom<CourseEditServiceModel>
+    public class CourseFormModel : IValidatableObject, IMapFrom<CourseServiceModel>
     {
         [Required]
         [StringLength(DataConstants.CourseNameMaxLength,
@@ -40,12 +40,20 @@
         public DateTime EndDate { get; set; }
 
         [IgnoreMap]
-        public FormAction Action { get; set; } = FormAction.Create;
+        public FormActionEnum Action { get; set; } = FormActionEnum.Create;
 
         public IEnumerable<ValidationResult> Validate(System.ComponentModel.DataAnnotations.ValidationContext validationContext)
         {
-            var compare = DateTime.Compare(this.StartDate, this.EndDate);
-            if (compare == 1) // End date before Start date
+            var hasStartBeforeToday = DateTime.Compare(this.StartDate, DateTime.Now.Date) == -1;
+            var hasEndBeforeStart = DateTime.Compare(this.EndDate, this.StartDate) == -1;
+
+            if (hasStartBeforeToday)
+            {
+                yield return new ValidationResult(DataConstants.CourseStartDate,
+                    new[] { nameof(this.StartDate) });
+            }
+
+            if (hasEndBeforeStart)
             {
                 yield return new ValidationResult(DataConstants.CourseEndDate,
                     new[] { nameof(this.EndDate) });

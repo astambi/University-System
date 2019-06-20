@@ -1,6 +1,7 @@
 ﻿namespace LearningSystem.Web.Areas.Identity.Pages.Account
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Text.Encodings.Web;
     using System.Threading.Tasks;
@@ -38,7 +39,7 @@
 
         public string ReturnUrl { get; set; }
 
-        public class InputModel
+        public class InputModel : IValidatableObject
         {
             [Required]
             [EmailAddress]
@@ -76,6 +77,16 @@
             [Compare("Password",
                 ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+            {
+                var isNotBornYet = DateTime.Compare((DateTime)this.Birthdate, DateTime.Now.Date) == 1;
+                if (isNotBornYet)
+                {
+                    yield return new ValidationResult(DataConstants.UserBirthdate,
+                        new[] { nameof(this.Birthdate) });
+                }
+            }
         }
 
         public void OnGet(string returnUrl = null) => this.ReturnUrl = returnUrl;

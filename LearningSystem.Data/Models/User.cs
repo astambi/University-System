@@ -24,7 +24,8 @@
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (this.Birthdate > DateTime.UtcNow)
+            var isNotBornYet = DateTime.Compare(DateTime.Now.Date, this.Birthdate) == -1;
+            if (isNotBornYet)
             {
                 yield return new ValidationResult(DataConstants.UserBirthdate,
                     new[] { nameof(this.Birthdate) });

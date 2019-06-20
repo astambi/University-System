@@ -35,7 +35,16 @@
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (this.StartDate < this.EndDate)
+            var hasStartBeforeToday = DateTime.Compare(this.StartDate, DateTime.Now.Date) == -1;
+            var hasEndBeforeStart = DateTime.Compare(this.EndDate, this.StartDate) == -1;
+
+            if (hasStartBeforeToday)
+            {
+                yield return new ValidationResult(DataConstants.CourseStartDate,
+                    new[] { nameof(this.StartDate) });
+            }
+
+            if (hasEndBeforeStart)
             {
                 yield return new ValidationResult(DataConstants.CourseEndDate,
                     new[] { nameof(this.EndDate) });

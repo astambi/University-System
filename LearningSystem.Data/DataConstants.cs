@@ -9,15 +9,17 @@
         public const int ArticleTitleMaxLength = 50;
         public const int ArticleContentMinLength = 3;
         public const int ArticleContentMaxLength = 5000;
-        public const string ArticlePublishDate = "The article Publish date must precede current date.";
+        public const string ArticlePublishDate = "The Publish date cannot be in the future.";
+
 
         public const int CourseNameMaxLength = 50;
         public const int CourseDescriptionMaxLength = 2000;
-        public const string CourseEndDate = "The Course End date cannot precede Start date.";
+        public const string CourseEndDate = "The End date should be on or after Start date.";
+        public const string CourseStartDate = "The Start date cannot be in the past.";
 
         public const int UserNameMinLength = 2;
         public const int UserNameMaxLength = 100;
         public const int UserUsernameMaxLength = 50;
-        public const string UserBirthdate = "The user Birthdate must precede current date.";
+        public const string UserBirthdate = "The Birthdate cannot be in the future.";
     }
 }
