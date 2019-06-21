@@ -9,6 +9,7 @@
     using LearningSystem.Data.Models;
     using LearningSystem.Services.Blog.Models;
     using LearningSystem.Services.Html;
+    using LearningSystem.Services.Models;
     using Microsoft.EntityFrameworkCore;
 
     public class ArticleService : IArticleService
@@ -63,6 +64,17 @@
             await this.db.Articles.AddAsync(article);
             await this.db.SaveChangesAsync();
         }
+
+        public async Task<ArticleDetailsWithAuthorServiceModel> GetByIdAsync(int id)
+            => await this.db
+            .Articles
+            .Where(a => a.Id == id)
+            .Select(a => new ArticleDetailsWithAuthorServiceModel
+            {
+                Article = this.mapper.Map<ArticleDetailsServiceModel>(a),
+                Author = this.mapper.Map<UserServiceModel>(a.Author)
+            })
+            .FirstOrDefaultAsync();
 
         public async Task<int> TotalAsync()
             => await this.db.Articles.CountAsync();

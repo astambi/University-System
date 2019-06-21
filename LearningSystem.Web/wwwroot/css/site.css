@@ -7,6 +7,24 @@ a.navbar-brand {
     word-break: break-all;
 }
 
+/*Links*/
+
+a, a:hover {
+    text-decoration: none;
+}
+
+    a.article-card-link {
+        color: #212529;
+    }
+
+        a.article-card-link:hover div {
+            color: #4ba745;
+            background-color: #f0f1f2;
+            font-weight: bold;
+            border-color: #86cd96;
+            border-radius: 0.25rem;
+        }
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {

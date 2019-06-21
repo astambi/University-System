@@ -38,7 +38,7 @@
         public const string Index = "Index";
 
         // Pagination
-        public const int PageSize = 4;
+        public const int PageSize = 12;
 
         // Bootstrap Styles
         public const string CreateStyle = "success";

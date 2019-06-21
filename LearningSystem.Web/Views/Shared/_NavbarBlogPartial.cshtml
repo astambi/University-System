@@ -1,21 +1,9 @@
 ﻿@if (User.Identity.IsAuthenticated)
 {
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle text-uppercase text-info font-weight-bold" href="#" id="navbarDropdownMenuLinkBlog" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Blog
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkBlog">
-            <a class="nav-link text-dark"
-               asp-area="@WebConstants.BlogArea"
-               asp-controller="@WebConstants.ArticlesController"
-               asp-action="@nameof(ArticlesController.Index)">Articles</a>
-            @if (User.IsInRole(WebConstants.BlogAuthorRole))
-            {
-                <a class="nav-link text-dark"
-                   asp-area="@WebConstants.BlogArea"
-                   asp-controller="@WebConstants.ArticlesController"
-                   asp-action="@nameof(ArticlesController.Create)">Publish article</a>
-            }
-        </div>
+    <li class="nav-item">
+        <a class="nav-link text-success text-uppercase font-weight-bold"
+           asp-area="@WebConstants.BlogArea"
+           asp-controller="@WebConstants.ArticlesController"
+           asp-action="@nameof(ArticlesController.Index)">Blog</a>
     </li>
 }

@@ -12,6 +12,8 @@
 
         Task CreateAsync(string title, string rawHtmlContent, string userId);
 
+        Task <ArticleDetailsWithAuthorServiceModel> GetByIdAsync(int id);
+
         Task<int> TotalAsync();
     }
 }

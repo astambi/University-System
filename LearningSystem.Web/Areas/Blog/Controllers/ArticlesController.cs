@@ -29,21 +29,19 @@
 
         public async Task<IActionResult> Index(int currentPage = 1)
         {
-            var pageArticles = await this.articleService.AllAsync(currentPage, WebConstants.PageSize);
-            var totalArticles = await this.articleService.TotalAsync();
+            var pagination = new PaginationModel
+            {
+                Action = nameof(Index),
+                RequestedPage = currentPage,
+                TotalItems = await this.articleService.TotalAsync(),
+            };
 
-            var totalPages = PaginationHelpers.GetTotalPages(totalArticles, WebConstants.PageSize);
-            currentPage = PaginationHelpers.GetValidCurrentPage(currentPage, totalPages);
+            var articles = await this.articleService.AllAsync(pagination.CurrentPage, WebConstants.PageSize);
 
             var model = new ArticlePageListingViewModel
             {
-                Articles = pageArticles,
-                Pagination = new PaginationModel
-                {
-                    Action = nameof(Index),
-                    CurrentPage = currentPage,
-                    TotalPages = totalPages
-                }
+                Articles = articles,
+                Pagination = pagination
             };
 
             return this.View(model);
@@ -77,6 +75,10 @@
             return this.RedirectToAction(nameof(Index));
         }
 
-        
+        public async Task<IActionResult> Details(int id)
+        {
+            var model = await this.articleService.GetByIdAsync(id);
+            return this.View(model);
+        }
     }
 }

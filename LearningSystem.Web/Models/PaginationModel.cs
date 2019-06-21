@@ -1,14 +1,24 @@
 ﻿namespace LearningSystem.Web.Models
 {
+    using LearningSystem.Web.Infrastructure.Helpers;
+
     public class PaginationModel
     {
         public string Action { get; set; } = WebConstants.Index;
 
         public string SearchTerm { get; set; }
 
-        public int CurrentPage { get; set; }
+        public int RequestedPage { get; set; }
 
-        public int TotalPages { get; set; }
+        public int TotalItems { get; set; }
+
+        public int PageSize { get; set; } = WebConstants.PageSize;
+
+        public int TotalPages
+            => PaginationHelpers.GetTotalPages(this.TotalItems, this.PageSize);
+
+        public int CurrentPage
+            => PaginationHelpers.GetValidCurrentPage(this.RequestedPage, this.TotalPages);
 
         public int PreviousPage
             => this.CurrentPage == 1
