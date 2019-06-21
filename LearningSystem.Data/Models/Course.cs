@@ -35,7 +35,7 @@
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            var hasStartBeforeToday = DateTime.Compare(this.StartDate, DateTime.Now.Date) == -1;
+            var hasStartBeforeToday = DateTime.Compare(this.StartDate, DateTime.UtcNow.Date) == -1;
             var hasEndBeforeStart = DateTime.Compare(this.EndDate, this.StartDate) == -1;
 
             if (hasStartBeforeToday)

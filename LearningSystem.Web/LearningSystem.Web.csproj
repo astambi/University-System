@@ -23,11 +23,6 @@
 
 
   <ItemGroup>
-    <Folder Include="Areas\Admin\Views\Shared\" />
-    <Folder Include="Areas\Blog\Controllers\" />
-    <Folder Include="Areas\Blog\Models\" />
-    <Folder Include="Areas\Blog\Views\" />
-    <Folder Include="Infrastructure\Helpers\" />
     <Folder Include="wwwroot\lib\qrcode\" />
   </ItemGroup>
 

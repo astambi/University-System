@@ -1,0 +1,43 @@
+﻿@model CourseListingServiceModel
+
+@{
+    var days = Model.Course.Duration == 1 ? "day" : "days";
+}
+
+<article class="card-group col-sm-6 col-md-4 col-lg-3 my-2">
+    <div class="card border-info shadow">
+        <div class="card-header bg-info border-light d-flex flex-wrap justify-content-between">
+            <div class=" small">
+                <i class="fa fa-clock"></i> @Model.Course.StartDate.ToShortDateString()
+            </div>
+            <div class=" small">
+                <i class="fa fa-hourglass"></i> @Model.Course.Duration @days
+            </div>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">@Model.Course.Name</h5>
+            <p class="card-text">@Model.Course.Description</p>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item list-group-item-action text-muted">Trainer: @Model.Trainer.Name</li>
+            <li class="list-group-item list-group-item-action text-muted small"><i class="fa fa-clock"></i> Start date: @Model.Course.StartDate.ToShortDateString()</li>
+            <li class="list-group-item list-group-item-action text-muted small"><i class="fa fa-clock"></i> End date: @Model.Course.EndDate.ToShortDateString()</li>
+            <li class="list-group-item list-group-item-action text-muted small d-flex flex-wrap justify-content-between">
+                <div>
+                    <i class="fa fa-clock"></i> @Model.Course.StartDate.ToShortDateString()
+                </div>
+                <div>
+                    <i class="fa fa-hourglass"></i> @Model.Course.Duration @days
+                </div>
+            </li>
+        </ul>
+        <div class="card-footer bg-transparent border-info d-flex flex-wrap justify-content-between">
+            <div class="text-muted small">
+                <i class="fa fa-clock"></i> @Model.Course.StartDate.ToShortDateString()
+            </div>
+            <div class="text-muted small">
+                <i class="fa fa-hourglass"></i> @Model.Course.Duration @days
+            </div>
+        </div>
+    </div>
+</article>

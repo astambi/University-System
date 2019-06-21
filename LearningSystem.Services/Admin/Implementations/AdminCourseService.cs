@@ -7,6 +7,7 @@
     using LearningSystem.Data;
     using LearningSystem.Data.Models;
     using LearningSystem.Services.Admin.Models;
+    using Microsoft.EntityFrameworkCore;
 
     public class AdminCourseService : IAdminCourseService
     {
@@ -19,7 +20,7 @@
             this.mapper = mapper;
         }
 
-        public async Task Create(
+        public async Task CreateAsync(
             string name,
             string description,
             DateTime startDate,
@@ -45,11 +46,11 @@
             await this.db.SaveChangesAsync();
         }
 
-        public CourseServiceModel GetById(int id)
-            => this.db.Courses
+        public async Task<CourseServiceModel> GetByIdAsync(int id)
+            => await this.db.Courses
             .Where(c => c.Id == id)
             .Select(c => this.mapper.Map<CourseServiceModel>(c))
-            .FirstOrDefault();
+            .FirstOrDefaultAsync();
 
         public async Task UpdateAsync(
             int id,

@@ -28,7 +28,7 @@
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            var isNotPublishedYet = DateTime.Compare(DateTime.Now.Date, this.PublishDate) == -1;
+            var isNotPublishedYet = DateTime.Compare(DateTime.UtcNow.Date, this.PublishDate) == -1;
             if (isNotPublishedYet)
             {
                 yield return new ValidationResult(DataConstants.ArticlePublishDate,

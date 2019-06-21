@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
+    <PackageReference Include="HtmlSanitizer" Version="4.0.217" />
   </ItemGroup>
 
 </Project>

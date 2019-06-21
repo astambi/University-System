@@ -37,13 +37,11 @@
             this.mapper = mapper;
         }
 
-        public IActionResult Index() => this.View();
-
         public async Task<IActionResult> Create()
         {
             var model = new CourseFormModel
             {
-                Trainers = await this.GetTrainers(),
+                Trainers = await this.GetTrainersAsync(),
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow
             };
@@ -62,11 +60,11 @@
 
             if (!this.ModelState.IsValid)
             {
-                model.Trainers = await this.GetTrainers();
+                model.Trainers = await this.GetTrainersAsync();
                 return this.View(CourseFormView, model);
             }
 
-            await this.adminCourseService.Create(
+            await this.adminCourseService.CreateAsync(
                 model.Name,
                 model.Description,
                 model.StartDate,
@@ -79,7 +77,7 @@
 
         public async Task<IActionResult> Edit(int id)
         {
-            var course = this.adminCourseService.GetById(id);
+            var course = await this.adminCourseService.GetByIdAsync(id);
             if (course == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
@@ -87,7 +85,7 @@
             }
 
             var model = this.mapper.Map<CourseFormModel>(course);
-            model.Trainers = await this.GetTrainers();
+            model.Trainers = await this.GetTrainersAsync();
             model.Action = FormActionEnum.Edit;
 
             return this.View(CourseFormView, model);
@@ -111,7 +109,7 @@
 
             if (!this.ModelState.IsValid)
             {
-                model.Trainers = await this.GetTrainers();
+                model.Trainers = await this.GetTrainersAsync();
                 return this.View(CourseFormView, model);
             }
 
@@ -127,7 +125,7 @@
             return this.RedirectToAction(nameof(HomeController.Index), WebConstants.HomeController);
         }
 
-        private async Task<IEnumerable<SelectListItem>> GetTrainers()
+        private async Task<IEnumerable<SelectListItem>> GetTrainersAsync()
             => (await this.userManager.GetUsersInRoleAsync(WebConstants.TrainerRole))
             .Select(t => new SelectListItem
             {

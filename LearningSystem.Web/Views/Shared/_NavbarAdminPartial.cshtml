@@ -1,0 +1,18 @@
+﻿@if (User.IsInRole(WebConstants.AdministratorRole))
+{
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle text-uppercase text-danger font-weight-bold" href="#" id="navbarDropdownMenuLinkAdmin" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Admin
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkAdmin">
+            <a class="dropdown-item text-dark"
+               asp-area="@WebConstants.AdminArea"
+               asp-controller="@WebConstants.UsersController"
+               asp-action="@nameof(UsersController.Index)">Users</a>
+            <a class="dropdown-item text-dark"
+               asp-area="@WebConstants.AdminArea"
+               asp-controller="@WebConstants.CoursesController"
+               asp-action="@nameof(LearningSystem.Web.Areas.Admin.Controllers.CoursesController.Create)">Create course</a>
+        </div>
+    </li>
+}

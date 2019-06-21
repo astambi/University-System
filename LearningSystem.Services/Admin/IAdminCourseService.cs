@@ -6,14 +6,14 @@
 
     public interface IAdminCourseService
     {
-        Task Create(
+        Task CreateAsync(
             string name,
             string description,
             DateTime startDate,
             DateTime endDate,
             string trainerId);
 
-        CourseServiceModel GetById(int id);
+        Task<CourseServiceModel> GetByIdAsync(int id);
 
         Task UpdateAsync(
             int id,

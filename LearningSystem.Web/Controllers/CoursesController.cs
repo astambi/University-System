@@ -1,6 +1,6 @@
 ﻿namespace LearningSystem.Web.Controllers
 {
-    using System.Diagnostics;
+    using System.Linq;
     using System.Threading.Tasks;
     using LearningSystem.Services;
     using LearningSystem.Web.Infrastructure.Helpers;
@@ -8,11 +8,11 @@
     using LearningSystem.Web.Models.Courses;
     using Microsoft.AspNetCore.Mvc;
 
-    public class HomeController : Controller
+    public class CoursesController : Controller
     {
         private readonly ICourseService courseService;
 
-        public HomeController(ICourseService courseService)
+        public CoursesController(ICourseService courseService)
         {
             this.courseService = courseService;
         }
@@ -39,12 +39,5 @@
 
             return this.View(model);
         }
-
-        public IActionResult Privacy()
-            => this.View();
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-            => this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier });
     }
 }

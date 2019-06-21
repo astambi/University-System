@@ -1,6 +1,6 @@
 ﻿@model CourseFormModel
 
-<h1>@Model.Action Course</h1>
+<h1>@Model.Action course</h1>
 
 <section class="col-md-6">
     <form asp-action="@Model.Action" method="post">
@@ -38,7 +38,8 @@
 </section>
 
 <div>
-    <a asp-action="Index">Back to Courses</a>
+    <a asp-area="" asp-controller="Courses"
+       asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Index)">Back to Courses</a>
 </div>
 
 @section Scripts {

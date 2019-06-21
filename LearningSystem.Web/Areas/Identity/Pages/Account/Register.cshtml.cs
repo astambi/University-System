@@ -80,7 +80,7 @@
 
             public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
             {
-                var isNotBornYet = DateTime.Compare((DateTime)this.Birthdate, DateTime.Now.Date) == 1;
+                var isNotBornYet = DateTime.Compare((DateTime)this.Birthdate, DateTime.UtcNow.Date) == 1;
                 if (isNotBornYet)
                 {
                     yield return new ValidationResult(DataConstants.UserBirthdate,
