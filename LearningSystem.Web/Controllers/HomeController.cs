@@ -30,7 +30,6 @@
                 Courses = pageCourses,
                 Pagination = new PaginationModel
                 {
-                    Controller = WebConstants.CoursesController,
                     Action = nameof(Index),
                     CurrentPage = currentPage,
                     TotalPages = totalPages

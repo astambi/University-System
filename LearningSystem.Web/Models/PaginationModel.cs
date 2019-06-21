@@ -2,10 +2,6 @@
 {
     public class PaginationModel
     {
-        public string Area { get; set; } = string.Empty;
-
-        public string Controller { get; set; }
-
         public string Action { get; set; } = WebConstants.Index;
 
         public string SearchTerm { get; set; }

@@ -15,8 +15,6 @@
         <ul class="pagination">
             <li class="page-item @prevDisabled">
                 <a class="page-link" aria-disabled="@prevDisabled" aria-label="Previous" tabindex="-1"
-                   asp-area="@Model.Area"
-                   asp-controller="@Model.Controller"
                    asp-action="@Model.Action"
                    asp-route-search="@Model.SearchTerm"
                    asp-route-currentPage="@Model.PreviousPage"><span aria-hidden="true">&laquo;</span></a>
@@ -33,8 +31,6 @@
                     else
                     {
                         <a class="page-link"
-                           asp-area="@Model.Area"
-                           asp-controller="@Model.Controller"
                            asp-action="@Model.Action"
                            asp-route-search="@Model.SearchTerm"
                            asp-route-currentPage="@i">@i</a>
@@ -43,8 +39,6 @@
             }
             <li class="page-item @nextDisabled">
                 <a class="page-link" aria-disabled="@nextDisabled" aria-label="Next" tabindex="-1"
-                   asp-area="@Model.Area"
-                   asp-controller="@Model.Controller"
                    asp-action="@Model.Action"
                    asp-route-search="@Model.SearchTerm"
                    asp-route-currentPage="@Model.NextPage"><span aria-hidden="true">&raquo;</span></a>

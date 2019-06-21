@@ -31,6 +31,7 @@
         {
             var pageArticles = await this.articleService.AllAsync(currentPage, WebConstants.PageSize);
             var totalArticles = await this.articleService.TotalAsync();
+
             var totalPages = PaginationHelpers.GetTotalPages(totalArticles, WebConstants.PageSize);
             currentPage = PaginationHelpers.GetValidCurrentPage(currentPage, totalPages);
 
@@ -39,8 +40,6 @@
                 Articles = pageArticles,
                 Pagination = new PaginationModel
                 {
-                    Area = WebConstants.BlogArea,
-                    Controller = WebConstants.ArticlesController,
                     Action = nameof(Index),
                     CurrentPage = currentPage,
                     TotalPages = totalPages
@@ -77,5 +76,7 @@
 
             return this.RedirectToAction(nameof(Index));
         }
+
+        
     }
 }
