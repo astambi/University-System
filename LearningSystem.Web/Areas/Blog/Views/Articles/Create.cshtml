@@ -1,0 +1,38 @@
+﻿@model ArticleFormModel
+
+@{
+    ViewData["Title"] = "Publish Article";
+}
+
+<h1>Publish article</h1>
+
+<section class="col-lg-8">
+    <form asp-action="@FormActionEnum.Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Title" class="control-label"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Content" class="control-label"></label>
+            <textarea asp-for="Content" id="mytextarea" class="form-control" rows="20"></textarea>
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+        <partial name="_FormSubmitPartial" model="FormActionEnum.Create" />
+    </form>
+</section>
+
+<div>
+    <a asp-area="@WebConstants.BlogArea"
+       asp-controller="@WebConstants.ArticlesController"
+       asp-action="@nameof(ArticlesController.Index)">Back to Articles</a>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    @*TinyMCE*@
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>tinymce.init({ selector: '#mytextarea' });</script>
+}

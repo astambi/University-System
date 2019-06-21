@@ -1,0 +1,28 @@
+﻿@model ArticlePageListingViewModel
+
+@{
+    ViewData["Title"] = "Blog Articles";
+}
+
+<h1>Blog articles</h1>
+
+<section class="card-deck">
+    @foreach (var article in Model.Articles)
+    {
+        <div class="col-md-4">
+            <div class="card shadow-lg m-2">
+                <div class="card-body">
+                    <h4 class="card-title">@article.Article.Title</h4>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        by @article.Author
+                    </h6>
+                    <p class="card-text text-muted">
+                        @article.Article.PublishDate.ToShortDateString()
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+</section>
+
+<partial name="_PaginationPartial" for="Pagination" />
