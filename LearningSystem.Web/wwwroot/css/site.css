@@ -1,6 +1,16 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
+/*
+@import url('bootstrap.min(materia).css');
+@import url('bootstrap.min(yeti).css');
+@import url('bootstrap.min(cerulean).css');
+@import url('bootstrap.min(litera).css');
+@import url('bootstrap.min(sketchy).css');
+@import url('bootstrap.min(cosmo).css');
+@import url('bootstrap.min(spacelab).css');
+*/
+
 a.navbar-brand {
     white-space: normal;
     text-align: center;
@@ -32,6 +42,13 @@ a, a:hover {
             color: #ffffff;
             background-color: #28a745;
         }
+
+/*Courses*/
+.bg-gradient {
+    background-image: linear-gradient(to bottom right, #081025, #228acc);
+    color: white;
+}
+
 
 /* Sticky footer styles
 -------------------------------------------------- */

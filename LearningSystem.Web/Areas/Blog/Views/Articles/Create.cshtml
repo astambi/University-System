@@ -16,7 +16,7 @@
         </div>
         <div class="form-group">
             <label asp-for="Content" class="control-label"></label>
-            <textarea asp-for="Content" id="mytextarea" class="form-control" rows="20"></textarea>
+            <textarea asp-for="Content" id="content" class="form-control" rows="15"></textarea>
             <span asp-validation-for="Content" class="text-danger"></span>
         </div>
         <partial name="_FormSubmitPartial" model="FormActionEnum.Create" />
@@ -34,5 +34,5 @@
 
     @*TinyMCE*@
     <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-    <script>tinymce.init({ selector: '#mytextarea' });</script>
+    <script>tinymce.init({ selector: '#content' });</script>
 }

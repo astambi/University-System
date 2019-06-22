@@ -22,10 +22,10 @@
             {
                 Action = nameof(Index),
                 RequestedPage = currentPage,
-                TotalItems = await this.courseService.TotalAsync()
+                TotalItems = await this.courseService.TotalAsync(true)
             };
 
-            var courses = await this.courseService.AllWithTrainers(pagination.CurrentPage, WebConstants.PageSize);
+            var courses = await this.courseService.AllWithTrainers(true, pagination.CurrentPage, WebConstants.PageSize);
 
             var model = new CoursePageListingViewModel
             {

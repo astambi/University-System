@@ -2,6 +2,7 @@
 {
     using System.Threading.Tasks;
     using LearningSystem.Services;
+    using LearningSystem.Web.Infrastructure.Extensions;
     using LearningSystem.Web.Models;
     using LearningSystem.Web.Models.Courses;
     using Microsoft.AspNetCore.Mvc;
@@ -21,10 +22,10 @@
             {
                 Action = nameof(Index),
                 RequestedPage = currentPage,
-                TotalItems = await this.courseService.TotalAsync()
+                TotalItems = await this.courseService.TotalAsync(false)
             };
 
-            var courses = await this.courseService.AllWithTrainers(pagination.CurrentPage, WebConstants.PageSize);
+            var courses = await this.courseService.AllWithTrainers(false, pagination.CurrentPage, WebConstants.PageSize);
 
             var model = new CoursePageListingViewModel
             {
@@ -33,6 +34,19 @@
             };
 
             return this.View(model);
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var course = await this.courseService.GetById(id);
+
+            if (course == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            return this.View(course);
         }
     }
 }

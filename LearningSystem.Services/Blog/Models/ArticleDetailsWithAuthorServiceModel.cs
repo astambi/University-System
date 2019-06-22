@@ -2,7 +2,7 @@
 {
     using LearningSystem.Common.Mapping;
     using LearningSystem.Data.Models;
-    using LearningSystem.Services.Models;
+    using LearningSystem.Services.Models.Users;
 
     public class ArticleDetailsWithAuthorServiceModel : IMapFrom<Article>
     {

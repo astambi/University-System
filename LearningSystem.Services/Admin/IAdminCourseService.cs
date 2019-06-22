@@ -13,7 +13,7 @@
             DateTime endDate,
             string trainerId);
 
-        Task<CourseServiceModel> GetByIdAsync(int id);
+        Task<AdminCourseServiceModel> GetByIdAsync(int id);
 
         Task UpdateAsync(
             int id,

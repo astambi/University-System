@@ -46,10 +46,10 @@
             await this.db.SaveChangesAsync();
         }
 
-        public async Task<CourseServiceModel> GetByIdAsync(int id)
+        public async Task<AdminCourseServiceModel> GetByIdAsync(int id)
             => await this.db.Courses
             .Where(c => c.Id == id)
-            .Select(c => this.mapper.Map<CourseServiceModel>(c))
+            .Select(c => this.mapper.Map<AdminCourseServiceModel>(c))
             .FirstOrDefaultAsync();
 
         public async Task UpdateAsync(

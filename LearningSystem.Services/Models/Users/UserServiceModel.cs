@@ -1,4 +1,4 @@
-﻿namespace LearningSystem.Services.Models
+﻿namespace LearningSystem.Services.Models.Users
 {
     using LearningSystem.Common.Mapping;
     using LearningSystem.Data.Models;

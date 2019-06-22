@@ -5,39 +5,40 @@
 }
 
 <article class="card-group col-sm-6 col-md-4 col-lg-3 my-2">
-    <div class="card border-info shadow">
-        <div class="card-header bg-info border-light d-flex flex-wrap justify-content-between">
-            <div class=" small">
-                <i class="fa fa-clock"></i> @Model.Course.StartDate.ToShortDateString()
+    <div class="card border-info shadow-lg">
+        <div class="card-header bg-info text-light border-light small d-flex flex-wrap justify-content-between">
+            <div>
+                <i class="fa fa-clock"></i> @Model.Course.StartDate.ToDate()
             </div>
-            <div class=" small">
+            <div>
                 <i class="fa fa-hourglass"></i> @Model.Course.Duration @days
             </div>
         </div>
         <div class="card-body">
+            <div class="text-center">
+                <img src="https://s3-ap-south-1.amazonaws.com/icegateinstitute/wp-content/uploads/2018/11/27054729/GATE-Crash-Course.jpg" alt="Alternate Text" height="150" class="mw-100" />
+            </div>
+            <hr />
             <h5 class="card-title">@Model.Course.Name</h5>
-            <p class="card-text">@Model.Course.Description</p>
         </div>
+
         <ul class="list-group list-group-flush">
-            <li class="list-group-item list-group-item-action text-muted">Trainer: @Model.Trainer.Name</li>
-            <li class="list-group-item list-group-item-action text-muted small"><i class="fa fa-clock"></i> Start date: @Model.Course.StartDate.ToShortDateString()</li>
-            <li class="list-group-item list-group-item-action text-muted small"><i class="fa fa-clock"></i> End date: @Model.Course.EndDate.ToShortDateString()</li>
-            <li class="list-group-item list-group-item-action text-muted small d-flex flex-wrap justify-content-between">
-                <div>
-                    <i class="fa fa-clock"></i> @Model.Course.StartDate.ToShortDateString()
-                </div>
-                <div>
-                    <i class="fa fa-hourglass"></i> @Model.Course.Duration @days
-                </div>
+            <li class="list-group-item list-group-item-action text-muted">
+                Trainer: @Model.Trainer.Name
+            </li>
+            <li class="list-group-item list-group-item-action text-muted d-flex flex-wrap justify-content-between">
+                <div><i class="fa fa-hourglass-start"></i> @Model.Course.StartDate.ToDate()</div>
+                <div><i class="fa fa-hourglass-end"></i> @Model.Course.EndDate.ToDate()</div>
             </li>
         </ul>
+
         <div class="card-footer bg-transparent border-info d-flex flex-wrap justify-content-between">
-            <div class="text-muted small">
-                <i class="fa fa-clock"></i> @Model.Course.StartDate.ToShortDateString()
-            </div>
-            <div class="text-muted small">
-                <i class="fa fa-hourglass"></i> @Model.Course.Duration @days
-            </div>
+            <a class="btn btn-sm btn-outline-info"
+               asp-controller="@WebConstants.CoursesController"
+               asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Details)"
+               asp-route-id="@Model.Course.Id"
+               asp-route-name="@Model.Course.Name.ToFriendlyUrl()">Details</a>
+            <button class="btn btn-sm btn-outline-info">Subscribe</button>
         </div>
     </div>
 </article>

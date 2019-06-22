@@ -1,7 +1,7 @@
 ﻿namespace LearningSystem.Web.Models.Courses
 {
     using System.Collections.Generic;
-    using LearningSystem.Services.Models;
+    using LearningSystem.Services.Models.Courses;
 
     public class CoursePageListingViewModel
     {

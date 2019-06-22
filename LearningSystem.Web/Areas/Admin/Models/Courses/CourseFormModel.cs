@@ -10,7 +10,7 @@
     using LearningSystem.Web.Models;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
-    public class CourseFormModel : IValidatableObject, IMapFrom<CourseServiceModel>
+    public class CourseFormModel : IValidatableObject, IMapFrom<AdminCourseServiceModel>
     {
         [Required]
         [StringLength(DataConstants.CourseNameMaxLength,

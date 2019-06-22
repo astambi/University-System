@@ -5,7 +5,7 @@
     using System.Text;
     using System.Text.RegularExpressions;
 
-    public static class StringExtentions
+    public static class StringExtensions
     {
         private const string CurrencyFormat = "C2";
         private const string NumberFormat = "N0";
@@ -15,7 +15,7 @@
         private const string EnAlphabet = "a b v g d e zh z i y k l m n o p r s t u f h ts ch sh sht a y yu ya";
         private static Dictionary<char, string> transliterationTable;
 
-        static StringExtentions()
+        static StringExtensions()
         {
             InititializeTransliterationTable();
         }

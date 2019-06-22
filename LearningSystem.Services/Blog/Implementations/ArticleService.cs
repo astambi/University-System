@@ -9,7 +9,7 @@
     using LearningSystem.Data.Models;
     using LearningSystem.Services.Blog.Models;
     using LearningSystem.Services.Html;
-    using LearningSystem.Services.Models;
+    using LearningSystem.Services.Models.Users;
     using Microsoft.EntityFrameworkCore;
 
     public class ArticleService : IArticleService
