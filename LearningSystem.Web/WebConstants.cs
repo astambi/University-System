@@ -50,6 +50,7 @@
         public const string SuccessStyle = "success";
 
         // Notifications
+        public const string ArticleNotFoundMsg = "Article not found.";
         public const string ArticlePublishedMsg = "Article published successfully.";
         public const string CourseCreatedMsg = "Course created successfully.";
         public const string CourseNotFoundMsg = "Course not found.";

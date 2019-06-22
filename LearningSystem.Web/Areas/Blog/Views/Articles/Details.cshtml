@@ -8,12 +8,8 @@
 
 <h6 class="text-muted">
     @Model.Article.PublishDate.ToLocalTime() |
-    <a asp-area=""
-       asp-controller="Users"
-       asp-action="Profile"
-       asp-route-id="@Model.Author.Id">@Model.Author.Name</a>
-    (<i class="fa fa-envelope"></i>
-    <a href="mailto:@Model.Author.Email">@Model.Author.Email</a>) | 
+    <a asp-area="" asp-controller="Users" asp-action="Profile" asp-route-id="@Model.Author.Id">@Model.Author.Name</a>
+    <i class="fa fa-envelope"></i> <a href="mailto:@Model.Author.Email">@Model.Author.Email</a> |
     <i class="fa fa-users"></i> 0
 </h6>
 <p class="shadow">@Html.Raw(Model.Article.Content)</p>

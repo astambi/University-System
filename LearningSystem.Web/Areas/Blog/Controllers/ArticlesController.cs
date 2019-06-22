@@ -33,7 +33,7 @@
             {
                 Action = nameof(Index),
                 RequestedPage = currentPage,
-                TotalItems = await this.articleService.TotalAsync(),
+                TotalItems = await this.articleService.TotalAsync()
             };
 
             var articles = await this.articleService.AllAsync(pagination.CurrentPage, WebConstants.PageSize);
@@ -78,6 +78,12 @@
         public async Task<IActionResult> Details(int id)
         {
             var model = await this.articleService.GetByIdAsync(id);
+            if (model == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.ArticleNotFoundMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
             return this.View(model);
         }
     }
