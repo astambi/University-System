@@ -22,5 +22,7 @@
             DateTime startDate,
             DateTime endDate,
             string trainerId);
+
+        Task RemoveAsync(int id);
     }
 }

@@ -72,7 +72,6 @@
                 model.TrainerId);
 
             this.TempData.AddSuccessMessage(WebConstants.CourseCreatedMsg);
-
             return this.RedirectToAction(nameof(Web.Controllers.CoursesController.Index), WebConstants.CoursesController);
         }
 
@@ -86,7 +85,7 @@
             if (!courseExists)
             {
                 this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
-                return this.RedirectToAction(nameof(HomeController.Index), WebConstants.HomeController);
+                return this.RedirectToAction(nameof(Web.Controllers.CoursesController.Index), WebConstants.CoursesController);
             }
 
             var user = await this.userManager.FindByIdAsync(model.TrainerId);
@@ -110,7 +109,6 @@
                  model.TrainerId);
 
             this.TempData.AddSuccessMessage(WebConstants.CourseUpdatedMsg);
-
             return this.RedirectToAction(
                 nameof(Web.Controllers.CoursesController.Details),
                 WebConstants.CoursesController,
@@ -119,6 +117,22 @@
 
         public async Task<IActionResult> Delete(int id)
             => await this.LoadCourseForm(id, FormActionEnum.Delete);
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id, CourseFormModel model)
+        {
+            var courseExists = this.courseService.Exists(id);
+            if (!courseExists)
+            {
+                this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
+                return this.RedirectToAction(nameof(Web.Controllers.CoursesController.Index), WebConstants.CoursesController);
+            }
+
+            await this.adminCourseService.RemoveAsync(id);
+
+            this.TempData.AddSuccessMessage(WebConstants.CourseDeletedMsg);
+            return this.RedirectToAction(nameof(Web.Controllers.CoursesController.Index), WebConstants.CoursesController);
+        }
 
         private async Task<IEnumerable<SelectListItem>> GetTrainersAsync()
             => (await this.userManager.GetUsersInRoleAsync(WebConstants.TrainerRole))
@@ -136,7 +150,7 @@
             if (course == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
-                return this.RedirectToAction(nameof(HomeController.Index), WebConstants.HomeController);
+                return this.RedirectToAction(nameof(Web.Controllers.CoursesController.Index), WebConstants.CoursesController);
             }
 
             var model = this.mapper.Map<CourseFormModel>(course);

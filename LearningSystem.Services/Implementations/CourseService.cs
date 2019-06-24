@@ -42,7 +42,7 @@
                 return false;
             }
 
-            return course.StartDate.Subtract(DateTime.UtcNow).Ticks > 0;
+            return course.StartDate > DateTime.UtcNow;
         }
 
         public async Task CancellUserEnrollmentInCourse(int courseId, string userId)
@@ -54,8 +54,16 @@
                 return;
             }
 
+            //var studentCourse = await this.db
+            //    .Courses
+            //    .Where(c => c.Id == courseId)
+            //    .SelectMany(c => c.Students)
+            //    .Where(sc => sc.StudentId == userId)
+            //    .FirstOrDefaultAsync();
+
             // NB! observe primary key order in StudentCourse table
             var studentCourse = await this.db.FindAsync<StudentCourse>(userId, courseId);
+
             this.db.Remove(studentCourse);
             await this.db.SaveChangesAsync();
         }

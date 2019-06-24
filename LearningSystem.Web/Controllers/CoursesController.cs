@@ -1,7 +1,6 @@
 ﻿namespace LearningSystem.Web.Controllers
 {
     using System.Threading.Tasks;
-    using AutoMapper;
     using LearningSystem.Data.Models;
     using LearningSystem.Services;
     using LearningSystem.Web.Infrastructure.Extensions;
@@ -35,11 +34,7 @@
 
             var courses = await this.courseService.AllActiveWithTrainers(pagination.CurrentPage, WebConstants.PageSize);
 
-            var model = new CoursePageListingViewModel
-            {
-                Courses = courses,
-                Pagination = pagination
-            };
+            var model = new CoursePageListingViewModel { Courses = courses, Pagination = pagination };
 
             return this.View(model);
         }
@@ -55,14 +50,14 @@
 
             var courses = await this.courseService.AllArchivedWithTrainers(pagination.CurrentPage, WebConstants.PageSize);
 
-            var model = new CoursePageListingViewModel
-            {
-                Courses = courses,
-                Pagination = pagination
-            };
+            var model = new CoursePageListingViewModel { Courses = courses, Pagination = pagination };
 
             return this.View(model);
         }
+
+        [Authorize]
+        public async Task<IActionResult> Cancel(int id)
+            => await this.UpdateEnrollment(id, false);
 
         public async Task<IActionResult> Details(int id)
         {
@@ -89,16 +84,45 @@
         public async Task<IActionResult> Enroll(int id)
             => await this.UpdateEnrollment(id, true);
 
-        [Authorize]
-        public async Task<IActionResult> Cancel(int id)
-            => await this.UpdateEnrollment(id, false);
-
-        private async Task<IActionResult> UpdateEnrollment(int id, bool enrollAction)
+        private async Task<IActionResult> TryCancel(int id, string userId, bool isEnrolled)
         {
-            var courseExists = this.courseService.Exists(id);
-            if (!courseExists)
+            if (!isEnrolled)
+            {
+                this.TempData.AddInfoMessage(WebConstants.UserNotEnrolledInCourseMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            await this.courseService.CancellUserEnrollmentInCourse(id, userId);
+            this.TempData.AddSuccessMessage(WebConstants.UserCancelledEnrollmentInCourseMsg);
+
+            return this.RedirectToAction(nameof(Details), routeValues: new { id });
+        }
+
+        private async Task<IActionResult> TryEnroll(int id, string userId, bool isEnrolled)
+        {
+            if (isEnrolled)
+            {
+                this.TempData.AddInfoMessage(WebConstants.UserAlreadyEnrolledInCourseMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            await this.courseService.EnrollUserInCourse(id, userId);
+            this.TempData.AddSuccessMessage(WebConstants.UserEnrolledInCourseMsg);
+
+            return this.RedirectToAction(nameof(Details), routeValues: new { id });
+        }
+
+        private async Task<IActionResult> UpdateEnrollment(int id, bool enrollAction) // Enroll / Cancel
+        {
+            if (!this.courseService.Exists(id))
             {
                 this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            if (!await this.courseService.CanEnroll(id))
+            {
+                this.TempData.AddErrorMessage(WebConstants.CourseEnrollmentClosedMsg);
                 return this.RedirectToAction(nameof(Index));
             }
 
@@ -109,42 +133,11 @@
                 return this.RedirectToAction(nameof(Index));
             }
 
-            var canEnroll = await this.courseService.CanEnroll(id);
-            if (!canEnroll)
-            {
-                this.TempData.AddErrorMessage(WebConstants.CourseEnrollmentClosedMsg);
-                return this.RedirectToAction(nameof(Index));
-            }
+            var isEnrolled = await this.courseService.UserIsEnrolledInCourse(id, userId);
 
-            var isEnrolledInCourse = await this.courseService.UserIsEnrolledInCourse(id, userId);
-
-            switch (enrollAction)
-            {
-                // Enroll
-                case true:
-                    if (isEnrolledInCourse)
-                    {
-                        this.TempData.AddInfoMessage(WebConstants.UserAlreadyEnrolledInCourseMsg);
-                        return this.RedirectToAction(nameof(Index));
-                    }
-
-                    await this.courseService.EnrollUserInCourse(id, userId);
-                    this.TempData.AddSuccessMessage(WebConstants.UserEnrolledInCourseMsg);
-                    break;
-                // Cancel enrollment
-                case false:
-                    if (!isEnrolledInCourse)
-                    {
-                        this.TempData.AddInfoMessage(WebConstants.UserNotEnrolledInCourseMsg);
-                        return this.RedirectToAction(nameof(Index));
-                    }
-
-                    await this.courseService.CancellUserEnrollmentInCourse(id, userId);
-                    this.TempData.AddSuccessMessage(WebConstants.UserCancelledEnrollmentInCourseMsg);
-                    break;
-            }
-
-            return this.RedirectToAction(nameof(Details), routeValues: new { id });
+            return enrollAction
+                ? await this.TryEnroll(id, userId, isEnrolled)
+                : await this.TryCancel(id, userId, isEnrolled);
         }
     }
 }

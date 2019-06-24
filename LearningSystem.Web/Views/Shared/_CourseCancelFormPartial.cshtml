@@ -5,9 +5,8 @@
     var style = WebConstants.Styles[action];
 }
 
-<form method="post" class="bg-transparent border border-white"
-      asp-controller="@WebConstants.CoursesController"
+<form asp-controller="@WebConstants.CoursesController"
       asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Cancel)"
-      asp-route-id="@Model">
+      asp-route-id="@Model" method="post" class="bg-transparent border border-white">
     <button type="submit" class="btn btn-@style">@action</button>
 </form>

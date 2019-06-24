@@ -52,6 +52,18 @@
             .Select(c => this.mapper.Map<AdminCourseServiceModel>(c))
             .FirstOrDefaultAsync();
 
+        public async Task RemoveAsync(int id)
+        {
+            var course = await this.db.Courses.FindAsync(id);
+            if (course == null)
+            {
+                return;
+            }
+
+            this.db.Courses.Remove(course);
+            await this.db.SaveChangesAsync();
+        }
+
         public async Task UpdateAsync(
             int id,
             string name,

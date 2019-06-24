@@ -2,15 +2,15 @@
 
 @if (User.IsInRole(WebConstants.AdministratorRole))
 {
-    <a class="btn btn-outline-warning"
-       asp-area="@WebConstants.AdminArea"
+    <a asp-area="@WebConstants.AdminArea"
        asp-controller="@WebConstants.CoursesController"
        asp-action="@nameof(LearningSystem.Web.Areas.Admin.Controllers.CoursesController.Edit)"
-       asp-route-id="@Model">Edit</a>
+       asp-route-id="@Model"
+       class="btn btn-outline-@WebConstants.Styles[FormActionEnum.Edit.ToString()]">@FormActionEnum.Edit</a>
 
-    <a class="btn btn-outline-danger"
-       asp-area="@WebConstants.AdminArea"
+    <a asp-area="@WebConstants.AdminArea"
        asp-controller="@WebConstants.CoursesController"
        asp-action="@nameof(LearningSystem.Web.Areas.Admin.Controllers.CoursesController.Delete)"
-       asp-route-id="@Model">Delete</a>
+       asp-route-id="@Model"
+       class="btn btn-outline-@WebConstants.Styles[FormActionEnum.Delete.ToString()]">@FormActionEnum.Delete</a>
 }

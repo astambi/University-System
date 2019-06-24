@@ -56,6 +56,7 @@
         public const string ArticleNotFoundMsg = "Article not found.";
         public const string ArticlePublishedMsg = "Article published successfully.";
         public const string CourseCreatedMsg = "Course created successfully.";
+        public const string CourseDeletedMsg = "Course deleted successfully.";
         public const string CourseEnrollmentClosedMsg = "Course is closed for enrollment after start date.";
         public const string CourseEnrollmentOpenMsg = "Course is open for enrollment for {0}."; // days/hours
         public const string CourseNotFoundMsg = "Course not found.";
