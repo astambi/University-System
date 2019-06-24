@@ -1,0 +1,13 @@
+﻿@model int
+
+@{
+    var action = FormActionEnum.Cancel.ToString();
+    var style = WebConstants.Styles[action];
+}
+
+<form method="post" class="bg-transparent border border-white"
+      asp-controller="@WebConstants.CoursesController"
+      asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Cancel)"
+      asp-route-id="@Model">
+    <button type="submit" class="btn btn-@style">@action</button>
+</form>

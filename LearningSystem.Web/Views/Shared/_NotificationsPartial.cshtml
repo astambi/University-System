@@ -1,12 +1,13 @@
-﻿@if (TempData.ContainsKey(WebConstants.TempDataErrorMessageKey))
+﻿@foreach (var tempDataKvp in TempData)
 {
-    <partial name="_NotificationEntryPartial" model="NotificationEnum.Error" />
-}
-@if (TempData.ContainsKey(WebConstants.TempDataSuccessMessageKey))
-{
-    <partial name="_NotificationEntryPartial" model="NotificationEnum.Success" />
-}
-@if (TempData.ContainsKey(WebConstants.TempDataInfoMessageKey))
-{
-    <partial name="_NotificationEntryPartial" model="NotificationEnum.Info" />
+    var notificationType = tempDataKvp.Key;
+    var notificationMsg = TempData[notificationType];
+    var cssStyle = WebConstants.Styles[notificationType];
+
+    if (notificationMsg != null)
+    {
+        <div class="alert alert-@cssStyle alert-dismissible fade show shadow" role="alert" data-dismiss="alert" aria-hidden="true">
+            @notificationMsg
+        </div>
+    }
 }

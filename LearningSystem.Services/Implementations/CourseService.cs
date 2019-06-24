@@ -24,21 +24,54 @@
             this.mapper = mapper;
         }
 
-        public async Task<IEnumerable<CourseListingServiceModel>> AllWithTrainers(
-            bool activeOnly = true,
+        public async Task<IEnumerable<CourseListingServiceModel>> AllActiveWithTrainers(
             int page = 1,
             int pageSize = ServicesConstants.PageSize)
-            => await this.GetQuerableCoursesSelection(activeOnly)
-            .OrderBy(c => c.StartDate)
-            .ThenBy(c => c.EndDate)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .Select(c => new CourseListingServiceModel
+            => await this.AllWithTrainers(true, page, pageSize);
+
+        public async Task<IEnumerable<CourseListingServiceModel>> AllArchivedWithTrainers(
+            int page = 1,
+            int pageSize = ServicesConstants.PageSize)
+            => await this.AllWithTrainers(false, page, pageSize);
+
+        public async Task<bool> CanEnroll(int id)
+        {
+            var course = await this.db.Courses.FindAsync(id);
+            if (course == null)
             {
-                Course = this.mapper.Map<CourseServiceModel>(c),
-                Trainer = this.mapper.Map<UserBasicServiceModel>(c.Trainer),
-            })
-            .ToListAsync();
+                return false;
+            }
+
+            return course.StartDate.Subtract(DateTime.UtcNow).Ticks > 0;
+        }
+
+        public async Task CancellUserEnrollmentInCourse(int courseId, string userId)
+        {
+            if (!await this.CanEnroll(courseId)
+                || !await this.db.Users.AnyAsync(u => u.Id == userId)
+                || !await this.UserIsEnrolledInCourse(courseId, userId))
+            {
+                return;
+            }
+
+            // NB! observe primary key order in StudentCourse table
+            var studentCourse = await this.db.FindAsync<StudentCourse>(userId, courseId);
+            this.db.Remove(studentCourse);
+            await this.db.SaveChangesAsync();
+        }
+
+        public async Task EnrollUserInCourse(int courseId, string userId)
+        {
+            if (!await this.CanEnroll(courseId)
+                || !await this.db.Users.AnyAsync(u => u.Id == userId)
+                || await this.UserIsEnrolledInCourse(courseId, userId))
+            {
+                return;
+            }
+
+            await this.db.AddAsync(new StudentCourse { CourseId = courseId, StudentId = userId });
+            await this.db.SaveChangesAsync();
+        }
 
         public bool Exists(int id)
             => this.db.Courses.Any(c => c.Id == id);
@@ -54,19 +87,48 @@
             })
             .FirstOrDefaultAsync();
 
-        public async Task<int> TotalAsync(bool activeOnly = true)
-            => await this.GetQuerableCoursesSelection(activeOnly).CountAsync();
+        public async Task<bool> UserIsEnrolledInCourse(int courseId, string userId)
+            => await this.db
+            .Courses
+            .AnyAsync(c => c.Id == courseId
+                        && c.Students.Any(sc => sc.StudentId == userId));
 
-        private IQueryable<Course> GetQuerableCoursesSelection(bool activeOnly)
+        public async Task<int> TotalActiveAsync()
+            => await this.TotalAsync(true);
+
+        public async Task<int> TotalArchivedAsync()
+            => await this.TotalAsync(false);
+
+        private async Task<IEnumerable<CourseListingServiceModel>> AllWithTrainers(
+            bool isActive,
+            int page = 1,
+            int pageSize = ServicesConstants.PageSize)
+            => await this.GetQuerableCoursesSelection(isActive)
+            .OrderBy(c => c.StartDate)
+            .ThenBy(c => c.EndDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(c => new CourseListingServiceModel
+            {
+                Course = this.mapper.Map<CourseServiceModel>(c),
+                Trainer = this.mapper.Map<UserBasicServiceModel>(c.Trainer),
+            })
+            .ToListAsync();
+
+        private async Task<int> TotalAsync(bool isActive)
+            => await this.GetQuerableCoursesSelection(isActive).CountAsync();
+
+        private IQueryable<Course> GetQuerableCoursesSelection(bool isActive)
         {
             var coursesAsQuerable = this.db.Courses.AsQueryable();
 
-            if (activeOnly)
-            {
-                coursesAsQuerable = coursesAsQuerable
-                    .Where(c => DateTime.Compare(DateTime.UtcNow, c.EndDate) < 1)
+            coursesAsQuerable = isActive
+                ? coursesAsQuerable
+                    .Where(c => DateTime.Compare(DateTime.UtcNow, c.EndDate.AddDays(1)) < 1) // EndDate time in db = 00:00:00
+                    .AsQueryable()
+                : coursesAsQuerable
+                    .Where(c => DateTime.Compare(DateTime.UtcNow, c.EndDate.AddDays(1)) == 1)
                     .AsQueryable();
-            }
 
             return coursesAsQuerable;
         }

@@ -19,5 +19,11 @@
 
         public int Duration
             => this.EndDate.AddDays(1).Subtract(this.StartDate).Days;
+
+        public TimeSpan RemainingTimeTillStart // in local time
+            => this.StartDate.ToLocalTime().Subtract(DateTime.Now);
+
+        public bool CanEnroll
+            => this.RemainingTimeTillStart.Ticks > 0;
     }
 }

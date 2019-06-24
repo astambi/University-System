@@ -1,35 +1,44 @@
 ﻿@model CourseFormModel
 
+@{
+    var isDeleteDisabled = Model.Action == FormActionEnum.Delete;
+}
+
 <h1>@Model.Action course</h1>
+
+@if (isDeleteDisabled)
+{
+    <h3 class="text-danger">Are you sure you want to delete this course?</h3>
+}
 
 <section class="col-md-6">
     <form asp-action="@Model.Action" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
             <label asp-for="Name" class="control-label"></label>
-            <input asp-for="Name" class="form-control" />
+            <input asp-for="Name" class="form-control" disabled="@isDeleteDisabled" />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
         <div class="form-group">
             <label asp-for="Description" class="control-label"></label>
-            <textarea asp-for="Description" class="form-control"></textarea>
+            <textarea asp-for="Description" class="form-control" rows="10" disabled="@isDeleteDisabled"></textarea>
             <span asp-validation-for="Description" class="text-danger"></span>
         </div>
         <div class="form-group">
             <label asp-for="TrainerId" class="control-label"></label>
-            <select asp-for="TrainerId" class="form-control" asp-items="Model.Trainers">
+            <select asp-for="TrainerId" asp-items="Model.Trainers" class="form-control" disabled="@isDeleteDisabled">
                 <option value="-1" selected disabled>Choose...</option>
             </select>
             <span asp-validation-for="TrainerId" class="text-danger"></span>
         </div>
         <div class="form-group">
             <label asp-for="StartDate" class="control-label"></label>
-            <input asp-for="StartDate" class="form-control" />
+            <input asp-for="StartDate" class="form-control" disabled="@isDeleteDisabled" />
             <span asp-validation-for="StartDate" class="text-danger"></span>
         </div>
         <div class="form-group">
             <label asp-for="EndDate" class="control-label"></label>
-            <input asp-for="EndDate" class="form-control" />
+            <input asp-for="EndDate" class="form-control" disabled="@isDeleteDisabled" />
             <span asp-validation-for="EndDate" class="text-danger"></span>
         </div>
 
@@ -38,7 +47,8 @@
 </section>
 
 <div>
-    <a asp-area="" asp-controller="Courses"
+    <a asp-area=""
+       asp-controller="Courses"
        asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Index)">Back to Courses</a>
 </div>
 

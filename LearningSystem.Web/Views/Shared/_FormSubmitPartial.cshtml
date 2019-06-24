@@ -1,16 +1,7 @@
 ﻿@model FormActionEnum
 
 @{
-    var cssStyle = WebConstants.PrimaryStyle;
-    switch (Model)
-    {
-        case FormActionEnum.Create: cssStyle = WebConstants.CreateStyle; break;
-        case FormActionEnum.Edit: cssStyle = WebConstants.EditStyle; break;
-        case FormActionEnum.Delete: cssStyle = WebConstants.DeleteStyle; break;
-        case FormActionEnum.Add: cssStyle = WebConstants.CreateStyle; break;
-        case FormActionEnum.Remove: cssStyle = WebConstants.DeleteStyle; break;
-        default: break;
-    }
+    var cssStyle = WebConstants.Styles[Model.ToString()];
 }
 
 <div class="form-group">

@@ -6,13 +6,6 @@
 
 <partial name="_WelcomePartial" />
 
-<section>
-    <h1>Courses</h1>
-    <section class="d-flex flex-wrap">
-        @foreach (var course in Model.Courses)
-        {
-            <partial name="_CourseCardPartial" model="course" />
-        }
-    </section>
-    <partial name="_PaginationPartial" for="Pagination" />
-</section>
+<h1>Courses</h1>
+
+<partial name="_CoursesListPartial" model="@Model" />

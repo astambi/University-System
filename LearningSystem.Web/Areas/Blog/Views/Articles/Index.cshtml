@@ -17,7 +17,7 @@
     {
         <a class="article-card-link d-flex col-sm-6 col-lg-4 col-xl-3 text-decoration-none"
            asp-action="Details" asp-route-id="@article.Article.Id" asp-route-title="@article.Article.Title.ToFriendlyUrl()">
-            <div class="card border-success shadow m-2">
+            <div class="article-card card border-success m-2">
                 <div class="card-body">
                     <h4 class="card-title">@article.Article.Title</h4>
                     <h6 class="card-subtitle mb-2">@article.Author</h6>

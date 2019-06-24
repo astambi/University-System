@@ -1,16 +1,6 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
-/*
-@import url('bootstrap.min(materia).css');
-@import url('bootstrap.min(yeti).css');
-@import url('bootstrap.min(cerulean).css');
-@import url('bootstrap.min(litera).css');
-@import url('bootstrap.min(sketchy).css');
-@import url('bootstrap.min(cosmo).css');
-@import url('bootstrap.min(spacelab).css');
-*/
-
 a.navbar-brand {
     white-space: normal;
     text-align: center;
@@ -23,17 +13,20 @@ a, a:hover {
     text-decoration: none;
 }
 
-    /*Blog article card links*/
+    /*Blog article*/
     a.article-card-link {
         color: #212529;
     }
 
-        a.article-card-link:hover .card-body .card-title {
-            color: #27a243;
+        a.article-card-link .card {
+            box-shadow: 4px 4px 5px 0px rgba(0,0,0,0.2);
+        }
+
+        a.article-card-link:hover .card {
+            box-shadow: 8px 8px 5px 0px rgba(0,0,0,0.3);
         }
 
         a.article-card-link:hover .card-body {
-            background-color: #f8f9fa;
             border-top-left-radius: 0.25rem;
             border-top-right-radius: 0.25rem;
         }
@@ -45,10 +38,9 @@ a, a:hover {
 
 /*Courses*/
 .bg-gradient {
-    background-image: linear-gradient(to bottom right, #081025, #228acc);
+    background-image: linear-gradient(to bottom right, #0e6471, #33cee6);
     color: white;
 }
-
 
 /* Sticky footer styles
 -------------------------------------------------- */

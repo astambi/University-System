@@ -72,24 +72,12 @@
                 model.TrainerId);
 
             this.TempData.AddSuccessMessage(WebConstants.CourseCreatedMsg);
-            return this.RedirectToAction(nameof(HomeController.Index), WebConstants.HomeController);
+
+            return this.RedirectToAction(nameof(Web.Controllers.CoursesController.Index), WebConstants.CoursesController);
         }
 
         public async Task<IActionResult> Edit(int id)
-        {
-            var course = await this.adminCourseService.GetByIdAsync(id);
-            if (course == null)
-            {
-                this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
-                return this.RedirectToAction(nameof(HomeController.Index), WebConstants.HomeController);
-            }
-
-            var model = this.mapper.Map<CourseFormModel>(course);
-            model.Trainers = await this.GetTrainersAsync();
-            model.Action = FormActionEnum.Edit;
-
-            return this.View(CourseFormView, model);
-        }
+            => await this.LoadCourseForm(id, FormActionEnum.Edit);
 
         [HttpPost]
         public async Task<IActionResult> Edit(int id, CourseFormModel model)
@@ -122,8 +110,15 @@
                  model.TrainerId);
 
             this.TempData.AddSuccessMessage(WebConstants.CourseUpdatedMsg);
-            return this.RedirectToAction(nameof(HomeController.Index), WebConstants.HomeController);
+
+            return this.RedirectToAction(
+                nameof(Web.Controllers.CoursesController.Details),
+                WebConstants.CoursesController,
+                routeValues: new { id });
         }
+
+        public async Task<IActionResult> Delete(int id)
+            => await this.LoadCourseForm(id, FormActionEnum.Delete);
 
         private async Task<IEnumerable<SelectListItem>> GetTrainersAsync()
             => (await this.userManager.GetUsersInRoleAsync(WebConstants.TrainerRole))
@@ -134,5 +129,21 @@
             })
             .OrderBy(t => t.Text)
             .ToList();
+
+        private async Task<IActionResult> LoadCourseForm(int id, FormActionEnum action)
+        {
+            var course = await this.adminCourseService.GetByIdAsync(id);
+            if (course == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
+                return this.RedirectToAction(nameof(HomeController.Index), WebConstants.HomeController);
+            }
+
+            var model = this.mapper.Map<CourseFormModel>(course);
+            model.Trainers = await this.GetTrainersAsync();
+            model.Action = action;
+
+            return this.View(CourseFormView, model);
+        }
     }
 }

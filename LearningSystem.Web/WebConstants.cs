@@ -1,5 +1,8 @@
 ﻿namespace LearningSystem.Web
 {
+    using System.Collections.Generic;
+    using LearningSystem.Web.Models;
+
     public class WebConstants
     {
         // Roles
@@ -53,11 +56,37 @@
         public const string ArticleNotFoundMsg = "Article not found.";
         public const string ArticlePublishedMsg = "Article published successfully.";
         public const string CourseCreatedMsg = "Course created successfully.";
+        public const string CourseEnrollmentClosedMsg = "Course is closed for enrollment after start date.";
+        public const string CourseEnrollmentOpenMsg = "Course is open for enrollment for {0}."; // days/hours
         public const string CourseNotFoundMsg = "Course not found.";
         public const string CourseUpdatedMsg = "Course updated successfully.";
         public const string InvalidIdentityOrRoleMsg = "Invalid identity or role.";
         public const string InvalidUserMsg = "Invalid user.";
         public const string UserAddedToRoleMsg = "User {0} added to role {1}.";
+        public const string UserAlreadyEnrolledInCourseMsg = "User already enrolled in this course.";
+        public const string UserCancelledEnrollmentInCourseMsg = "Course enrollment cancelled successfully.";
+        public const string UserEnrolledInCourseMsg = "Enrolled in course successfully.";
+        public const string UserNotEnrolledInCourseMsg = "User not enrolled in this course.";
         public const string UserRemovedFromRoleMsg = "User {0} removed from role {1}.";
+
+        public static Dictionary<string, string> Styles;
+
+        static WebConstants()
+        {
+            Styles = new Dictionary<string, string>
+            {
+                [TempDataErrorMessageKey] = ErrorStyle,
+                [TempDataInfoMessageKey] = InfoStyle,
+                [TempDataSuccessMessageKey] = SuccessStyle,
+                [FormActionEnum.Add.ToString()] = CreateStyle,
+                [FormActionEnum.Create.ToString()] = CreateStyle,
+                [FormActionEnum.Default.ToString()] = PrimaryStyle,
+                [FormActionEnum.Delete.ToString()] = DeleteStyle,
+                [FormActionEnum.Edit.ToString()] = EditStyle,
+                [FormActionEnum.Remove.ToString()] = DeleteStyle,
+                [FormActionEnum.Enroll.ToString()] = CreateStyle,
+                [FormActionEnum.Cancel.ToString()] = DeleteStyle,
+            };
+        }
     }
 }
