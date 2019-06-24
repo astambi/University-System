@@ -3,6 +3,7 @@
     using System.ComponentModel.DataAnnotations;
     using System.Threading.Tasks;
     using LearningSystem.Data.Models;
+    using LearningSystem.Web.Infrastructure.Extensions;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -45,7 +46,9 @@
             var user = await this._userManager.GetUserAsync(this.User);
             if (user == null)
             {
-                return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId(this.User)}'.");
+                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
+                return this.RedirectToPage();
+                //return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId(this.User)}'.");
             }
 
             var hasPassword = await this._userManager.HasPasswordAsync(user);
@@ -68,7 +71,9 @@
             var user = await this._userManager.GetUserAsync(this.User);
             if (user == null)
             {
-                return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId(this.User)}'.");
+                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
+                return this.RedirectToPage();
+                //return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId(this.User)}'.");
             }
 
             var addPasswordResult = await this._userManager.AddPasswordAsync(user, this.Input.NewPassword);

@@ -6,25 +6,25 @@
 
     public interface ICourseService
     {
-        Task<IEnumerable<CourseListingServiceModel>> AllActiveWithTrainers(
+        Task<IEnumerable<CourseListingServiceModel>> AllActiveWithTrainersAsync(
             int page = 1,
             int pageSize = ServicesConstants.PageSize);
 
-        Task<IEnumerable<CourseListingServiceModel>> AllArchivedWithTrainers(
+        Task<IEnumerable<CourseListingServiceModel>> AllArchivedWithTrainersAsync(
             int page = 1,
             int pageSize = ServicesConstants.PageSize);
 
-        Task<bool> CanEnroll(int id);
+        Task<bool> CanEnrollAsync(int id);
 
-        Task EnrollUserInCourse(int courseId, string userId);
+        Task EnrollUserInCourseAsync(int courseId, string userId);
 
-        Task CancellUserEnrollmentInCourse(int courseId, string userId);
+        Task CancellUserEnrollmentInCourseAsync(int courseId, string userId);
 
         bool Exists(int id);
 
-        Task<CourseDetailsServiceModel> GetById(int id);
+        Task<CourseDetailsServiceModel> GetByIdAsync(int id);
 
-        Task<bool> UserIsEnrolledInCourse(int courseId, string userId);
+        Task<bool> UserIsEnrolledInCourseAsync(int courseId, string userId);
 
         Task<int> TotalActiveAsync();
 

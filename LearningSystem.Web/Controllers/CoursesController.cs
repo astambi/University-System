@@ -32,7 +32,7 @@
                 TotalItems = await this.courseService.TotalActiveAsync()
             };
 
-            var courses = await this.courseService.AllActiveWithTrainers(pagination.CurrentPage, WebConstants.PageSize);
+            var courses = await this.courseService.AllActiveWithTrainersAsync(pagination.CurrentPage, WebConstants.PageSize);
 
             var model = new CoursePageListingViewModel { Courses = courses, Pagination = pagination };
 
@@ -48,7 +48,7 @@
                 TotalItems = await this.courseService.TotalArchivedAsync()
             };
 
-            var courses = await this.courseService.AllArchivedWithTrainers(pagination.CurrentPage, WebConstants.PageSize);
+            var courses = await this.courseService.AllArchivedWithTrainersAsync(pagination.CurrentPage, WebConstants.PageSize);
 
             var model = new CoursePageListingViewModel { Courses = courses, Pagination = pagination };
 
@@ -61,7 +61,7 @@
 
         public async Task<IActionResult> Details(int id)
         {
-            var course = await this.courseService.GetById(id);
+            var course = await this.courseService.GetByIdAsync(id);
             if (course == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
@@ -75,7 +75,7 @@
                 return this.RedirectToAction(nameof(Index));
             }
 
-            course.IsUserEnrolled = await this.courseService.UserIsEnrolledInCourse(id, userId);
+            course.IsUserEnrolled = await this.courseService.UserIsEnrolledInCourseAsync(id, userId);
 
             return this.View(course);
         }
@@ -92,7 +92,7 @@
                 return this.RedirectToAction(nameof(Index));
             }
 
-            await this.courseService.CancellUserEnrollmentInCourse(id, userId);
+            await this.courseService.CancellUserEnrollmentInCourseAsync(id, userId);
             this.TempData.AddSuccessMessage(WebConstants.UserCancelledEnrollmentInCourseMsg);
 
             return this.RedirectToAction(nameof(Details), routeValues: new { id });
@@ -106,7 +106,7 @@
                 return this.RedirectToAction(nameof(Index));
             }
 
-            await this.courseService.EnrollUserInCourse(id, userId);
+            await this.courseService.EnrollUserInCourseAsync(id, userId);
             this.TempData.AddSuccessMessage(WebConstants.UserEnrolledInCourseMsg);
 
             return this.RedirectToAction(nameof(Details), routeValues: new { id });
@@ -120,7 +120,7 @@
                 return this.RedirectToAction(nameof(Index));
             }
 
-            if (!await this.courseService.CanEnroll(id))
+            if (!await this.courseService.CanEnrollAsync(id))
             {
                 this.TempData.AddErrorMessage(WebConstants.CourseEnrollmentClosedMsg);
                 return this.RedirectToAction(nameof(Index));
@@ -133,7 +133,7 @@
                 return this.RedirectToAction(nameof(Index));
             }
 
-            var isEnrolled = await this.courseService.UserIsEnrolledInCourse(id, userId);
+            var isEnrolled = await this.courseService.UserIsEnrolledInCourseAsync(id, userId);
 
             return enrollAction
                 ? await this.TryEnroll(id, userId, isEnrolled)

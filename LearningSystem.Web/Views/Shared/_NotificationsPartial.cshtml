@@ -2,9 +2,11 @@
 {
     var notificationType = tempDataKvp.Key;
     var notificationMsg = TempData[notificationType];
-    var cssStyle = WebConstants.Styles[notificationType];
+    var cssStyle = WebConstants.Styles.ContainsKey(notificationType)
+        ? WebConstants.Styles[notificationType]
+        : null; //  Use to prevent duplicate notifications from Managing User Account
 
-    if (notificationMsg != null)
+    if (notificationMsg != null && cssStyle != null)
     {
         <div class="alert alert-@cssStyle alert-dismissible fade show shadow" role="alert" data-dismiss="alert" aria-hidden="true">
             @notificationMsg

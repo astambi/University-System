@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using LearningSystem.Data.Models;
+    using LearningSystem.Web.Infrastructure.Extensions;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
@@ -56,14 +57,18 @@
             var user = await this._userManager.GetUserAsync(this.User);
             if (user == null)
             {
-                return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId(this.User)}'.");
+                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
+                return this.RedirectToPage();
+                //return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId(this.User)}'.");
             }
 
             var result = await this._userManager.RemoveLoginAsync(user, loginProvider, providerKey);
             if (!result.Succeeded)
             {
-                var userId = await this._userManager.GetUserIdAsync(user);
-                throw new InvalidOperationException($"Unexpected error occurred removing external login for user with ID '{userId}'.");
+                this.TempData.AddErrorMessages(result);
+                return this.RedirectToPage();
+                //var userId = await this._userManager.GetUserIdAsync(user);
+                //throw new InvalidOperationException($"Unexpected error occurred removing external login for user with ID '{userId}'.");
             }
 
             await this._signInManager.RefreshSignInAsync(user);
@@ -87,22 +92,24 @@
             var user = await this._userManager.GetUserAsync(this.User);
             if (user == null)
             {
-                return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId(this.User)}'.");
+                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
+                return this.RedirectToPage();
+                //return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId(this.User)}'.");
             }
 
             var info = await this._signInManager.GetExternalLoginInfoAsync(await this._userManager.GetUserIdAsync(user));
             if (info == null)
             {
-                throw new InvalidOperationException($"Unexpected error occurred loading external login info for user with ID '{user.Id}'.");
+                this.TempData.AddErrorMessage(WebConstants.ExternalLoginInfoErrorMsg);
+                return this.RedirectToPage();
+                //throw new InvalidOperationException($"Unexpected error occurred loading external login info for user with ID '{user.Id}'.");
             }
 
             var result = await this._userManager.AddLoginAsync(user, info);
             if (!result.Succeeded)
             {
                 // Error Message for adding external provider login
-                this.StatusMessage = string.Join(Environment.NewLine,
-                    result.Errors.Select(e => e.Description).ToList());
-
+                this.TempData.AddErrorMessages(result);
                 return this.RedirectToPage();
 
                 //throw new InvalidOperationException($"Unexpected error occurred adding external login for user with ID '{user.Id}'.");

@@ -61,6 +61,8 @@
         public const string CourseEnrollmentOpenMsg = "Course is open for enrollment for {0}."; // days/hours
         public const string CourseNotFoundMsg = "Course not found.";
         public const string CourseUpdatedMsg = "Course updated successfully.";
+        public const string ExternalLoginInfoErrorMsg = "Unable to load external login info.";
+        public const string Disable2faErrorMsg = "Cannot disable 2FA for user.";
         public const string InvalidIdentityOrRoleMsg = "Invalid identity or role.";
         public const string InvalidUserMsg = "Invalid user.";
         public const string UserAddedToRoleMsg = "User {0} added to role {1}.";

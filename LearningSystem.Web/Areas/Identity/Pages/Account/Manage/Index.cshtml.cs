@@ -1,10 +1,14 @@
 ﻿namespace LearningSystem.Web.Areas.Identity.Pages.Account.Manage
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Text.Encodings.Web;
     using System.Threading.Tasks;
+    using LearningSystem.Data;
     using LearningSystem.Data.Models;
+    using LearningSystem.Services;
+    using LearningSystem.Web.Infrastructure.Extensions;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.UI.Services;
     using Microsoft.AspNetCore.Mvc;
@@ -15,18 +19,29 @@
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IEmailSender _emailSender;
+        private readonly IUserService userService;
 
         public IndexModel(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IUserService userService)
         {
             this._userManager = userManager;
             this._signInManager = signInManager;
             this._emailSender = emailSender;
+            this.userService = userService;
         }
 
         public string Username { get; set; }
+
+        //Custom User Data
+        public string Name { get; set; }
+
+        //Custom User Data
+        [Required]
+        [DataType(DataType.Date)]
+        public DateTime Birthdate { get; set; }
 
         public bool IsEmailConfirmed { get; set; }
 
@@ -36,7 +51,7 @@
         [BindProperty]
         public InputModel Input { get; set; }
 
-        public class InputModel
+        public class InputModel : IValidatableObject
         {
             [Required]
             [EmailAddress]
@@ -45,6 +60,27 @@
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+
+            // Custom User data
+            [Required]
+            [StringLength(DataConstants.UserNameMaxLength,
+                ErrorMessage = DataConstants.StringMinMaxLength,
+                MinimumLength = DataConstants.UserNameMinLength)]
+            public string Name { get; set; }
+
+            [Required]
+            [DataType(DataType.Date)]
+            public DateTime Birthdate { get; set; }
+
+            public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+            {
+                var isNotBornYet = DateTime.UtcNow < this.Birthdate;
+                if (isNotBornYet)
+                {
+                    yield return new ValidationResult(DataConstants.UserBirthdate,
+                        new[] { nameof(this.Birthdate) });
+                }
+            }
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -52,7 +88,9 @@
             var user = await this._userManager.GetUserAsync(this.User);
             if (user == null)
             {
-                return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId(this.User)}'.");
+                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
+                return this.RedirectToPage();
+                //return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId(this.User)}'.");
             }
 
             var userName = await this._userManager.GetUserNameAsync(user);
@@ -61,10 +99,16 @@
 
             this.Username = userName;
 
+            // Custom User Data
+            var profileToEdit = await this.userService.GetProfileToEditAsync(user.Id);
+
             this.Input = new InputModel
             {
                 Email = email,
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                //Custom User Data
+                Name = profileToEdit?.Name,
+                Birthdate = profileToEdit?.Birthdate ?? DateTime.UtcNow
             };
 
             this.IsEmailConfirmed = await this._userManager.IsEmailConfirmedAsync(user);
@@ -82,7 +126,9 @@
             var user = await this._userManager.GetUserAsync(this.User);
             if (user == null)
             {
-                return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId(this.User)}'.");
+                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
+                return this.RedirectToPage();
+                //return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId(this.User)}'.");
             }
 
             var email = await this._userManager.GetEmailAsync(user);
@@ -91,8 +137,10 @@
                 var setEmailResult = await this._userManager.SetEmailAsync(user, this.Input.Email);
                 if (!setEmailResult.Succeeded)
                 {
-                    var userId = await this._userManager.GetUserIdAsync(user);
-                    throw new InvalidOperationException($"Unexpected error occurred setting email for user with ID '{userId}'.");
+                    this.TempData.AddErrorMessages(setEmailResult);
+                    return this.RedirectToPage();
+                    //var userId = await this._userManager.GetUserIdAsync(user);
+                    //throw new InvalidOperationException($"Unexpected error occurred setting email for user with ID '{userId}'.");
                 }
             }
 
@@ -102,10 +150,15 @@
                 var setPhoneResult = await this._userManager.SetPhoneNumberAsync(user, this.Input.PhoneNumber);
                 if (!setPhoneResult.Succeeded)
                 {
-                    var userId = await this._userManager.GetUserIdAsync(user);
-                    throw new InvalidOperationException($"Unexpected error occurred setting phone number for user with ID '{userId}'.");
+                    this.TempData.AddErrorMessages(setPhoneResult);
+                    return this.RedirectToPage();
+                    //var userId = await this._userManager.GetUserIdAsync(user);
+                    //throw new InvalidOperationException($"Unexpected error occurred setting phone number for user with ID '{userId}'.");
                 }
             }
+
+            // Update Custom User Data
+            await this.userService.UpdateUserProfileAsync(user.Id, this.Input.Name, this.Input.Birthdate);
 
             await this._signInManager.RefreshSignInAsync(user);
             this.StatusMessage = "Your profile has been updated";
@@ -122,9 +175,10 @@
             var user = await this._userManager.GetUserAsync(this.User);
             if (user == null)
             {
-                return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId(this.User)}'.");
+                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
+                return this.RedirectToPage();
+                //return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId(this.User)}'.");
             }
-
 
             var userId = await this._userManager.GetUserIdAsync(user);
             var email = await this._userManager.GetEmailAsync(user);

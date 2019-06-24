@@ -24,17 +24,17 @@
             this.mapper = mapper;
         }
 
-        public async Task<IEnumerable<CourseListingServiceModel>> AllActiveWithTrainers(
+        public async Task<IEnumerable<CourseListingServiceModel>> AllActiveWithTrainersAsync(
             int page = 1,
             int pageSize = ServicesConstants.PageSize)
             => await this.AllWithTrainers(true, page, pageSize);
 
-        public async Task<IEnumerable<CourseListingServiceModel>> AllArchivedWithTrainers(
+        public async Task<IEnumerable<CourseListingServiceModel>> AllArchivedWithTrainersAsync(
             int page = 1,
             int pageSize = ServicesConstants.PageSize)
             => await this.AllWithTrainers(false, page, pageSize);
 
-        public async Task<bool> CanEnroll(int id)
+        public async Task<bool> CanEnrollAsync(int id)
         {
             var course = await this.db.Courses.FindAsync(id);
             if (course == null)
@@ -45,11 +45,11 @@
             return course.StartDate > DateTime.UtcNow;
         }
 
-        public async Task CancellUserEnrollmentInCourse(int courseId, string userId)
+        public async Task CancellUserEnrollmentInCourseAsync(int courseId, string userId)
         {
-            if (!await this.CanEnroll(courseId)
+            if (!await this.CanEnrollAsync(courseId)
                 || !await this.db.Users.AnyAsync(u => u.Id == userId)
-                || !await this.UserIsEnrolledInCourse(courseId, userId))
+                || !await this.UserIsEnrolledInCourseAsync(courseId, userId))
             {
                 return;
             }
@@ -68,11 +68,11 @@
             await this.db.SaveChangesAsync();
         }
 
-        public async Task EnrollUserInCourse(int courseId, string userId)
+        public async Task EnrollUserInCourseAsync(int courseId, string userId)
         {
-            if (!await this.CanEnroll(courseId)
+            if (!await this.CanEnrollAsync(courseId)
                 || !await this.db.Users.AnyAsync(u => u.Id == userId)
-                || await this.UserIsEnrolledInCourse(courseId, userId))
+                || await this.UserIsEnrolledInCourseAsync(courseId, userId))
             {
                 return;
             }
@@ -84,7 +84,7 @@
         public bool Exists(int id)
             => this.db.Courses.Any(c => c.Id == id);
 
-        public async Task<CourseDetailsServiceModel> GetById(int id)
+        public async Task<CourseDetailsServiceModel> GetByIdAsync(int id)
             => await this.db.Courses
             .Where(c => c.Id == id)
             .Select(c => new CourseDetailsServiceModel
@@ -95,7 +95,7 @@
             })
             .FirstOrDefaultAsync();
 
-        public async Task<bool> UserIsEnrolledInCourse(int courseId, string userId)
+        public async Task<bool> UserIsEnrolledInCourseAsync(int courseId, string userId)
             => await this.db
             .Courses
             .AnyAsync(c => c.Id == courseId

@@ -1,0 +1,16 @@
+﻿@model UserProfileServiceModel
+
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<partial name="_ProfilePartial" for="User" />
+<hr />
+
+<h3>Courses</h3>
+<section class=" card-deck d-flex justify-content-start">
+    @foreach (var course in Model.Courses)
+    {
+        <partial name="_ProfileCoursePartial" model="@course" />
+    }
+</section>
