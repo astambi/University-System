@@ -15,13 +15,16 @@
     {
         private readonly LearningSystemDbContext db;
         private readonly IMapper mapper;
+        private readonly ICourseService courseService;
 
         public TrainerService(
             LearningSystemDbContext db,
-            IMapper mapper)
+            IMapper mapper,
+            ICourseService courseService)
         {
             this.db = db;
             this.mapper = mapper;
+            this.courseService = courseService;
         }
 
         public async Task AssessStudentCoursePerformance(string trainerId, int courseId, string studentId, Grade grade)
@@ -50,12 +53,17 @@
             .Select(c => this.mapper.Map<CourseServiceModel>(c))
             .FirstOrDefaultAsync();
 
-        public async Task<IEnumerable<CourseServiceModel>> CoursesAsync(string id)
-            => await this.db
-            .Courses
+        public async Task<IEnumerable<CourseServiceModel>> CoursesAsync(
+            string id,
+            string search = null,
+            int page = 1,
+            int pageSize = ServicesConstants.PageSize)
+            => await this.courseService.GetQuerableBySearch(search)
             .Where(c => c.TrainerId == id)
             .OrderByDescending(c => c.StartDate)
             .ThenByDescending(c => c.EndDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .Select(c => this.mapper.Map<CourseServiceModel>(c))
             .ToListAsync();
 
@@ -77,5 +85,10 @@
                 Grade = sc.Grade
             })
             .ToListAsync();
+
+        public async Task<int> TotalCoursesAsync(string id, string search = null)
+            => await this.courseService.GetQuerableBySearch(search)
+            .Where(c => c.TrainerId == id)
+            .CountAsync();
     }
 }

@@ -141,16 +141,18 @@
             return courses.Select(c => c.Course).ToList();
         }
 
-        private IQueryable<Course> GetQuerableByStatus(IQueryable<Course> coursesAsQuerable, bool isActive)
-            => isActive
+        public IQueryable<Course> GetQuerableByStatus(IQueryable<Course> coursesAsQuerable, bool? isActive)
+            => isActive == null // all
             ? coursesAsQuerable
-                .Where(c => DateTime.Compare(DateTime.UtcNow, c.EndDate.AddDays(1)) < 1) // EndDate time in db = 00:00:00
-                .AsQueryable()
-            : coursesAsQuerable
-                .Where(c => DateTime.Compare(DateTime.UtcNow, c.EndDate.AddDays(1)) == 1)
-                .AsQueryable();
+            : (bool)isActive
+                ? coursesAsQuerable
+                    .Where(c => DateTime.Compare(DateTime.UtcNow, c.EndDate.AddDays(1)) < 1) // EndDate time in db = 00:00:00
+                    .AsQueryable()
+                : coursesAsQuerable
+                    .Where(c => DateTime.Compare(DateTime.UtcNow, c.EndDate.AddDays(1)) == 1) // archive
+                    .AsQueryable();
 
-        private IQueryable<Course> GetQuerableBySearch(string search)
+        public IQueryable<Course> GetQuerableBySearch(string search)
         {
             var coursesAsQuerable = this.db.Courses.AsQueryable();
 

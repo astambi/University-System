@@ -5,11 +5,10 @@
 }
 
 <header class="d-flex flex-wrap justify-content-between align-items-center">
-    <h1>Courses archive</h1>
+    <h1>Archive</h1>
     <partial name="_SearchPartial" for="Search" />
-
     <a asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Index)"
-       asp-route-search="@Model.Search.SearchTerm" class="btn bnt-lg btn-outline-info">Active</a>
+       asp-route-search="@Model.Search.SearchTerm" class="btn bnt-lg btn-outline-info">Courses</a>
 </header>
 
 <partial name="_CoursesListPartial" model="@Model" />

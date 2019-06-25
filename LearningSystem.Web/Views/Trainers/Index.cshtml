@@ -1,12 +1,11 @@
-﻿@model IEnumerable<CourseServiceModel>
+﻿@model CoursePageListingViewModel
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Trainings</h1>
-<section class="d-flex flex-wrap">
-    @foreach (var course in Model)
-    {
-        <partial name="_CourseCardPartial" model="@course" />
-    }
-</section>
+<header class="d-flex flex-wrap justify-content-between align-items-center">
+    <h1>Trainings</h1>
+    <partial name="_SearchPartial" for="Search" />
+</header>
+
+<partial name="_CoursesListPartial" model="@Model" />

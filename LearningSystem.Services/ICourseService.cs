@@ -1,7 +1,9 @@
 ﻿namespace LearningSystem.Services
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
+    using LearningSystem.Data.Models;
     using LearningSystem.Services.Models.Courses;
 
     public interface ICourseService
@@ -31,5 +33,9 @@
         Task<int> TotalActiveAsync(string search = null);
 
         Task<int> TotalArchivedAsync(string search = null);
+
+        IQueryable<Course> GetQuerableByStatus(IQueryable<Course> coursesAsQuerable, bool? isActive = null); // all by default
+
+        IQueryable<Course> GetQuerableBySearch(string search);
     }
 }

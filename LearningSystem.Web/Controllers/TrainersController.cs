@@ -4,6 +4,8 @@
     using LearningSystem.Data.Models;
     using LearningSystem.Services;
     using LearningSystem.Web.Infrastructure.Extensions;
+    using LearningSystem.Web.Models;
+    using LearningSystem.Web.Models.Courses;
     using LearningSystem.Web.Models.Trainers;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
@@ -26,7 +28,7 @@
             this.trainerService = trainerService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string search = null, int currentPage = 1)
         {
             var userId = this.userManager.GetUserId(this.User);
             if (userId == null)
@@ -35,9 +37,24 @@
                 return this.RedirectToAction(nameof(CoursesController.Index));
             }
 
-            var courses = await this.trainerService.CoursesAsync(userId);
+            var pagination = new PaginationModel
+            {
+                SearchTerm = search,
+                Action = nameof(Index),
+                RequestedPage = currentPage,
+                TotalItems = await this.trainerService.TotalCoursesAsync(search)
+            };
 
-            return this.View(courses);
+            var courses = await this.trainerService.CoursesAsync(userId, search, pagination.CurrentPage, WebConstants.PageSize);
+
+            var model = new CoursePageListingViewModel
+            {
+                Courses = courses,
+                Pagination = pagination,
+                Search = new SearchModel { SearchTerm = search, Placeholder = WebConstants.SearchByCourseName }
+            };
+
+            return this.View(model);
         }
 
         public async Task<IActionResult> Students(int id)
