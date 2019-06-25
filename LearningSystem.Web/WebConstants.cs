@@ -80,7 +80,7 @@
         public const string UserNotEnrolledInCourseMsg = "User not enrolled in this course.";
         public const string UserAddedToRoleMsg = "User {0} added to role {1}.";
         public const string UserRemovedFromRoleMsg = "User {0} removed from role {1}.";
-        public const string SearchByArticleTitle = "Search by title or content";
+        public const string SearchByArticleTitleOrContent = "Search by title or content";
         public const string SearchByCourseName = "Search by course name";
         public const string SearchByUserName = "Search by name";
 

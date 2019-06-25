@@ -26,21 +26,23 @@
             this.articleService = articleService;
         }
 
-        public async Task<IActionResult> Index(int currentPage = 1)
+        public async Task<IActionResult> Index(string search = null, int currentPage = 1)
         {
             var pagination = new PaginationModel
             {
+                SearchTerm = search,
                 Action = nameof(Index),
                 RequestedPage = currentPage,
-                TotalItems = await this.articleService.TotalAsync()
+                TotalItems = await this.articleService.TotalAsync(search)
             };
 
-            var articles = await this.articleService.AllAsync(pagination.CurrentPage, WebConstants.PageSize);
+            var articles = await this.articleService.AllAsync(search, pagination.CurrentPage, WebConstants.PageSize);
 
             var model = new ArticlePageListingViewModel
             {
                 Articles = articles,
-                Pagination = pagination
+                Pagination = pagination,
+                Search = new SearchModel { SearchTerm = search, Placeholder = WebConstants.SearchByArticleTitleOrContent }
             };
 
             return this.View(model);

@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using AutoMapper;
     using LearningSystem.Data;
@@ -29,10 +30,10 @@
         }
 
         public async Task<IEnumerable<ArticleWithAuthorListingServiceModel>> AllAsync(
+            string search = null,
             int page = 1,
             int pageSize = ServicesConstants.PageSize)
-            => await this.db
-            .Articles
+            => await this.GetQuerableBySearchKeyword(search)
             .OrderByDescending(a => a.PublishDate)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
@@ -76,7 +77,25 @@
             })
             .FirstOrDefaultAsync();
 
-        public async Task<int> TotalAsync()
-            => await this.db.Articles.CountAsync();
+        public async Task<int> TotalAsync(string search = null)
+            => await this.GetQuerableBySearchKeyword(search).CountAsync();
+
+        private IQueryable<Article> GetQuerableBySearchKeyword(string search)
+        {
+            var articlesAsQuerable = this.db.Articles.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var keywordPattern = $@"\b{search.Trim()}\b"; // whole words only
+                var options = RegexOptions.Multiline | RegexOptions.IgnoreCase;
+
+                articlesAsQuerable = articlesAsQuerable
+                    .Where(a => Regex.IsMatch(a.Title, keywordPattern, options)
+                             || Regex.IsMatch(a.Content, keywordPattern, options))
+                    .AsQueryable();
+            }
+
+            return articlesAsQuerable;
+        }
     }
 }

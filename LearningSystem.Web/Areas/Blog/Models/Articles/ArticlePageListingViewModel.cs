@@ -9,5 +9,7 @@
         public IEnumerable<ArticleWithAuthorListingServiceModel> Articles { get; set; }
 
         public PaginationModel Pagination { get; set; }
+
+        public SearchModel Search { get; set; }
     }
 }

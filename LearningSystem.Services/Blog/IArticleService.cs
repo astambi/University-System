@@ -7,13 +7,14 @@
     public interface IArticleService
     {
         Task<IEnumerable<ArticleWithAuthorListingServiceModel>> AllAsync(
+            string search = null,
             int page = 1,
             int pageSize = ServicesConstants.PageSize);
 
         Task CreateAsync(string title, string rawHtmlContent, string userId);
 
-        Task <ArticleDetailsWithAuthorServiceModel> GetByIdAsync(int id);
+        Task<ArticleDetailsWithAuthorServiceModel> GetByIdAsync(int id);
 
-        Task<int> TotalAsync();
+        Task<int> TotalAsync(string search = null);
     }
 }
