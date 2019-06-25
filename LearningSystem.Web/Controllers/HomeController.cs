@@ -16,18 +16,24 @@
             this.courseService = courseService;
         }
 
-        public async Task<IActionResult> Index(int currentPage = 1)
+        public async Task<IActionResult> Index(string search = null, int currentPage = 1)
         {
             var pagination = new PaginationModel
             {
+                SearchTerm = search,
                 Action = nameof(Index),
                 RequestedPage = currentPage,
-                TotalItems = await this.courseService.TotalActiveAsync()
+                TotalItems = await this.courseService.TotalActiveAsync(search)
             };
 
-            var courses = await this.courseService.AllActiveWithTrainersAsync(pagination.CurrentPage, WebConstants.PageSize);
+            var courses = await this.courseService.AllActiveWithTrainersAsync(search, pagination.CurrentPage, WebConstants.PageSize);
 
-            var model = new CoursePageListingViewModel { Courses = courses, Pagination = pagination };
+            var model = new CoursePageListingViewModel
+            {
+                Courses = courses,
+                Pagination = pagination,
+                Search = new SearchModel { SearchTerm = search, Placeholder = WebConstants.SearchByCourseName }
+            };
 
             return this.View(model);
         }

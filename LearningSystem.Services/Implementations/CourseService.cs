@@ -25,14 +25,16 @@
         }
 
         public async Task<IEnumerable<CourseServiceModel>> AllActiveWithTrainersAsync(
+            string search = null,
             int page = 1,
             int pageSize = ServicesConstants.PageSize)
-            => await this.AllWithTrainers(true, page, pageSize);
+            => await this.AllWithTrainers(search, true, page, pageSize);
 
         public async Task<IEnumerable<CourseServiceModel>> AllArchivedWithTrainersAsync(
+            string search = null,
             int page = 1,
             int pageSize = ServicesConstants.PageSize)
-            => await this.AllWithTrainers(false, page, pageSize);
+            => await this.AllWithTrainers(search, false, page, pageSize);
 
         public async Task<bool> CanEnrollAsync(int id)
         {
@@ -85,7 +87,8 @@
             => this.db.Courses.Any(c => c.Id == id);
 
         public async Task<CourseDetailsServiceModel> GetByIdAsync(int id)
-            => await this.db.Courses
+            => await this.db
+            .Courses
             .Where(c => c.Id == id)
             .Select(c => new CourseDetailsServiceModel
             {
@@ -101,18 +104,23 @@
             .AnyAsync(c => c.Id == courseId
                         && c.Students.Any(sc => sc.StudentId == userId));
 
-        public async Task<int> TotalActiveAsync()
-            => await this.TotalAsync(true);
+        public async Task<int> TotalActiveAsync(string search = null)
+            => await this.GetQuerableByStatus(this.GetQuerableBySearch(search), true)
+            .CountAsync();
 
-        public async Task<int> TotalArchivedAsync()
-            => await this.TotalAsync(false);
+        public async Task<int> TotalArchivedAsync(string search = null)
+            => await this.GetQuerableByStatus(this.GetQuerableBySearch(search), false)
+            .CountAsync();
 
         private async Task<IEnumerable<CourseServiceModel>> AllWithTrainers(
+            string search,
             bool isActive,
             int page = 1,
             int pageSize = ServicesConstants.PageSize)
         {
-            var courses = await this.GetQuerableCoursesSelection(isActive)
+            var coursesAsQuerable = this.GetQuerableBySearch(search);
+
+            var courses = await this.GetQuerableByStatus(coursesAsQuerable, isActive)
                 .OrderByDescending(c => c.StartDate)
                 .ThenByDescending(c => c.EndDate)
                 .Skip((page - 1) * pageSize)
@@ -133,20 +141,25 @@
             return courses.Select(c => c.Course).ToList();
         }
 
-        private async Task<int> TotalAsync(bool isActive)
-            => await this.GetQuerableCoursesSelection(isActive).CountAsync();
+        private IQueryable<Course> GetQuerableByStatus(IQueryable<Course> coursesAsQuerable, bool isActive)
+            => isActive
+            ? coursesAsQuerable
+                .Where(c => DateTime.Compare(DateTime.UtcNow, c.EndDate.AddDays(1)) < 1) // EndDate time in db = 00:00:00
+                .AsQueryable()
+            : coursesAsQuerable
+                .Where(c => DateTime.Compare(DateTime.UtcNow, c.EndDate.AddDays(1)) == 1)
+                .AsQueryable();
 
-        private IQueryable<Course> GetQuerableCoursesSelection(bool isActive)
+        private IQueryable<Course> GetQuerableBySearch(string search)
         {
             var coursesAsQuerable = this.db.Courses.AsQueryable();
 
-            coursesAsQuerable = isActive
-                ? coursesAsQuerable
-                    .Where(c => DateTime.Compare(DateTime.UtcNow, c.EndDate.AddDays(1)) < 1) // EndDate time in db = 00:00:00
-                    .AsQueryable()
-                : coursesAsQuerable
-                    .Where(c => DateTime.Compare(DateTime.UtcNow, c.EndDate.AddDays(1)) == 1)
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                coursesAsQuerable = coursesAsQuerable
+                    .Where(c => c.Name.ToLower().Contains(search.Trim().ToLower()))
                     .AsQueryable();
+            }
 
             return coursesAsQuerable;
         }

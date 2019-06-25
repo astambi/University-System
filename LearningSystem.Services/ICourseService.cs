@@ -7,10 +7,12 @@
     public interface ICourseService
     {
         Task<IEnumerable<CourseServiceModel>> AllActiveWithTrainersAsync(
+            string search = null,
             int page = 1,
             int pageSize = ServicesConstants.PageSize);
 
         Task<IEnumerable<CourseServiceModel>> AllArchivedWithTrainersAsync(
+            string search = null,
             int page = 1,
             int pageSize = ServicesConstants.PageSize);
 
@@ -26,8 +28,8 @@
 
         Task<bool> UserIsEnrolledInCourseAsync(int courseId, string userId);
 
-        Task<int> TotalActiveAsync();
+        Task<int> TotalActiveAsync(string search = null);
 
-        Task<int> TotalArchivedAsync();
+        Task<int> TotalArchivedAsync(string search = null);
     }
 }

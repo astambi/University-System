@@ -10,6 +10,7 @@
         Enroll = 5,
         Cancel = 6,
         Grade = 7,
+        Search = 8,
         Default = 99
     }
 }

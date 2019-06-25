@@ -4,10 +4,12 @@
     ViewData["Title"] = "Active Courses";
 }
 
-<h1 class="d-flex flex-wrap justify-content-between align-items-center">
-    Active courses
-    <a class="btn bnt-lg btn-outline-info"
-       asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Archive)">Archive</a>
-</h1>
+<header class="d-flex flex-wrap justify-content-between align-items-center">
+    <h1>Active courses</h1>
+    <partial name="_SearchPartial" for="Search" />
+
+    <a asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Archive)"
+       asp-route-search="@Model.Search.SearchTerm" class="btn bnt-lg btn-outline-info">Archive</a>
+</header>
 
 <partial name="_CoursesListPartial" model="@Model" />
