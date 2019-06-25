@@ -9,6 +9,7 @@
         Remove = 4,
         Enroll = 5,
         Cancel = 6,
+        Grade = 7,
         Default = 99
     }
 }

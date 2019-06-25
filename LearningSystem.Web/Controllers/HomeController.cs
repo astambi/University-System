@@ -27,11 +27,7 @@
 
             var courses = await this.courseService.AllActiveWithTrainersAsync(pagination.CurrentPage, WebConstants.PageSize);
 
-            var model = new CoursePageListingViewModel
-            {
-                Courses = courses,
-                Pagination = pagination
-            };
+            var model = new CoursePageListingViewModel { Courses = courses, Pagination = pagination };
 
             return this.View(model);
         }

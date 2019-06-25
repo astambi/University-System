@@ -23,6 +23,10 @@
             this.mapper = mapper;
         }
 
+        public async Task<bool> CanBeDeleted(string id)
+            => !await this.db.Courses.AnyAsync(c => c.TrainerId == id)
+            && !await this.db.Articles.AnyAsync(a => a.AuthorId == id);
+
         public async Task<UserEditServiceModel> GetProfileToEditAsync(string id)
             => await this.db
             .Users

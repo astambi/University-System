@@ -3,8 +3,6 @@
     using AutoMapper;
     using LearningSystem.Data;
     using LearningSystem.Data.Models;
-    using LearningSystem.Web.Areas.Blog.Controllers;
-    using LearningSystem.Web.Controllers;
     using LearningSystem.Web.Infrastructure.Extensions;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -127,28 +125,6 @@
 
             app.UseMvc(routes =>
             {
-                // Routing Blog articles with SEO friendly URLs
-                routes.MapRoute(
-                    name: "blog",
-                    template: "blog/articles/{id}/{title?}",
-                    defaults: new
-                    {
-                        area = WebConstants.BlogArea,
-                        controller = WebConstants.ArticlesController,
-                        action = nameof(ArticlesController.Details)
-                    });
-
-                // Routing Courses (details) with SEO friendly URLs
-                routes.MapRoute(
-                    name: "course",
-                    template: "course/{id}/{name?}",
-                    defaults: new
-                    {
-                        controller = WebConstants.CoursesController,
-                        action = nameof(CoursesController.Details)
-                    });
-
-                // Routing Areas
                 routes.MapRoute(
                   name: "areas",
                   template: "{area:exists}/{controller=Home}/{action=Index}/{id?}"

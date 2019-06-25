@@ -11,5 +11,7 @@
         Task<UserEditServiceModel> GetProfileToEditAsync(string id);
 
         Task UpdateUserProfileAsync(string id, string name, DateTime birthdate);
+
+        Task<bool> CanBeDeleted(string id);
     }
 }

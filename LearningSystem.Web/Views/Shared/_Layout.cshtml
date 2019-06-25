@@ -24,8 +24,7 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand"
-                   asp-area=""
-                   asp-controller="@WebConstants.HomeController"
+                   asp-area="" asp-controller="@WebConstants.HomeController"
                    asp-action="@nameof(HomeController.Index)">Learning System</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -36,10 +35,17 @@
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark"
-                               asp-area=""
-                               asp-controller="@WebConstants.CoursesController"
+                               asp-area="" asp-controller="@WebConstants.CoursesController"
                                asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Index)">Courses</a>
                         </li>
+                        @if (User.IsInRole(WebConstants.TrainerRole))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark"
+                                   asp-area="" asp-controller="@WebConstants.TrainersController"
+                                   asp-action="@nameof(TrainersController.Index)">Trainer</a>
+                            </li>
+                        }
                         <partial name="_NavbarBlogPartial" />
                         <partial name="_NavbarAdminPartial" />
                     </ul>

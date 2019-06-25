@@ -1,0 +1,12 @@
+﻿@model IEnumerable<CourseServiceModel>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Trainings</h1>
+<section class="d-flex flex-wrap">
+    @foreach (var course in Model)
+    {
+        <partial name="_CourseCardPartial" model="@course" />
+    }
+</section>

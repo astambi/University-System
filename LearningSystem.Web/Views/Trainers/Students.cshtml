@@ -1,0 +1,45 @@
+﻿@model StudentCourseGradeViewModel
+@{
+    ViewData["Title"] = "Students";
+}
+
+<h1>Course</h1>
+<partial name="_CourseCardPartial" for="Course" />
+
+<h1>Students</h1>
+<table class="table table-hover">
+    <thead>
+        <tr class="align-bottom">
+            <th>Student</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Grade</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var student in Model.Students)
+        {
+            var formModel = new StudentCourseGradeFormModel
+            {
+                CourseId = Model.Course.Id,
+                StudentId = student.Student.Id,
+                Grade = student.Grade
+            };
+            <tr>
+                <td>@student.Student.Name</td>
+                <td>@student.Student.Username</td>
+                <td>@student.Student.Email</td>
+                <td>@student.Grade</td>
+                <td>
+                    @if (Model.Course.EndDate < DateTime.UtcNow)
+                    {
+                        <partial name="_GradeFormPartial" model="@formModel" />
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<small>@WebConstants.TrainersAssessPerformanceAfterCourseEndsMsg</small>

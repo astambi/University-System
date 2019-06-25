@@ -6,11 +6,11 @@
 
     public interface ICourseService
     {
-        Task<IEnumerable<CourseListingServiceModel>> AllActiveWithTrainersAsync(
+        Task<IEnumerable<CourseServiceModel>> AllActiveWithTrainersAsync(
             int page = 1,
             int pageSize = ServicesConstants.PageSize);
 
-        Task<IEnumerable<CourseListingServiceModel>> AllArchivedWithTrainersAsync(
+        Task<IEnumerable<CourseServiceModel>> AllArchivedWithTrainersAsync(
             int page = 1,
             int pageSize = ServicesConstants.PageSize);
 

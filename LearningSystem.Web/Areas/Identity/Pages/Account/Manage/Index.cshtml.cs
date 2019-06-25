@@ -74,7 +74,7 @@
 
             public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
             {
-                var isNotBornYet = DateTime.UtcNow < this.Birthdate;
+                var isNotBornYet = DateTime.Compare(DateTime.UtcNow.Date, this.Birthdate) == -1;
                 if (isNotBornYet)
                 {
                     yield return new ValidationResult(DataConstants.UserBirthdate,
@@ -120,6 +120,7 @@
         {
             if (!this.ModelState.IsValid)
             {
+                this.Username = (await this._userManager.GetUserAsync(this.User))?.UserName;
                 return this.Page();
             }
 
@@ -158,10 +159,14 @@
             }
 
             // Update Custom User Data
-            await this.userService.UpdateUserProfileAsync(user.Id, this.Input.Name, this.Input.Birthdate);
+            if (user.Name != this.Input.Name
+                || user.Birthdate != this.Input.Birthdate)
+            {
+                await this.userService.UpdateUserProfileAsync(user.Id, this.Input.Name, this.Input.Birthdate);
+            }
 
-            await this._signInManager.RefreshSignInAsync(user);
             this.StatusMessage = "Your profile has been updated";
+            await this._signInManager.RefreshSignInAsync(user);
             return this.RedirectToPage();
         }
 

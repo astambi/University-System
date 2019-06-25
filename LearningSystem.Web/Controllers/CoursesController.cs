@@ -1,6 +1,7 @@
 ﻿namespace LearningSystem.Web.Controllers
 {
     using System.Threading.Tasks;
+    using AutoMapper;
     using LearningSystem.Data.Models;
     using LearningSystem.Services;
     using LearningSystem.Web.Infrastructure.Extensions;
@@ -14,13 +15,16 @@
     {
         private readonly UserManager<User> userManager;
         private readonly ICourseService courseService;
+        private readonly IMapper mapper;
 
         public CoursesController(
             UserManager<User> userManager,
-            ICourseService courseService)
+            ICourseService courseService,
+            IMapper mapper)
         {
             this.userManager = userManager;
             this.courseService = courseService;
+            this.mapper = mapper;
         }
 
         public async Task<IActionResult> Index(int currentPage = 1)
@@ -59,6 +63,8 @@
         public async Task<IActionResult> Cancel(int id)
             => await this.UpdateEnrollment(id, false);
 
+        // SEO friendly URL
+        [Route(WebConstants.CoursesController + "/{id}/{name?}")]
         public async Task<IActionResult> Details(int id)
         {
             var course = await this.courseService.GetByIdAsync(id);

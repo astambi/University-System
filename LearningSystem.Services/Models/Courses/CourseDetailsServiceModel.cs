@@ -1,6 +1,5 @@
 ﻿namespace LearningSystem.Services.Models.Courses
 {
-    using AutoMapper;
     using LearningSystem.Services.Models.Users;
 
     public class CourseDetailsServiceModel

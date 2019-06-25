@@ -2,6 +2,7 @@
 {
     using System;
     using System.ComponentModel.DataAnnotations;
+    using AutoMapper;
     using LearningSystem.Common.Mapping;
     using LearningSystem.Data.Models;
 
@@ -16,6 +17,11 @@
 
         [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
+
+        public string TrainerId { get; set; }
+
+        [IgnoreMap]
+        public string TrainerName { get; set; }
 
         public int Duration
             => this.EndDate.AddDays(1).Subtract(this.StartDate).Days;

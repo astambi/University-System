@@ -4,7 +4,7 @@
     var notificationMsg = TempData[notificationType];
     var cssStyle = WebConstants.Styles.ContainsKey(notificationType)
         ? WebConstants.Styles[notificationType]
-        : null; //  Use to prevent duplicate notifications from Managing User Account
+        : null; //  Prevents duplicate notifications from Managing User Account
 
     if (notificationMsg != null && cssStyle != null)
     {

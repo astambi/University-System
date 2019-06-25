@@ -1,0 +1,21 @@
+﻿@model StudentCourseGradeFormModel
+
+<form asp-action="@nameof(TrainersController.AssessPerformance)"
+      asp-route-id="@Model.CourseId" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input asp-for="CourseId" hidden />
+    <input asp-for="StudentId" hidden />
+
+    <div class="form-group d-flex p-0 m-0">
+        <select asp-for="Grade" asp-items="Html.GetEnumSelectList<Grade>()" class="form-control" required>
+            <option selected disabled>Grade</option>
+        </select>
+        <span asp-validation-for="Grade" class="text-danger"></span>
+
+        <partial name="_FormSubmitPartial" model="FormActionEnum.Grade" />
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

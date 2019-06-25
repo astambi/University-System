@@ -4,6 +4,8 @@
     using System.ComponentModel.DataAnnotations;
     using System.Threading.Tasks;
     using LearningSystem.Data.Models;
+    using LearningSystem.Services;
+    using LearningSystem.Web.Infrastructure.Extensions;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -14,15 +16,18 @@
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
+        private readonly IUserService userService;
 
         public DeletePersonalDataModel(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
-            ILogger<DeletePersonalDataModel> logger)
+            ILogger<DeletePersonalDataModel> logger,
+            IUserService userService)
         {
             this._userManager = userManager;
             this._signInManager = signInManager;
             this._logger = logger;
+            this.userService = userService;
         }
 
         [BindProperty]
@@ -42,7 +47,9 @@
             var user = await this._userManager.GetUserAsync(this.User);
             if (user == null)
             {
-                return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId(this.User)}'.");
+                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
+                return this.Page();
+                //return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId(this.User)}'.");
             }
 
             this.RequirePassword = await this._userManager.HasPasswordAsync(user);
@@ -54,7 +61,9 @@
             var user = await this._userManager.GetUserAsync(this.User);
             if (user == null)
             {
-                return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId(this.User)}'.");
+                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
+                return this.Page();
+                //return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId(this.User)}'.");
             }
 
             this.RequirePassword = await this._userManager.HasPasswordAsync(user);
@@ -67,11 +76,21 @@
                 }
             }
 
+            //Check DB ForeignKeys for user
+            var canBeDeleted = await this.userService.CanBeDeleted(user.Id);
+            if (!canBeDeleted)
+            {
+                this.TempData.AddErrorMessage(WebConstants.UserCannotBeDeletedMsg);
+                return this.Page();
+            }
+
             var result = await this._userManager.DeleteAsync(user);
             var userId = await this._userManager.GetUserIdAsync(user);
             if (!result.Succeeded)
             {
-                throw new InvalidOperationException($"Unexpected error occurred deleteing user with ID '{userId}'.");
+                this.TempData.AddErrorMessages(result);
+                return this.Page();
+                //throw new InvalidOperationException($"Unexpected error occurred deleteing user with ID '{userId}'.");
             }
 
             await this._signInManager.SignOutAsync();

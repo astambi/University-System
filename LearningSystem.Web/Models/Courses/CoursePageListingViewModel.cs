@@ -5,7 +5,7 @@
 
     public class CoursePageListingViewModel
     {
-        public IEnumerable<CourseListingServiceModel> Courses { get; set; }
+        public IEnumerable<CourseServiceModel> Courses { get; set; }
 
         public PaginationModel Pagination { get; set; }
     }

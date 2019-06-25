@@ -24,12 +24,12 @@
             this.mapper = mapper;
         }
 
-        public async Task<IEnumerable<CourseListingServiceModel>> AllActiveWithTrainersAsync(
+        public async Task<IEnumerable<CourseServiceModel>> AllActiveWithTrainersAsync(
             int page = 1,
             int pageSize = ServicesConstants.PageSize)
             => await this.AllWithTrainers(true, page, pageSize);
 
-        public async Task<IEnumerable<CourseListingServiceModel>> AllArchivedWithTrainersAsync(
+        public async Task<IEnumerable<CourseServiceModel>> AllArchivedWithTrainersAsync(
             int page = 1,
             int pageSize = ServicesConstants.PageSize)
             => await this.AllWithTrainers(false, page, pageSize);
@@ -107,21 +107,31 @@
         public async Task<int> TotalArchivedAsync()
             => await this.TotalAsync(false);
 
-        private async Task<IEnumerable<CourseListingServiceModel>> AllWithTrainers(
+        private async Task<IEnumerable<CourseServiceModel>> AllWithTrainers(
             bool isActive,
             int page = 1,
             int pageSize = ServicesConstants.PageSize)
-            => await this.GetQuerableCoursesSelection(isActive)
-            .OrderBy(c => c.StartDate)
-            .ThenBy(c => c.EndDate)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .Select(c => new CourseListingServiceModel
+        {
+            var courses = await this.GetQuerableCoursesSelection(isActive)
+                .OrderByDescending(c => c.StartDate)
+                .ThenByDescending(c => c.EndDate)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(c => new CourseListingServiceModel
+                {
+                    Course = this.mapper.Map<CourseServiceModel>(c),
+                    Trainer = this.mapper.Map<UserBasicServiceModel>(c.Trainer)
+                })
+                .ToListAsync();
+
+            for (var i = 0; i < courses.Count; i++)
             {
-                Course = this.mapper.Map<CourseServiceModel>(c),
-                Trainer = this.mapper.Map<UserBasicServiceModel>(c.Trainer),
-            })
-            .ToListAsync();
+                var course = courses[i].Course;
+                course.TrainerName = courses[i].Trainer.Name;
+            }
+
+            return courses.Select(c => c.Course).ToList();
+        }
 
         private async Task<int> TotalAsync(bool isActive)
             => await this.GetQuerableCoursesSelection(isActive).CountAsync();

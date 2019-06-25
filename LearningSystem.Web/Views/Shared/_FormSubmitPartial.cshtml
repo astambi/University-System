@@ -1,9 +1,5 @@
 ﻿@model FormActionEnum
 
-@{
-    var cssStyle = WebConstants.Styles[Model.ToString()];
-}
-
 <div class="form-group">
-    <input type="submit" value="@Model" class="btn btn-block btn-outline-@cssStyle" />
+    <input type="submit" value="@Model" class="btn btn-block btn-outline-@StyleHelpers.ToStyle(Model)" />
 </div>

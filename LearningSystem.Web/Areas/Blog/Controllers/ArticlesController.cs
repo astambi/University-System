@@ -74,6 +74,8 @@
             return this.RedirectToAction(nameof(Index));
         }
 
+        // SEO friendly URL
+        [Route(WebConstants.BlogArea + "/" + WebConstants.ArticlesController + "/{id}/{title?}")]
         public async Task<IActionResult> Details(int id)
         {
             var model = await this.articleService.GetByIdAsync(id);
