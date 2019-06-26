@@ -1,16 +1,36 @@
-﻿@model UserProfileServiceModel
+﻿@model UserProfileViewModel
 
 @{
     ViewData["Title"] = "Profile";
 }
 
 <partial name="_ProfilePartial" for="User" />
-<hr />
 
-<h3>Courses</h3>
-<section class=" card-deck d-flex justify-content-start">
-    @foreach (var course in Model.Courses)
+<h3>
+    Roles:
+    @if (Model.Roles.Any())
     {
-        <partial name="_ProfileCoursePartial" model="@course" />
+        <span class="lead">@string.Join(", ", Model.Roles.Select(s => s.ToFriendlyName()))</span>
     }
-</section>
+    else
+    {
+        <span class="lead">No roles</span>
+    }
+
+</h3>
+
+<h3>
+    Courses:
+    @if (!Model.Courses.Any())
+    {<span>No courses</span>}
+</h3>
+
+@if (Model.Courses.Any())
+{
+    <section class=" card-deck d-flex justify-content-start">
+        @foreach (var course in Model.Courses)
+        {
+            <partial name="_ProfileCoursePartial" model="@course" />
+        }
+    </section>
+}

@@ -23,7 +23,7 @@
 
 
   <ItemGroup>
-    <Folder Include="Models\Users\" />
+    <Folder Include="Models\Home\" />
     <Folder Include="wwwroot\lib\qrcode\" />
   </ItemGroup>
 

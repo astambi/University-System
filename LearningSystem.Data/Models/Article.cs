@@ -28,8 +28,8 @@
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            var isNotPublishedYet = DateTime.Compare(DateTime.UtcNow.Date, this.PublishDate) == -1;
-            if (isNotPublishedYet)
+            var isFutureDate = DateTime.Now.Date < this.PublishDate.ToLocalTime().Date;
+            if (isFutureDate)
             {
                 yield return new ValidationResult(DataConstants.ArticlePublishDate,
                     new[] { nameof(this.PublishDate) });

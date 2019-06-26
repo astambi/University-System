@@ -28,7 +28,7 @@
 
         public async Task<IActionResult> Index(string search = null, int currentPage = 1)
         {
-            var pagination = new PaginationModel
+            var pagination = new PaginationViewModel
             {
                 SearchTerm = search,
                 Action = nameof(Index),
@@ -42,7 +42,7 @@
             {
                 Articles = articles,
                 Pagination = pagination,
-                Search = new SearchModel { SearchTerm = search, Placeholder = WebConstants.SearchByArticleTitleOrContent }
+                Search = new SearchViewModel { SearchTerm = search, Placeholder = WebConstants.SearchByArticleTitleOrContent }
             };
 
             return this.View(model);

@@ -43,6 +43,8 @@
                 User = this.mapper.Map<UserWithBirthdateServiceModel>(u),
                 Courses = u.Courses
                     .Select(sc => this.MapCourseWithGrade(sc, sc.Course))
+                    .OrderByDescending(c => c.StartDate)
+                    .ThenByDescending(c => c.EndDate)
                     .ToList()
             })
             .FirstOrDefaultAsync();

@@ -1,6 +1,6 @@
 ﻿namespace LearningSystem.Web.Models
 {
-    public class SearchModel
+    public class SearchViewModel
     {
         public FormActionEnum Action { get; set; } = FormActionEnum.Search;
 

@@ -44,7 +44,7 @@
                 return false;
             }
 
-            return course.StartDate > DateTime.UtcNow;
+            return DateTime.UtcNow < course.StartDate; // has not started
         }
 
         public async Task CancellUserEnrollmentInCourseAsync(int courseId, string userId)
@@ -141,17 +141,6 @@
             return courses.Select(c => c.Course).ToList();
         }
 
-        public IQueryable<Course> GetQuerableByStatus(IQueryable<Course> coursesAsQuerable, bool? isActive)
-            => isActive == null // all
-            ? coursesAsQuerable
-            : (bool)isActive
-                ? coursesAsQuerable
-                    .Where(c => DateTime.Compare(DateTime.UtcNow, c.EndDate.AddDays(1)) < 1) // EndDate time in db = 00:00:00
-                    .AsQueryable()
-                : coursesAsQuerable
-                    .Where(c => DateTime.Compare(DateTime.UtcNow, c.EndDate.AddDays(1)) == 1) // archive
-                    .AsQueryable();
-
         public IQueryable<Course> GetQuerableBySearch(string search)
         {
             var coursesAsQuerable = this.db.Courses.AsQueryable();
@@ -165,5 +154,16 @@
 
             return coursesAsQuerable;
         }
+
+        public IQueryable<Course> GetQuerableByStatus(IQueryable<Course> coursesAsQuerable, bool? isActive)
+            => isActive == null // all
+            ? coursesAsQuerable
+            : (bool)isActive
+                ? coursesAsQuerable
+                    .Where(c => DateTime.UtcNow <= c.EndDate) // active
+                    .AsQueryable()
+                : coursesAsQuerable
+                    .Where(c => c.EndDate < DateTime.UtcNow) // archive
+                    .AsQueryable();
     }
 }

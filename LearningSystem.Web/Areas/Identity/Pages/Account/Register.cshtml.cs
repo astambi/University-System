@@ -80,8 +80,8 @@
 
             public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
             {
-                var isNotBornYet = DateTime.Compare((DateTime)this.Birthdate, DateTime.UtcNow.Date) == 1;
-                if (isNotBornYet)
+                var isFutureDate = DateTime.UtcNow.Date < this.Birthdate.Value.Date;
+                if (isFutureDate)
                 {
                     yield return new ValidationResult(DataConstants.UserBirthdate,
                         new[] { nameof(this.Birthdate) });
@@ -102,7 +102,7 @@
                     UserName = this.Input.UserName,
                     Email = this.Input.Email,
                     Name = this.Input.Name,
-                    Birthdate = (DateTime)this.Input.Birthdate
+                    Birthdate = this.Input.Birthdate.Value
                 };
 
                 var result = await this._userManager.CreateAsync(user, this.Input.Password);

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
 
@@ -23,6 +24,37 @@
         public static string ToCurrency(this decimal price)
             => price.ToString(CurrencyFormat);
 
+        public static string ToFriendlyName(this string text)
+        {
+            var containsMidUpperLetter = text
+                .Skip(1)
+                .Any(ch => char.IsUpper(ch));
+
+            if (!containsMidUpperLetter)
+            {
+                return text;
+            }
+
+            var builder = new StringBuilder()
+                .Append(text[0]);
+
+            for (int i = 1; i < text.Length; i++)
+            {
+                var symbol = text[i];
+                if (char.IsUpper(symbol))
+                {
+                    builder.Append(" ");
+                }
+
+                builder.Append(symbol);
+            }
+
+            return builder.ToString().Trim();
+        }
+
+        public static string ToFriendlyUrl(this string text)
+            => Regex.Replace(TranslitConvert(text), @"[^A-Za-z0-9_\.~]+", "-");
+
         public static string ToNumber(this int number)
             => number.ToString(NumberFormat);
 
@@ -31,9 +63,6 @@
 
         public static string ToPercentage(this double percentage)
             => percentage.ToString(PercentageFormat);
-
-        public static string ToFriendlyUrl(this string text)
-            => Regex.Replace(TranslitConvert(text), @"[^A-Za-z0-9_\.~]+", "-");
 
         private static string TranslitConvert(string text)
         {

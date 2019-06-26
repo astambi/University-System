@@ -8,8 +8,8 @@
     {
         public IEnumerable<ArticleWithAuthorListingServiceModel> Articles { get; set; }
 
-        public PaginationModel Pagination { get; set; }
+        public PaginationViewModel Pagination { get; set; }
 
-        public SearchModel Search { get; set; }
+        public SearchViewModel Search { get; set; }
     }
 }

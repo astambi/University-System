@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
+    using LearningSystem.Common.Infrastructure.Extensions;
     using LearningSystem.Data;
     using LearningSystem.Data.Models;
     using LearningSystem.Services.Admin.Models;
@@ -23,8 +24,8 @@
         public async Task CreateAsync(
             string name,
             string description,
-            DateTime startDate,
-            DateTime endDate,
+            DateTime startDate, // local time
+            DateTime endDate, // local time
             string trainerId)
         {
             var trainerExists = this.db.Users.Any(u => u.Id == trainerId);
@@ -37,8 +38,8 @@
             {
                 Name = name,
                 Description = description,
-                StartDate = startDate,
-                EndDate = endDate,
+                StartDate = startDate.ToStartDateUtc(),
+                EndDate = endDate.ToEndDateUtc(),
                 TrainerId = trainerId
             };
 
@@ -68,8 +69,8 @@
             int id,
             string name,
             string description,
-            DateTime startDate,
-            DateTime endDate,
+            DateTime startDate, // local time
+            DateTime endDate, // local time
             string trainerId)
         {
             var course = await this.db.Courses.FindAsync(id);
@@ -86,8 +87,8 @@
 
             course.Name = name;
             course.Description = description;
-            course.StartDate = startDate;
-            course.EndDate = endDate;
+            course.StartDate = startDate.ToStartDateUtc();
+            course.EndDate = endDate.ToEndDateUtc();
             course.TrainerId = trainerId;
 
             await this.db.SaveChangesAsync();

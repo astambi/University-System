@@ -37,7 +37,7 @@
                 return this.RedirectToAction(nameof(CoursesController.Index));
             }
 
-            var pagination = new PaginationModel
+            var pagination = new PaginationViewModel
             {
                 SearchTerm = search,
                 Action = nameof(Index),
@@ -51,7 +51,7 @@
             {
                 Courses = courses,
                 Pagination = pagination,
-                Search = new SearchModel { SearchTerm = search, Placeholder = WebConstants.SearchByCourseName }
+                Search = new SearchViewModel { SearchTerm = search, Placeholder = WebConstants.SearchByCourseName }
             };
 
             return this.View(model);
@@ -76,13 +76,13 @@
             var isTrainer = await this.trainerService.IsTrainerForCourseAsync(userId, id);
             if (!isTrainer)
             {
-                this.TempData.AddErrorMessage(WebConstants.NotCourseTrainerMsg);
+                this.TempData.AddErrorMessage(WebConstants.NotTrainerForCourseMsg);
                 return this.RedirectToAction(nameof(Index));
             }
 
             var model = new StudentCourseGradeViewModel
             {
-                Course = await this.trainerService.CourseAsync(userId, id),
+                Course = await this.trainerService.CourseByIdAsync(userId, id),
                 Students = await this.trainerService.StudentsInCourseAsync(id)
             };
 
@@ -115,11 +115,11 @@
             var isTrainer = await this.trainerService.IsTrainerForCourseAsync(userId, id);
             if (!isTrainer)
             {
-                this.TempData.AddErrorMessage(WebConstants.NotCourseTrainerMsg);
+                this.TempData.AddErrorMessage(WebConstants.NotTrainerForCourseMsg);
                 return this.RedirectToAction(nameof(Index));
             }
 
-            var courseHasEnded = await this.trainerService.CourseHasEnded(id);
+            var courseHasEnded = await this.trainerService.CourseHasEndedAsync(id);
             if (!courseHasEnded)
             {
                 this.TempData.AddErrorMessage(WebConstants.CourseHasNotEndedMsg);
@@ -133,7 +133,7 @@
                 return this.RedirectToAction(nameof(Students), routeValues: new { id });
             }
 
-            await this.trainerService.AssessStudentCoursePerformance(
+            await this.trainerService.AssessStudentCoursePerformanceAsync(
                 userId,
                 id,
                 model.StudentId,

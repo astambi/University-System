@@ -2,7 +2,7 @@
 {
     using LearningSystem.Web.Infrastructure.Helpers;
 
-    public class PaginationModel
+    public class PaginationViewModel
     {
         public string Action { get; set; } = WebConstants.Index;
 

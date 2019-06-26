@@ -74,8 +74,8 @@
 
             public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
             {
-                var isNotBornYet = DateTime.Compare(DateTime.UtcNow.Date, this.Birthdate) == -1;
-                if (isNotBornYet)
+                var isFutureDate = DateTime.UtcNow.Date < this.Birthdate.Date;
+                if (isFutureDate)
                 {
                     yield return new ValidationResult(DataConstants.UserBirthdate,
                         new[] { nameof(this.Birthdate) });
@@ -108,7 +108,7 @@
                 PhoneNumber = phoneNumber,
                 //Custom User Data
                 Name = profileToEdit?.Name,
-                Birthdate = profileToEdit?.Birthdate ?? DateTime.UtcNow
+                Birthdate = profileToEdit?.Birthdate.Date ?? DateTime.UtcNow
             };
 
             this.IsEmailConfirmed = await this._userManager.IsEmailConfirmedAsync(user);

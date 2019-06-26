@@ -9,6 +9,7 @@
         public const string AdministratorRole = "Administrator";
         public const string BlogAuthorRole = "BlogAuthor";
         public const string TrainerRole = "Trainer";
+        public const string StudentRole = "Student";
         // Student Role => default role for registered users
 
         // Admin
@@ -56,7 +57,9 @@
         // Notifications
         public const string ArticleNotFoundMsg = "Article not found.";
         public const string ArticlePublishedMsg = "Article published successfully.";
+
         public const string FormErrorsMsg = "Review the form for errors.";
+
         public const string CourseCreatedMsg = "Course created successfully.";
         public const string CourseDeletedMsg = "Course deleted successfully.";
         public const string CourseEnrollmentClosedMsg = "Course is closed for enrollment after start date.";
@@ -64,14 +67,19 @@
         public const string CourseHasNotEndedMsg = "Course has not ended.";
         public const string CourseNotFoundMsg = "Course not found.";
         public const string CourseUpdatedMsg = "Course updated successfully.";
+
         public const string ExternalLoginInfoErrorMsg = "Unable to load external login info.";
         public const string Disable2faErrorMsg = "Cannot disable 2FA for user.";
+
         public const string InvalidIdentityOrRoleMsg = "Invalid identity or role.";
         public const string InvalidUserMsg = "Invalid user.";
-        public const string NotCourseTrainerMsg = "Not authorized as trainer for this course.";
+
         public const string StudentAssessmentErrorMsg = "Student assessment error.";
         public const string StudentNotEnrolledInCourseMsg = "Student not enrolled in this course.";
+
+        public const string NotTrainerForCourseMsg = "Not authorized as trainer for this course.";
         public const string TrainersAssessPerformanceAfterCourseEndsMsg = "Trainers can assess students' course performance only when the course is over.";
+
         public const string UserAvddedToRoleMsg = "User {0} added to role {1}.";
         public const string UserAlreadyEnrolledInCourseMsg = "User already enrolled in this course.";
         public const string UserCancelledEnrollmentInCourseMsg = "Course enrollment cancelled successfully.";
@@ -80,6 +88,7 @@
         public const string UserNotEnrolledInCourseMsg = "User not enrolled in this course.";
         public const string UserAddedToRoleMsg = "User {0} added to role {1}.";
         public const string UserRemovedFromRoleMsg = "User {0} removed from role {1}.";
+
         public const string SearchByArticleTitleOrContent = "Search by title or content";
         public const string SearchByCourseName = "Search by course name";
         public const string SearchByUserName = "Search by name";
@@ -93,6 +102,7 @@
                 [TempDataErrorMessageKey] = ErrorStyle,
                 [TempDataInfoMessageKey] = InfoStyle,
                 [TempDataSuccessMessageKey] = SuccessStyle,
+
                 [FormActionEnum.Add.ToString()] = CreateStyle,
                 [FormActionEnum.Cancel.ToString()] = DeleteStyle,
                 [FormActionEnum.Create.ToString()] = CreateStyle,

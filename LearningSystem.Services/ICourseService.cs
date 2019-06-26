@@ -34,8 +34,8 @@
 
         Task<int> TotalArchivedAsync(string search = null);
 
-        IQueryable<Course> GetQuerableByStatus(IQueryable<Course> coursesAsQuerable, bool? isActive = null); // all by default
-
         IQueryable<Course> GetQuerableBySearch(string search);
+
+        IQueryable<Course> GetQuerableByStatus(IQueryable<Course> coursesAsQuerable, bool? isActive = null); // all by default
     }
 }

@@ -5,7 +5,9 @@
     public static class DateTimeExtensions
     {
         public static string ToDate(this DateTime dateTime)
-            => dateTime.ToLocalTime().ToShortDateString();
+            => dateTime
+            .ToLocalTime()
+            .ToShortDateString();
 
         public static string ToDays(this int days)
         {

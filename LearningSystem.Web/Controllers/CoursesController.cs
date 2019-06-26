@@ -29,7 +29,7 @@
 
         public async Task<IActionResult> Index(string search = null, int currentPage = 1)
         {
-            var pagination = new PaginationModel
+            var pagination = new PaginationViewModel
             {
                 SearchTerm = search,
                 Action = nameof(Index),
@@ -43,7 +43,7 @@
             {
                 Courses = courses,
                 Pagination = pagination,
-                Search = new SearchModel { SearchTerm = search, Placeholder = WebConstants.SearchByCourseName }
+                Search = new SearchViewModel { SearchTerm = search, Placeholder = WebConstants.SearchByCourseName }
             };
 
             return this.View(model);
@@ -51,7 +51,7 @@
 
         public async Task<IActionResult> Archive(string search = null, int currentPage = 1)
         {
-            var pagination = new PaginationModel
+            var pagination = new PaginationViewModel
             {
                 SearchTerm = search,
                 Action = nameof(Archive),
@@ -65,7 +65,7 @@
             {
                 Courses = courses,
                 Pagination = pagination,
-                Search = new SearchModel { SearchTerm = search, Placeholder = WebConstants.SearchByCourseName }
+                Search = new SearchViewModel { SearchTerm = search, Placeholder = WebConstants.SearchByCourseName }
             };
 
             return this.View(model);
@@ -87,13 +87,10 @@
             }
 
             var userId = this.userManager.GetUserId(this.User);
-            if (userId == null)
+            if (userId != null)
             {
-                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RedirectToAction(nameof(Index));
+                course.IsUserEnrolled = await this.courseService.UserIsEnrolledInCourseAsync(id, userId);
             }
-
-            course.IsUserEnrolled = await this.courseService.UserIsEnrolledInCourseAsync(id, userId);
 
             return this.View(course);
         }

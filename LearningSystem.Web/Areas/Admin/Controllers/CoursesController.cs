@@ -156,6 +156,8 @@
             var model = this.mapper.Map<CourseFormModel>(course);
             model.Trainers = await this.GetTrainersAsync();
             model.Action = action;
+            model.StartDate = model.StartDate.ToLocalTime();
+            model.EndDate = model.EndDate.ToLocalTime();
 
             return this.View(CourseFormView, model);
         }
