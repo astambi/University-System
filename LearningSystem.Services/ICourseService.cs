@@ -8,6 +8,8 @@
 
     public interface ICourseService
     {
+        Task AddExamSubmission(int id, string userId, byte[] examFileBytes);
+
         Task<IEnumerable<CourseServiceModel>> AllActiveWithTrainersAsync(
             string search = null,
             int page = 1,
@@ -28,14 +30,14 @@
 
         Task<CourseDetailsServiceModel> GetByIdAsync(int id);
 
-        Task<bool> UserIsEnrolledInCourseAsync(int courseId, string userId);
+        IQueryable<Course> GetQuerableBySearch(string search);
+
+        IQueryable<Course> GetQuerableByStatus(IQueryable<Course> coursesAsQuerable, bool? isActive = null); // all by default
+
+        Task<bool> IsUserEnrolledInCourseAsync(int courseId, string userId);
 
         Task<int> TotalActiveAsync(string search = null);
 
         Task<int> TotalArchivedAsync(string search = null);
-
-        IQueryable<Course> GetQuerableBySearch(string search);
-
-        IQueryable<Course> GetQuerableByStatus(IQueryable<Course> coursesAsQuerable, bool? isActive = null); // all by default
     }
 }

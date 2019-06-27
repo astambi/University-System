@@ -8,11 +8,11 @@
         <select name="Role" asp-items="@Model.Roles" class="form-control"></select>
         @if (Model.Action == FormActionEnum.Add)
         {
-            <button type="submit" class="btn btn-outline-primary"><i class="fa fa-plus"></i></button>
+            <button type="submit" class="btn btn-@StyleHelpers.ToStyle(FormActionEnum.Add)"><i class="fa fa-plus"></i></button>
         }
         else if (Model.Action == FormActionEnum.Remove)
         {
-            <button type="submit" class="btn btn-outline-danger"><i class="fa fa-minus"></i></button>
+            <button type="submit" class="btn btn-@StyleHelpers.ToStyle(FormActionEnum.Remove)"><i class="fa fa-minus"></i></button>
         }
     </div>
 </form>

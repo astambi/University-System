@@ -33,6 +33,8 @@
 
         public ICollection<StudentCourse> Students { get; set; } = new List<StudentCourse>();
 
+        public ICollection<ExamSubmission> ExamSubmissions { get; set; } = new List<ExamSubmission>();
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var hasStartBeforeToday = this.StartDate.ToLocalTime().Date < DateTime.Now.Date;

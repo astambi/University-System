@@ -2,12 +2,14 @@
 {
     using System.Threading.Tasks;
     using AutoMapper;
+    using LearningSystem.Data;
     using LearningSystem.Data.Models;
     using LearningSystem.Services;
     using LearningSystem.Web.Infrastructure.Extensions;
     using LearningSystem.Web.Models;
     using LearningSystem.Web.Models.Courses;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
 
@@ -72,6 +74,7 @@
         }
 
         [Authorize]
+        [HttpPost]
         public async Task<IActionResult> Cancel(int id)
             => await this.UpdateEnrollment(id, false);
 
@@ -89,15 +92,75 @@
             var userId = this.userManager.GetUserId(this.User);
             if (userId != null)
             {
-                course.IsUserEnrolled = await this.courseService.UserIsEnrolledInCourseAsync(id, userId);
+                course.IsUserEnrolled = await this.courseService.IsUserEnrolledInCourseAsync(id, userId);
             }
 
             return this.View(course);
         }
 
         [Authorize]
+        [HttpPost]
         public async Task<IActionResult> Enroll(int id)
             => await this.UpdateEnrollment(id, true);
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> UploadExam(int id, IFormFile examFile)
+        {
+            var course = await this.courseService.GetByIdAsync(id);
+            if (course == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            var userId = this.userManager.GetUserId(this.User);
+            if (userId == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            var isEnrolled = await this.courseService.IsUserEnrolledInCourseAsync(id, userId);
+            if (!isEnrolled)
+            {
+                this.TempData.AddErrorMessage(WebConstants.UserNotEnrolledInCourseMsg);
+                return this.RedirectToAction(nameof(Details), routeValues: new { id });
+            }
+
+            if (!course.IsExamSubmissionDate)
+            {
+                this.TempData.AddErrorMessage(WebConstants.FileSubmittionDateMsg);
+                return this.RedirectToAction(nameof(Details), routeValues: new { id });
+            }
+
+            if (examFile == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.FileNotSubmittedMsg);
+                return this.RedirectToAction(nameof(Details), routeValues: new { id });
+            }
+
+            if (!examFile.FileName.EndsWith($".{DataConstants.FileType}")
+                || !examFile.ContentType.Contains(DataConstants.FileType))
+            {
+                this.TempData.AddErrorMessage(string.Format(WebConstants.FileFormatInvalidMsg, DataConstants.FileType));
+                return this.RedirectToAction(nameof(Details), routeValues: new { id });
+            }
+
+            if (examFile.Length == 0
+                || examFile.Length > DataConstants.FileMaxLengthInBytes)
+            {
+                this.TempData.AddErrorMessage(string.Format(WebConstants.FileSizeInvalidMsg, DataConstants.FileMaxLengthInMb));
+                return this.RedirectToAction(nameof(Details), routeValues: new { id });
+            }
+
+            var fileBytes = await examFile.ToByteArray();
+            await this.courseService.AddExamSubmission(id, userId, fileBytes);
+
+            this.TempData.AddSuccessMessage(WebConstants.ExamSubmittedMsg);
+
+            return this.RedirectToAction(nameof(Details), routeValues: new { id });
+        }
 
         private async Task<IActionResult> TryCancel(int id, string userId, bool isEnrolled)
         {
@@ -148,7 +211,7 @@
                 return this.RedirectToAction(nameof(Index));
             }
 
-            var isEnrolled = await this.courseService.UserIsEnrolledInCourseAsync(id, userId);
+            var isEnrolled = await this.courseService.IsUserEnrolledInCourseAsync(id, userId);
 
             return enrollAction
                 ? await this.TryEnroll(id, userId, isEnrolled)

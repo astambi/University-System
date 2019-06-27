@@ -3,5 +3,5 @@
 <form asp-controller="@WebConstants.CoursesController"
       asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Enroll)"
       asp-route-id="@Model" method="post" class="bg-transparent border border-white">
-    <button type="submit" class="btn btn-@StyleHelpers.ToStyle(FormActionEnum.Enroll)">@FormActionEnum.Enroll</button>
+    <partial name="_FormSubmitPartial" model="@FormActionEnum.Enroll" />
 </form>

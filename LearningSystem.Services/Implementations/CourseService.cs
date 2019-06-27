@@ -24,6 +24,25 @@
             this.mapper = mapper;
         }
 
+        public async Task AddExamSubmission(int id, string userId, byte[] examFileBytes)
+        {
+            if (!await this.IsUserEnrolledInCourseAsync(id, userId))
+            {
+                return;
+            }
+
+            var examSubmission = new ExamSubmission
+            {
+                CourseId = id,
+                StudentId = userId,
+                FileSubmission = examFileBytes,
+                SubmissionDate = DateTime.UtcNow
+            };
+
+            await this.db.ExamSubmissions.AddAsync(examSubmission);
+            await this.db.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<CourseServiceModel>> AllActiveWithTrainersAsync(
             string search = null,
             int page = 1,
@@ -51,7 +70,7 @@
         {
             if (!await this.CanEnrollAsync(courseId)
                 || !await this.db.Users.AnyAsync(u => u.Id == userId)
-                || !await this.UserIsEnrolledInCourseAsync(courseId, userId))
+                || !await this.IsUserEnrolledInCourseAsync(courseId, userId))
             {
                 return;
             }
@@ -74,7 +93,7 @@
         {
             if (!await this.CanEnrollAsync(courseId)
                 || !await this.db.Users.AnyAsync(u => u.Id == userId)
-                || await this.UserIsEnrolledInCourseAsync(courseId, userId))
+                || await this.IsUserEnrolledInCourseAsync(courseId, userId))
             {
                 return;
             }
@@ -98,7 +117,32 @@
             })
             .FirstOrDefaultAsync();
 
-        public async Task<bool> UserIsEnrolledInCourseAsync(int courseId, string userId)
+        public IQueryable<Course> GetQuerableBySearch(string search)
+        {
+            var coursesAsQuerable = this.db.Courses.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                coursesAsQuerable = coursesAsQuerable
+                    .Where(c => c.Name.ToLower().Contains(search.Trim().ToLower()))
+                    .AsQueryable();
+            }
+
+            return coursesAsQuerable;
+        }
+
+        public IQueryable<Course> GetQuerableByStatus(IQueryable<Course> coursesAsQuerable, bool? isActive)
+            => isActive == null // all
+            ? coursesAsQuerable
+            : (bool)isActive
+                ? coursesAsQuerable
+                    .Where(c => DateTime.UtcNow <= c.EndDate) // active
+                    .AsQueryable()
+                : coursesAsQuerable
+                    .Where(c => c.EndDate < DateTime.UtcNow) // archive
+                    .AsQueryable();
+
+        public async Task<bool> IsUserEnrolledInCourseAsync(int courseId, string userId)
             => await this.db
             .Courses
             .AnyAsync(c => c.Id == courseId
@@ -140,30 +184,5 @@
 
             return courses.Select(c => c.Course).ToList();
         }
-
-        public IQueryable<Course> GetQuerableBySearch(string search)
-        {
-            var coursesAsQuerable = this.db.Courses.AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                coursesAsQuerable = coursesAsQuerable
-                    .Where(c => c.Name.ToLower().Contains(search.Trim().ToLower()))
-                    .AsQueryable();
-            }
-
-            return coursesAsQuerable;
-        }
-
-        public IQueryable<Course> GetQuerableByStatus(IQueryable<Course> coursesAsQuerable, bool? isActive)
-            => isActive == null // all
-            ? coursesAsQuerable
-            : (bool)isActive
-                ? coursesAsQuerable
-                    .Where(c => DateTime.UtcNow <= c.EndDate) // active
-                    .AsQueryable()
-                : coursesAsQuerable
-                    .Where(c => c.EndDate < DateTime.UtcNow) // archive
-                    .AsQueryable();
     }
 }

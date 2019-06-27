@@ -33,6 +33,14 @@
         }
 
         <ul class="list-group list-group-flush">
+            @if (Model.IsUserEnrolled && Model.IsExamSubmissionDate)
+            {
+                <partial name="_CourseHeaderPartial" model="@(" Exam Submission")" />
+                <li class="list-group-item">
+                    <partial name="_FileUploadFormPartial" for="Course.Id" />
+                </li>
+            }
+
             <partial name="_CourseHeaderPartial" model="@(" Description")" />
             <li class="list-group-item">@Model.Course.Description</li>
 

@@ -11,6 +11,7 @@
         Cancel = 6,
         Grade = 7,
         Search = 8,
+        Upload = 9,
         Default = 99
     }
 }

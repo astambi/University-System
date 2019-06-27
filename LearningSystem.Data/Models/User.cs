@@ -22,6 +22,8 @@
 
         public ICollection<Article> Articles { get; set; } = new List<Article>();
 
+        public ICollection<ExamSubmission> ExamSubmissions { get; set; } = new List<ExamSubmission>();
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var isFutureDate = DateTime.Now.Date < this.Birthdate.ToLocalTime().Date;

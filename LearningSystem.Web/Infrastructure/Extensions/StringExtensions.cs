@@ -24,6 +24,9 @@
         public static string ToCurrency(this decimal price)
             => price.ToString(CurrencyFormat);
 
+        public static string ToFriendlyName(this Enum enumValue)
+            => ToFriendlyName(enumValue.ToString());
+
         public static string ToFriendlyName(this string text)
         {
             var containsMidUpperLetter = text

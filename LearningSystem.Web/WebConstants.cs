@@ -46,13 +46,20 @@
         public const int PageSize = 12;
 
         // Bootstrap Styles
-        public const string CreateStyle = "success";
-        public const string DeleteStyle = "danger";
-        public const string EditStyle = "warning";
+        public const string DangerStyle = "danger";
         public const string ErrorStyle = "danger";
         public const string InfoStyle = "info";
         public const string PrimaryStyle = "primary";
         public const string SuccessStyle = "success";
+        public const string WarningStyle = "warning";
+
+        public const string OutlineStyle = "outline-";
+        public const string OutlineDangerStyle = OutlineStyle + DangerStyle;
+        public const string OutlineErrorStyle = OutlineStyle + ErrorStyle;
+        public const string OutlineInfoStyle = OutlineStyle + InfoStyle;
+        public const string OutlinePrimaryStyle = OutlineStyle + PrimaryStyle;
+        public const string OutlineSuccessStyle = OutlineStyle + SuccessStyle;
+        public const string OutlineWarningStyle = OutlineStyle + WarningStyle;
 
         // Notifications
         public const string ArticleNotFoundMsg = "Article not found.";
@@ -70,6 +77,13 @@
 
         public const string ExternalLoginInfoErrorMsg = "Unable to load external login info.";
         public const string Disable2faErrorMsg = "Cannot disable 2FA for user.";
+
+        public const string ExamSubmittedMsg = "Exam file submitted successfully.";
+
+        public const string FileFormatInvalidMsg = "File format should be {0}.";
+        public const string FileSubmittionDateMsg = "File can only be submitted on exam date.";
+        public const string FileNotSubmittedMsg = "No file was submitted.";
+        public const string FileSizeInvalidMsg = "File size should not exceed {0} MB.";
 
         public const string InvalidIdentityOrRoleMsg = "Invalid identity or role.";
         public const string InvalidUserMsg = "Invalid user.";
@@ -103,16 +117,17 @@
                 [TempDataInfoMessageKey] = InfoStyle,
                 [TempDataSuccessMessageKey] = SuccessStyle,
 
-                [FormActionEnum.Add.ToString()] = CreateStyle,
-                [FormActionEnum.Cancel.ToString()] = DeleteStyle,
-                [FormActionEnum.Create.ToString()] = CreateStyle,
-                [FormActionEnum.Default.ToString()] = PrimaryStyle,
-                [FormActionEnum.Delete.ToString()] = DeleteStyle,
-                [FormActionEnum.Edit.ToString()] = EditStyle,
-                [FormActionEnum.Enroll.ToString()] = CreateStyle,
-                [FormActionEnum.Grade.ToString()] = SuccessStyle,
-                [FormActionEnum.Search.ToString()] = InfoStyle,
-                [FormActionEnum.Remove.ToString()] = DeleteStyle,
+                [FormActionEnum.Add.ToString()] = OutlineSuccessStyle,
+                [FormActionEnum.Cancel.ToString()] = DangerStyle,
+                [FormActionEnum.Create.ToString()] = OutlineSuccessStyle,
+                [FormActionEnum.Default.ToString()] = OutlinePrimaryStyle,
+                [FormActionEnum.Delete.ToString()] = OutlineDangerStyle,
+                [FormActionEnum.Edit.ToString()] = OutlineWarningStyle,
+                [FormActionEnum.Enroll.ToString()] = SuccessStyle,
+                [FormActionEnum.Grade.ToString()] = OutlineSuccessStyle,
+                [FormActionEnum.Remove.ToString()] = OutlineDangerStyle,
+                [FormActionEnum.Search.ToString()] = OutlineInfoStyle,
+                [FormActionEnum.Upload.ToString()] = OutlineSuccessStyle,
             };
         }
     }

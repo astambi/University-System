@@ -126,7 +126,7 @@
                 return this.RedirectToAction(nameof(Students), routeValues: new { id });
             }
 
-            var isStudentInCourse = await this.courseService.UserIsEnrolledInCourseAsync(model.CourseId, model.StudentId);
+            var isStudentInCourse = await this.courseService.IsUserEnrolledInCourseAsync(model.CourseId, model.StudentId);
             if (!isStudentInCourse)
             {
                 this.TempData.AddErrorMessage(WebConstants.StudentNotEnrolledInCourseMsg);
