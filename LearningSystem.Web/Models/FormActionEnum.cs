@@ -12,6 +12,7 @@
         Grade = 7,
         Search = 8,
         Upload = 9,
+        Download = 10,
         Default = 99
     }
 }

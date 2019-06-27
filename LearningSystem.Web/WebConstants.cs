@@ -89,6 +89,7 @@
         public const string InvalidUserMsg = "Invalid user.";
 
         public const string StudentAssessmentErrorMsg = "Student assessment error.";
+        public const string StudentHasNotSubmittedExamMsg = "Student has not submitted an exam.";
         public const string StudentNotEnrolledInCourseMsg = "Student not enrolled in this course.";
 
         public const string NotTrainerForCourseMsg = "Not authorized as trainer for this course.";
@@ -116,12 +117,12 @@
                 [TempDataErrorMessageKey] = ErrorStyle,
                 [TempDataInfoMessageKey] = InfoStyle,
                 [TempDataSuccessMessageKey] = SuccessStyle,
-
                 [FormActionEnum.Add.ToString()] = OutlineSuccessStyle,
                 [FormActionEnum.Cancel.ToString()] = DangerStyle,
                 [FormActionEnum.Create.ToString()] = OutlineSuccessStyle,
                 [FormActionEnum.Default.ToString()] = OutlinePrimaryStyle,
                 [FormActionEnum.Delete.ToString()] = OutlineDangerStyle,
+                [FormActionEnum.Download.ToString()] = OutlineInfoStyle,
                 [FormActionEnum.Edit.ToString()] = OutlineWarningStyle,
                 [FormActionEnum.Enroll.ToString()] = SuccessStyle,
                 [FormActionEnum.Grade.ToString()] = OutlineSuccessStyle,

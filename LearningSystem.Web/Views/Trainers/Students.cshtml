@@ -1,42 +1,64 @@
 ﻿@model StudentCourseGradeViewModel
 @{
     ViewData["Title"] = "Students";
+    var courseHasEnded = Model.Course.EndDate < DateTime.UtcNow;
 }
 
 <h1>Course</h1>
 <partial name="_CourseCardPartial" for="Course" />
 
 <h1>Students</h1>
-<table class="table table-hover">
+<table class="table">
     <thead>
         <tr class="align-bottom">
             <th>Student</th>
             <th>Username</th>
             <th>Email</th>
-            <th>Grade</th>
-            <th></th>
+            @if (courseHasEnded)
+            {
+                <th>Exam</th>
+                <th>Grade</th>
+                <th>Assessment</th>
+            }
         </tr>
     </thead>
     <tbody>
         @foreach (var student in Model.Students)
         {
-            var formModel = new StudentCourseGradeFormModel
-            {
-                CourseId = Model.Course.Id,
-                StudentId = student.Student.Id,
-                Grade = student.Grade
-            };
             <tr>
                 <td>@student.Student.Name</td>
                 <td>@student.Student.Username</td>
                 <td>@student.Student.Email</td>
-                <td>@student.Grade</td>
-                <td>
-                    @if (Model.Course.EndDate < DateTime.UtcNow)
-                    {
-                        <partial name="_GradeFormPartial" model="@formModel" />
-                    }
-                </td>
+
+                @if (courseHasEnded)
+                {
+                    <td>
+                        @if (student.HasExamSubmission)
+                        {
+                            <a asp-action="@nameof(TrainersController.DownloadExam)"
+                               asp-route-id="@Model.Course.Id"
+                               asp-route-studentId="@student.Student.Id"
+                               class="btn btn-@StyleHelpers.ToStyle(FormActionEnum.Download)"><i class="fa fa-download"></i></a>
+                        }
+                        else
+                        {
+                            <i class="fa fa-user-slash"></i>
+                        }
+                    </td>
+                    <td>@student.Grade</td>
+                    <td>
+                        @if (student.HasExamSubmission)
+                        {
+                            var formModel = new StudentCourseGradeFormModel
+                            {
+                                CourseId = Model.Course.Id,
+                                StudentId = student.Student.Id,
+                                Grade = student.Grade
+                            };
+                            <partial name="_GradeFormPartial" model="@formModel" />
+                        }
+                    </td>
+                }
             </tr>
         }
     </tbody>

@@ -7,5 +7,7 @@
         public UserServiceModel Student { get; set; }
 
         public Grade? Grade { get; set; }
+
+        public bool HasExamSubmission { get; set; }
     }
 }

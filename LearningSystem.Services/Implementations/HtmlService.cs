@@ -1,4 +1,4 @@
-﻿namespace LearningSystem.Services.Html.Implementations
+﻿namespace LearningSystem.Services.Implementations
 {
     using Ganss.XSS;
 

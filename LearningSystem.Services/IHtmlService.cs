@@ -1,4 +1,4 @@
-﻿namespace LearningSystem.Services.Html
+﻿namespace LearningSystem.Services
 {
     public interface IHtmlService
     {

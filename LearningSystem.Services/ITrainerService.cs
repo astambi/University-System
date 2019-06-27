@@ -20,6 +20,8 @@
 
         Task<bool> CourseHasEndedAsync(int courseId);
 
+        Task<ExamDownloadServiceModel> DownloadExam(string trainerId, int courseId, string studentId);
+
         Task<bool> IsTrainerForCourseAsync(string userId, int courseId);
 
         Task<IEnumerable<StudentInCourseServiceModel>> StudentsInCourseAsync(int courseId);

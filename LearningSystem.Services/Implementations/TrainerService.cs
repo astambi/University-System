@@ -50,7 +50,8 @@
             string search = null,
             int page = 1,
             int pageSize = ServicesConstants.PageSize)
-            => await this.courseService.GetQuerableBySearch(search)
+            => await this.courseService
+            .GetQuerableBySearch(search)
             .Where(c => c.TrainerId == trainerId)
             .OrderByDescending(c => c.StartDate)
             .ThenByDescending(c => c.EndDate)
@@ -60,20 +61,40 @@
             .ToListAsync();
 
         public async Task<CourseServiceModel> CourseByIdAsync(string trainerId, int courseId)
-                    => await this.db
-                    .Courses
-                    .Where(c => c.Id == courseId)
-                    .Where(c => c.TrainerId == trainerId)
-                    .Select(c => this.mapper.Map<CourseServiceModel>(c))
-                    .FirstOrDefaultAsync();
+            => await this.db
+            .Courses
+            .Where(c => c.Id == courseId)
+            .Where(c => c.TrainerId == trainerId)
+            .Select(c => this.mapper.Map<CourseServiceModel>(c))
+            .FirstOrDefaultAsync();
 
         public async Task<bool> CourseHasEndedAsync(int id)
-            => await this.db.Courses
-            .AnyAsync(c => c.Id == id
-                        && c.EndDate < DateTime.UtcNow);
+            => await this.db
+            .Courses
+            .AnyAsync(c => c.Id == id && c.EndDate < DateTime.UtcNow);
+
+        public async Task<ExamDownloadServiceModel> DownloadExam(string trainerId, int courseId, string studentId)
+            => await this.IsTrainerForCourseAsync(trainerId, courseId)
+            && await this.CourseHasEndedAsync(courseId)
+            ? await this.db
+                .ExamSubmissions
+                .Where(e => e.CourseId == courseId)
+                .Where(e => e.StudentId == studentId)
+                .OrderByDescending(e => e.SubmissionDate)
+                .Select(e => new ExamDownloadServiceModel
+                {
+                    FileSubmission = e.FileSubmission,
+                    SubmissionDate = e.SubmissionDate,
+                    Student = e.Student.UserName,
+                    Course = e.Course.Name
+                })
+                .FirstOrDefaultAsync()
+            : null;
 
         public async Task<bool> IsTrainerForCourseAsync(string userId, int courseId)
-            => await this.db.Courses.AnyAsync(c => c.Id == courseId && c.TrainerId == userId);
+            => await this.db
+            .Courses
+            .AnyAsync(c => c.Id == courseId && c.TrainerId == userId);
 
         public async Task<IEnumerable<StudentInCourseServiceModel>> StudentsInCourseAsync(int courseId)
             => await this.db
@@ -83,12 +104,17 @@
             .Select(sc => new StudentInCourseServiceModel
             {
                 Student = this.mapper.Map<UserServiceModel>(sc.Student),
-                Grade = sc.Grade
+                Grade = sc.Grade,
+                HasExamSubmission = sc
+                    .Student
+                    .ExamSubmissions
+                    .Any(e => e.CourseId == sc.CourseId)
             })
             .ToListAsync();
 
         public async Task<int> TotalCoursesAsync(string trainerId, string search = null)
-            => await this.courseService.GetQuerableBySearch(search)
+            => await this.courseService
+            .GetQuerableBySearch(search)
             .Where(c => c.TrainerId == trainerId)
             .CountAsync();
     }

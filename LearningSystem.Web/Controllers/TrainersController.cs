@@ -1,6 +1,7 @@
 ﻿namespace LearningSystem.Web.Controllers
 {
     using System.Threading.Tasks;
+    using LearningSystem.Data;
     using LearningSystem.Data.Models;
     using LearningSystem.Services;
     using LearningSystem.Web.Infrastructure.Extensions;
@@ -140,6 +141,48 @@
                 (Grade)model.Grade);
 
             return this.RedirectToAction(nameof(Students), routeValues: new { id });
+        }
+
+        public async Task<IActionResult> DownloadExam(int id, string studentId)
+        {
+            var course = await this.courseService.GetByIdAsync(id);
+            if (course == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            var userId = this.userManager.GetUserId(this.User);
+            if (userId == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            var isTrainer = await this.trainerService.IsTrainerForCourseAsync(userId, id);
+            if (!isTrainer)
+            {
+                this.TempData.AddErrorMessage(WebConstants.NotTrainerForCourseMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            var courseHasEnded = await this.trainerService.CourseHasEndedAsync(id);
+            if (!courseHasEnded)
+            {
+                this.TempData.AddErrorMessage(WebConstants.CourseHasNotEndedMsg);
+                return this.RedirectToAction(nameof(Students), routeValues: new { id });
+            }
+
+            var exam = await this.trainerService.DownloadExam(userId, id, studentId);
+            if (exam == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.StudentHasNotSubmittedExamMsg);
+                return this.RedirectToAction(nameof(Students), routeValues: new { id });
+            }
+
+            var fileName = $"{exam.Course} - {exam.Student} - {exam.SubmissionDate.ToLocalTime()}.{DataConstants.FileType}";
+
+            return this.File(exam.FileSubmission, "application/zip", fileName);
         }
     }
 }
