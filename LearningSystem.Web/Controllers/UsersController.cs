@@ -52,6 +52,7 @@
         }
 
         [AllowAnonymous]
+        [Route(nameof(Certificate) + "/{id}")]
         public async Task<IActionResult> Certificate(string id) // read by pdfConverter
         {
             var certificate = await this.userService.GetCertificateDataAsync(id);
@@ -79,10 +80,12 @@
                 return this.RedirectToAction(nameof(HomeController.Index));
             }
 
-            return new FileContentResult(pdf, "application/pdf")
-            {
-                FileDownloadName = "Certificate.pdf"
-            };
+            return this.File(pdf, "application/pdf", "Certificate.pdf");
+
+            //return new FileContentResult(pdf, "application/pdf")
+            //{
+            //    FileDownloadName = "Certificate.pdf"
+            //};
         }
     }
 }
