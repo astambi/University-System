@@ -17,6 +17,8 @@
 
         public DbSet<ExamSubmission> ExamSubmissions { get; set; }
 
+        public DbSet<Certificate> Certificates { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -63,6 +65,18 @@
                 .HasOne(e => e.Student)
                 .WithMany(st => st.ExamSubmissions)
                 .HasForeignKey(e => e.StudentId);
+
+            builder
+                .Entity<Certificate>()
+                .HasOne(c => c.Course)
+                .WithMany(c => c.Certificates)
+                .HasForeignKey(c => c.CourseId);
+
+            builder
+                .Entity<Certificate>()
+                .HasOne(c => c.Student)
+                .WithMany(st => st.Certificates)
+                .HasForeignKey(c => c.StudentId);
         }
     }
 }

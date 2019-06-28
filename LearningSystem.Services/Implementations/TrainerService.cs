@@ -27,6 +27,45 @@
             this.courseService = courseService;
         }
 
+        public async Task<bool> AddCertificateAsync(string trainerId, int courseId, string studentId, Grade grade)
+        {
+            if (!await this.IsTrainerForCourseAsync(trainerId, courseId)
+                || !await this.courseService.IsUserEnrolledInCourseAsync(courseId, studentId)
+                || !this.courseService.IsGradeEligibleForCertificate(grade))
+            {
+                return false;
+            }
+
+            var prevBestCertificate = await this.db
+                .Certificates
+                .Where(c => c.CourseId == courseId && c.StudentId == studentId)
+                .OrderBy(c => c.Grade)
+                .FirstOrDefaultAsync();
+
+            var canUpgradeCertificate =
+                prevBestCertificate == null // no prev certificate
+                || grade < prevBestCertificate.Grade; // Enum Grade value smaller is better (A = 0, B = 1, etc.)
+
+            if (!canUpgradeCertificate)
+            {
+                return false;
+            }
+
+            var certificate = new Certificate
+            {
+                Id = Guid.NewGuid().ToString().Replace("-", string.Empty),
+                StudentId = studentId,
+                CourseId = courseId,
+                Grade = grade,
+                IssueDate = DateTime.UtcNow
+            };
+
+            await this.db.Certificates.AddAsync(certificate);
+            await this.db.SaveChangesAsync();
+
+            return true;
+        }
+
         public async Task AssessStudentCoursePerformanceAsync(string trainerId, int courseId, string studentId, Grade grade)
         {
             if (!await this.IsTrainerForCourseAsync(trainerId, courseId)

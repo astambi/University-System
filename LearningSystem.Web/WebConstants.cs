@@ -65,7 +65,8 @@
         public const string ArticleNotFoundMsg = "Article not found.";
         public const string ArticlePublishedMsg = "Article published successfully.";
 
-        public const string FormErrorsMsg = "Review the form for errors.";
+        public const string CertificateIssuedMsg = "Course certificate issued successfully.";
+        public const string CertificateNotFoundMsg = "Certificate not found.";
 
         public const string CourseCreatedMsg = "Course created successfully.";
         public const string CourseDeletedMsg = "Course deleted successfully.";
@@ -75,9 +76,12 @@
         public const string CourseNotFoundMsg = "Course not found.";
         public const string CourseUpdatedMsg = "Course updated successfully.";
 
-        public const string ExternalLoginInfoErrorMsg = "Unable to load external login info.";
         public const string Disable2faErrorMsg = "Cannot disable 2FA for user.";
+        public const string ExternalLoginInfoErrorMsg = "Unable to load external login info.";
 
+        public const string FormErrorsMsg = "Review the form for errors.";
+
+        public const string ExamAssessedMsg = "Exam was assessed successfully.";
         public const string ExamSubmittedMsg = "Exam file submitted successfully.";
 
         public const string FileFormatInvalidMsg = "File format should be {0}.";

@@ -134,11 +134,19 @@
                 return this.RedirectToAction(nameof(Students), routeValues: new { id });
             }
 
-            await this.trainerService.AssessStudentCoursePerformanceAsync(
-                userId,
-                id,
-                model.StudentId,
-                (Grade)model.Grade);
+            var gradeValue = model.Grade.Value;
+            await this.trainerService.AssessStudentCoursePerformanceAsync(userId, id, model.StudentId, gradeValue);
+            this.TempData.AddSuccessMessage(WebConstants.ExamAssessedMsg);
+
+            // Issue new certificate
+            if (this.courseService.IsGradeEligibleForCertificate(model.Grade))
+            {
+                var success = await this.trainerService.AddCertificateAsync(userId, id, model.StudentId, model.Grade.Value);
+                if (success)
+                {
+                    this.TempData.AddSuccessMessage(WebConstants.CertificateIssuedMsg);
+                }
+            }
 
             return this.RedirectToAction(nameof(Students), routeValues: new { id });
         }

@@ -27,6 +27,23 @@
             => !await this.db.Courses.AnyAsync(c => c.TrainerId == id)
             && !await this.db.Articles.AnyAsync(a => a.AuthorId == id);
 
+        public async Task<CertificateServiceModel> GetCertificateDataAsync(string id)
+            => await this.db
+            .Certificates
+            .Where(c => c.Id == id)
+            .Select(c => new CertificateServiceModel
+            {
+                Id = id,
+                Course = c.Course.Name,
+                StartDate = c.Course.StartDate,
+                EndDate = c.Course.EndDate,
+                Student = c.Student.Name,
+                Grade = c.Grade,
+                Trainer = c.Course.Trainer.Name,
+                IssueDate = c.IssueDate
+            })
+            .FirstOrDefaultAsync();
+
         public async Task<UserEditServiceModel> GetProfileToEditAsync(string id)
             => await this.db
             .Users
@@ -42,7 +59,21 @@
             {
                 User = this.mapper.Map<UserWithBirthdateServiceModel>(u),
                 Courses = u.Courses
-                    .Select(sc => this.MapCourseWithGrade(sc, sc.Course))
+                    //.Select(sc => this.MapCourseWithGrade(sc, sc.Course))
+                    .Select(sc => new CourseProfileServiceModel
+                    {
+                        Id = sc.CourseId,
+                        Name = sc.Course.Name,
+                        Grade = sc.Grade,
+                        StartDate = sc.Course.StartDate,
+                        EndDate = sc.Course.EndDate,
+                        CertificateId = sc.Course
+                            .Certificates
+                            .Where(c => c.StudentId == sc.StudentId)
+                            .OrderBy(c => c.Grade)
+                            .Select(c => c.Id)
+                            .FirstOrDefault()
+                    })
                     .OrderByDescending(c => c.StartDate)
                     .ThenByDescending(c => c.EndDate)
                     .ToList()
@@ -67,6 +98,14 @@
         {
             var courseDto = this.mapper.Map<CourseProfileServiceModel>(course);
             courseDto.Grade = studentCourse.Grade;
+            courseDto.CertificateId = studentCourse
+                .Course?
+                .Certificates
+                .Where(c => c.StudentId == studentCourse.StudentId)
+                .OrderBy(c => c.Grade)
+                .Select(c => c.Id)
+                .FirstOrDefault();
+
             return courseDto;
         }
     }

@@ -8,6 +8,8 @@
 
     public interface ITrainerService
     {
+        Task<bool> AddCertificateAsync(string trainerId, int courseId, string studentId, Grade grade);
+
         Task AssessStudentCoursePerformanceAsync(string trainerId, int courseId, string studentId, Grade grade);
 
         Task<IEnumerable<CourseServiceModel>> CoursesAsync(

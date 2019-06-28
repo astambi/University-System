@@ -20,5 +20,8 @@
 
         [IgnoreMap]
         public Grade? Grade { get; set; }
+
+        [IgnoreMap]
+        public string CertificateId { get; set; }
     }
 }

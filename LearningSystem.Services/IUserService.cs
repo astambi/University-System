@@ -6,12 +6,14 @@
 
     public interface IUserService
     {
+        Task<bool> CanBeDeleted(string id);
+
         Task<UserProfileServiceModel> GetUserProfileAsync(string id);
 
         Task<UserEditServiceModel> GetProfileToEditAsync(string id);
 
-        Task UpdateUserProfileAsync(string id, string name, DateTime birthdate);
+        Task<CertificateServiceModel> GetCertificateDataAsync(string id);
 
-        Task<bool> CanBeDeleted(string id);
+        Task UpdateUserProfileAsync(string id, string name, DateTime birthdate);
     }
 }

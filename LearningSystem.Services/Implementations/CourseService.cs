@@ -142,6 +142,11 @@
                     .Where(c => c.EndDate < DateTime.UtcNow) // archive
                     .AsQueryable();
 
+        public bool IsGradeEligibleForCertificate(Grade? grade)
+            => grade == Grade.A
+            || grade == Grade.B
+            || grade == Grade.C;
+
         public async Task<bool> IsUserEnrolledInCourseAsync(int courseId, string userId)
             => await this.db
             .Courses

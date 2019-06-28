@@ -1,0 +1,48 @@
+﻿@model CertificateServiceModel
+@{
+    ViewData["Title"] = "Certificate";
+    Layout = "_LayoutCertificate"; // no header & footer
+}
+
+<section class="certificate">
+    <header class="text-center p-5 m-auto">
+        <h1 class="display-1 text-uppercase font-weight-bold py-5">Certificate</h1>
+        <p>This certificate is issued by <strong>Software University</strong> to acknowledge that</p>
+        <h2 class="p-5">@Model.Student</h2>
+        <p>has successfully completed a course</p>
+        <h2 class="pt-5 pb-3">@Model.Course</h2>
+        <h3>with <label>Grade @Model.Grade</label></h3>
+    </header>
+    <article class="py-5 my-5">
+        <h4 class="text-center pb-2">Course details:</h4>
+        <div class="d-flex justify-content-around">
+            <div>
+                <h5>Start date: @Model.StartDate.ToShortDateString()</h5>
+                <h5>End date: @Model.EndDate.ToShortDateString()</h5>
+            </div>
+            <h5>Trainer: @Model.Trainer</h5>
+        </div>
+    </article>
+    <footer class="d-flex justify-content-between p-5 mt-5 my-5">
+        <div>
+            <p>Issue date: @Model.IssueDate.ToLongDateString()</p>
+            <p class="small">Check the validity of this certificate here:</p>
+            <p class="small">
+                <a asp-controller="@WebConstants.UsersController"
+                   asp-action="@nameof(LearningSystem.Web.Controllers.UsersController.Certificate)"
+                   asp-route-id="@Model.Id" class="certificate">@Model.DownloadPath</a>
+            </p>
+        </div>
+        <div><p>Issuer: Software University</p></div>
+    </footer>
+</section>
+
+<section class="w-25 m-auto">
+    <form asp-area=""
+          asp-controller="@WebConstants.UsersController"
+          asp-action="@nameof(LearningSystem.Web.Controllers.UsersController.DownloadCertificate)"
+          asp-route-id="@Model.Id"
+          asp-route-downloadUrl="@Model.DownloadPath" method="post">
+        <partial name="_FormSubmitPartial" model="FormActionEnum.Download" />
+    </form>
+</section>

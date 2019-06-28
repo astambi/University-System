@@ -34,6 +34,8 @@
 
         IQueryable<Course> GetQuerableByStatus(IQueryable<Course> coursesAsQuerable, bool? isActive = null); // all by default
 
+        bool IsGradeEligibleForCertificate(Grade? grade);
+
         Task<bool> IsUserEnrolledInCourseAsync(int courseId, string userId);
 
         Task<int> TotalActiveAsync(string search = null);

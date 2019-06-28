@@ -24,6 +24,8 @@
 
         public ICollection<ExamSubmission> ExamSubmissions { get; set; } = new List<ExamSubmission>();
 
+        public ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var isFutureDate = DateTime.Now.Date < this.Birthdate.ToLocalTime().Date;

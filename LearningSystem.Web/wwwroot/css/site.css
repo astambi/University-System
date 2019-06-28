@@ -42,6 +42,14 @@ a, a:hover {
     color: white;
 }
 
+
+/*Certificate*/
+.certificate {
+    background-color: #c47a23;
+    /*background-color: #234465;*/
+    color: white;
+}
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
