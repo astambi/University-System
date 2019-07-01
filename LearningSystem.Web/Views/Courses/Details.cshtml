@@ -20,7 +20,7 @@
         @if (Model.Course.CanEnroll)
         {
             <div class="card-body card-subtitle d-flex flex-wrap justify-content-between align-items-center bg-success text-white">
-                <h5 class="col-10">@enrollmentMsg</h5>
+                <h5 class="col-8">@enrollmentMsg</h5>
                 @if (Model.IsUserEnrolled)
                 {
                     <partial name="_CourseCancelFormPartial" for="Course.Id" />

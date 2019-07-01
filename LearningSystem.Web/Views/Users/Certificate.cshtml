@@ -23,26 +23,16 @@
             <h5>Trainer: @Model.Trainer</h5>
         </div>
     </article>
-    <footer class="d-flex justify-content-between p-5 mt-5 my-5">
+    <footer class="d-flex justify-content-between p-5 m-5">
         <div>
             <p>Issue date: @Model.IssueDate.ToLongDateString()</p>
             <p class="small">Check the validity of this certificate here:</p>
             <p class="small">
                 <a asp-controller="@WebConstants.UsersController"
                    asp-action="@nameof(LearningSystem.Web.Controllers.UsersController.Certificate)"
-                   asp-route-id="@Model.Id" class="certificate">@Model.DownloadPath</a>
+                   asp-route-id="@Model.Id" class="certificate">@Model.DownloadUrl</a>
             </p>
         </div>
         <div><p>Issuer: Software University</p></div>
     </footer>
-</section>
-
-<section class="w-25 m-auto">
-    <form asp-area=""
-          asp-controller="@WebConstants.UsersController"
-          asp-action="@nameof(LearningSystem.Web.Controllers.UsersController.DownloadCertificate)"
-          asp-route-id="@Model.Id"
-          asp-route-downloadUrl="@Model.DownloadPath" method="post">
-        <partial name="_FormSubmitPartial" model="FormActionEnum.Download" />
-    </form>
 </section>

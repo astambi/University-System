@@ -8,11 +8,12 @@
         Add = 3,
         Remove = 4,
         Enroll = 5,
-        Cancel = 6,
+        CancelEnrollment = 6,
         Grade = 7,
         Search = 8,
         Upload = 9,
         Download = 10,
+        Certificate = 11,
         Default = 99
     }
 }

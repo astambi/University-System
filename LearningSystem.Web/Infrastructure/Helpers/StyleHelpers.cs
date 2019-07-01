@@ -7,7 +7,7 @@
         public static string ToStyle(string actionName)
             => WebConstants.Styles.ContainsKey(actionName)
             ? WebConstants.Styles[actionName]
-            : WebConstants.PrimaryStyle;
+            : WebConstants.OutlinePrimaryStyle;
 
         public static string ToStyle(FormActionEnum action)
             => ToStyle(action.ToString());

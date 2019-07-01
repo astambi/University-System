@@ -62,8 +62,7 @@
                 return this.RedirectToAction(nameof(HomeController.Index));
             }
 
-            var req = this.HttpContext.Request;
-            certificate.DownloadPath = $"{req.Scheme}://{req.Host.Value}{req.Path.Value}";
+            certificate.DownloadUrl = this.HttpContext.Request.GetRequestUrl();
 
             return this.View(certificate);
         }
@@ -71,8 +70,10 @@
         [AllowAnonymous]
         [HttpPost]
         [Route(nameof(Certificate) + "/{id}")]
-        public IActionResult DownloadCertificate(string id, string downloadUrl)
+        public IActionResult DownloadCertificate(string id)
         {
+            var downloadUrl = this.HttpContext.Request.GetRequestUrl();
+
             var pdf = this.pdfService.ConvertToPdf(downloadUrl);
             if (pdf == null)
             {
@@ -81,11 +82,6 @@
             }
 
             return this.File(pdf, "application/pdf", "Certificate.pdf");
-
-            //return new FileContentResult(pdf, "application/pdf")
-            //{
-            //    FileDownloadName = "Certificate.pdf"
-            //};
         }
     }
 }

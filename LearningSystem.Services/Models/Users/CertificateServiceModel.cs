@@ -21,6 +21,6 @@
 
         public DateTime IssueDate { get; set; }
 
-        public string DownloadPath { get; set; }
+        public string DownloadUrl { get; set; }
     }
 }

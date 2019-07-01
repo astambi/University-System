@@ -22,8 +22,14 @@
         <div class="card-footer bg-transparent d-flex flex-wrap justify-content-around align-items-center">
             @if (Model.CertificateId != null)
             {
-                <a asp-action="@nameof(LearningSystem.Web.Controllers.UsersController.Certificate)"
-                   asp-route-id="@Model.CertificateId" class="btn btn-info">Certificate</a>
+                @*<a asp-action="@nameof(LearningSystem.Web.Controllers.UsersController.Certificate)"
+                    asp-route-id="@Model.CertificateId" class="btn btn-info border-white">View Certificate</a>*@
+                <form asp-area=""
+                      asp-controller="@WebConstants.UsersController"
+                      asp-action="@nameof(LearningSystem.Web.Controllers.UsersController.DownloadCertificate)"
+                      asp-route-id="@Model.CertificateId" method="post">
+                    <partial name="_FormSubmitPartial" model="FormActionEnum.Certificate" />
+                </form>
             }
             <a asp-controller="@WebConstants.CoursesController"
                asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Details)"

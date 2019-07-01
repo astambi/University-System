@@ -50,6 +50,12 @@ a, a:hover {
     color: white;
 }
 
+section.certificate {
+    padding-top: 120px;
+    width: 100%;
+    height: auto;
+}
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {

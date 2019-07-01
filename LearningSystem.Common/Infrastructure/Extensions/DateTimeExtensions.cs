@@ -5,11 +5,12 @@
     public static class DateTimeExtensions
     {
         public static DateTime ToStartDateUtc(this DateTime localDate)
-            => new DateTime(localDate.Year, localDate.Month, localDate.Day, 00, 00, 00)
-            .ToUniversalTime();
+            => new DateTime(localDate.Year, localDate.Month, localDate.Day)
+            .ToUniversalTime(); // 00:00:00
 
         public static DateTime ToEndDateUtc(this DateTime localDate)
-            => new DateTime(localDate.Year, localDate.Month, localDate.Day, 23, 59, 59)
-            .ToUniversalTime();
+            => ToStartDateUtc(localDate)
+            .AddDays(1)
+            .AddSeconds(-1); // 23:59:59
     }
 }
