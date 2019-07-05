@@ -8,7 +8,7 @@
 
     public interface ICourseService
     {
-        Task AddExamSubmission(int id, string userId, byte[] examFileBytes);
+        Task AddExamSubmissionAsync(int id, string userId, byte[] examFileBytes);
 
         Task<IEnumerable<CourseServiceModel>> AllActiveWithTrainersAsync(
             string search = null,

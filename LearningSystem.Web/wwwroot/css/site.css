@@ -42,7 +42,6 @@ a, a:hover {
     color: white;
 }
 
-
 /*Certificate*/
 .certificate {
     background-color: #c47a23;
@@ -51,9 +50,8 @@ a, a:hover {
 }
 
 section.certificate {
-    padding-top: 120px;
     width: 100%;
-    height: auto;
+    padding-top: 120px;
 }
 
 /* Sticky footer styles

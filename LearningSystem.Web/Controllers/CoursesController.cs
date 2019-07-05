@@ -155,7 +155,7 @@
             }
 
             var fileBytes = await examFile.ToByteArray();
-            await this.courseService.AddExamSubmission(id, userId, fileBytes);
+            await this.courseService.AddExamSubmissionAsync(id, userId, fileBytes);
 
             this.TempData.AddSuccessMessage(WebConstants.ExamSubmittedMsg);
 

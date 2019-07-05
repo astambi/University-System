@@ -24,7 +24,7 @@
             this.mapper = mapper;
         }
 
-        public async Task AddExamSubmission(int id, string userId, byte[] examFileBytes)
+        public async Task AddExamSubmissionAsync(int id, string userId, byte[] examFileBytes)
         {
             if (!await this.IsUserEnrolledInCourseAsync(id, userId))
             {
@@ -167,12 +167,20 @@
             int page = 1,
             int pageSize = ServicesConstants.PageSize)
         {
+            // Negative page & page size
+            page = Math.Max(1, page);
+
+            if (pageSize < 1)
+            {
+                pageSize = ServicesConstants.PageSize;
+            }
+
             var coursesAsQuerable = this.GetQuerableBySearch(search);
 
             var courses = await this.GetQuerableByStatus(coursesAsQuerable, isActive)
                 .OrderByDescending(c => c.StartDate)
                 .ThenByDescending(c => c.EndDate)
-                .Skip((page - 1) * pageSize)
+                .Skip(((page - 1) * pageSize))
                 .Take(pageSize)
                 .Select(c => new CourseListingServiceModel
                 {
