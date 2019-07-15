@@ -37,6 +37,7 @@
                 var model = context.ActionArguments
                     .FirstOrDefault(a => a.Key.ToLower().Contains("model"))
                     .Value;
+
                 if (model == null)
                 {
                     return;

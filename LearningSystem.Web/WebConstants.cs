@@ -73,6 +73,7 @@
         public const string CourseEnrollmentClosedMsg = "Course is closed for enrollment after start date.";
         public const string CourseEnrollmentOpenMsg = "Course is open for enrollment for {0}."; // days/hours
         public const string CourseHasNotEndedMsg = "Course has not ended.";
+        public const string CourseNotCreatedMsg = "Course not created.";
         public const string CourseNotFoundMsg = "Course not found.";
         public const string CourseUpdatedMsg = "Course updated successfully.";
 

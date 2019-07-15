@@ -1,5 +1,6 @@
 ﻿namespace LearningSystem.Web
 {
+    using System;
     using AutoMapper;
     using LearningSystem.Data;
     using LearningSystem.Data.Models;
@@ -71,7 +72,7 @@
             services.AddDomainServices();
 
             // AutoMapper
-            services.AddAutoMapper(typeof(Startup));
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // Routing with lowercase Urls
             services.AddRouting(options => options.LowercaseUrls = true);

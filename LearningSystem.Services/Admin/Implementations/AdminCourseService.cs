@@ -21,30 +21,34 @@
             this.mapper = mapper;
         }
 
-        public async Task CreateAsync(
+        public async Task<int> CreateAsync(
             string name,
             string description,
             DateTime startDate, // local time
-            DateTime endDate, // local time
+            DateTime endDate,   // local time
             string trainerId)
         {
             var trainerExists = this.db.Users.Any(u => u.Id == trainerId);
-            if (!trainerExists)
+            if (!trainerExists
+                || string.IsNullOrWhiteSpace(name)
+                || string.IsNullOrWhiteSpace(description))
             {
-                return;
+                return int.MinValue;
             }
 
             var course = new Course
             {
-                Name = name,
-                Description = description,
+                Name = name.Trim(),
+                Description = description.Trim(),
                 StartDate = startDate.ToStartDateUtc(),
                 EndDate = endDate.ToEndDateUtc(),
                 TrainerId = trainerId
             };
 
             await this.db.Courses.AddAsync(course);
-            await this.db.SaveChangesAsync();
+            var result = await this.db.SaveChangesAsync();
+
+            return course.Id;
         }
 
         public async Task<AdminCourseServiceModel> GetByIdAsync(int id)

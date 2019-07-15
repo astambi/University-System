@@ -8,6 +8,7 @@
     using LearningSystem.Common.Infrastructure.Extensions;
     using LearningSystem.Data;
     using LearningSystem.Data.Models;
+    using LearningSystem.Services;
     using LearningSystem.Services.Implementations;
     using LearningSystem.Services.Models.Courses;
     using LearningSystem.Services.Models.Users;
@@ -24,11 +25,12 @@
         private const int Precision = 100; // ms
 
         [Fact]
-        public async Task AddExamSubmissionShouldSaveCorrectDataWithEnrolledStudentInCourse()
+        public async Task AddExamSubmissionAsync_ShouldSaveCorrectData_WithEnrolledStudentInCourse()
         {
             // Arrange
             var db = await this.PrepareStudentInCourse();
-            var courseService = new CourseService(db, null);
+            var courseService = this.InitializeCourseService(db);
+
             var exam = new byte[] { 1, 1, 1 };
 
             // Act
@@ -62,11 +64,11 @@
         }
 
         [Fact]
-        public async Task AllActiveWithTrainersAsyncShouldReturnCorrectResultBySearchFilterAndOrder()
+        public async Task AllActiveWithTrainersAsync_ShouldReturnCorrectResult_BySearchFilterAndOrder()
         {
             // Arrange
             var db = await this.PrepareCoursesToSearch();
-            var courseService = new CourseService(db, Tests.Mapper);
+            var courseService = this.InitializeCourseService(db);
 
             // Act
             var result = await courseService.AllActiveWithTrainersAsync("T");
@@ -83,11 +85,11 @@
         }
 
         [Fact]
-        public async Task AllActiveWithTrainersAsyncShouldReturnCorrectResultWithPagination()
+        public async Task AllActiveWithTrainersAsync_ShouldReturnCorrectResult_WithPagination()
         {
             // Arrange
             var db = await this.PrepareCoursesToSearch();
-            var courseService = new CourseService(db, Tests.Mapper);
+            var courseService = this.InitializeCourseService(db);
 
             // Act
             var resultPage1Of2 = await courseService.AllActiveWithTrainersAsync("T", 1, 2);
@@ -126,11 +128,11 @@
         }
 
         [Fact]
-        public async Task AllArchivedWithTrainersAsyncShouldReturnCorrectResultBySearchFilterAndOrder()
+        public async Task AllArchivedWithTrainersAsync_ShouldReturnCorrectResult_BySearchFilterAndOrder()
         {
             // Arrange
             var db = await this.PrepareCoursesToSearch();
-            var courseService = new CourseService(db, Tests.Mapper);
+            var courseService = this.InitializeCourseService(db);
 
             // Act
             var result = await courseService.AllArchivedWithTrainersAsync("T");
@@ -147,11 +149,11 @@
         }
 
         [Fact]
-        public async Task AllArchivedWithTrainersAsyncShouldReturnCorrectResultWithPagination()
+        public async Task AllArchivedWithTrainersAsync_ShouldReturnCorrectResult_WithPagination()
         {
             // Arrange
             var db = await this.PrepareCoursesToSearch();
-            var courseService = new CourseService(db, Tests.Mapper);
+            var courseService = this.InitializeCourseService(db);
 
             // Act
             var resultPage1Of2 = await courseService.AllArchivedWithTrainersAsync("T", 1, 2);
@@ -190,30 +192,32 @@
         }
 
         [Fact]
-        public async Task CancellUserEnrollmentInCourseAsyncShouldRemoveValidStudentCourseBeforeStartDate()
+        public async Task CancellUserEnrollmentInCourseAsync_ShouldRemoveValidStudentCourse_BeforeStartDate()
         {
             // Arrange
             var db = await this.PrepareCoursesToEnroll();
-            var courseService = new CourseService(db, null);
+            var courseService = this.InitializeCourseService(db);
 
             // Act
-            await courseService.CancellUserEnrollmentInCourseAsync(4, StudentEnrolled);
-            await courseService.CancellUserEnrollmentInCourseAsync(5, StudentEnrolled);
-
-            // Assert
             // Invalid course start date
-            db.Find<StudentCourse>(StudentEnrolled, 5).Should().NotBeNull();
+            await courseService.CancellUserEnrollmentInCourseAsync(5, StudentEnrolled);
+            var studentInCourseOnCancellationAfterStartDate = db.Find<StudentCourse>(StudentEnrolled, 5);
 
             // Valid course start date
-            db.Find<StudentCourse>(StudentEnrolled, 4).Should().BeNull();
+            await courseService.CancellUserEnrollmentInCourseAsync(4, StudentEnrolled);
+            var studentInCourseOnCancellationBeforeStartDate = db.Find<StudentCourse>(StudentEnrolled, 4);
+
+            // Assert
+            studentInCourseOnCancellationAfterStartDate.Should().NotBeNull();
+            studentInCourseOnCancellationBeforeStartDate.Should().BeNull();
         }
 
         [Fact]
-        public async Task CanEnrollAsyncShouldReturnTrueBeforeStartDate()
+        public async Task CanEnrollAsync_ShouldReturnTrue_BeforeStartDate()
         {
             // Arrange
             var db = await this.PrepareCoursesToEnroll();
-            var courseService = new CourseService(db, null);
+            var courseService = this.InitializeCourseService(db);
 
             // Act
             var resultAfterStartDate = await courseService.CanEnrollAsync(1);
@@ -227,11 +231,11 @@
         }
 
         [Fact]
-        public async Task EnrollStudentInCourseAsyncShouldAddValidStudentCourseBeforeStartDate()
+        public async Task EnrollStudentInCourseAsync_ShouldAddValidStudentCourse_BeforeStartDate()
         {
             // Arrange
             var db = await this.PrepareCoursesToEnroll();
-            var courseService = new CourseService(db, null);
+            var courseService = this.InitializeCourseService(db);
 
             // Act
             await courseService.EnrollUserInCourseAsync(CourseInvalid, StudentNotEnrolled);
@@ -262,11 +266,12 @@
         }
 
         [Fact]
-        public async Task GetByIdAsyncShouldReturnCorrectDataWithValidId()
+        public async Task GetByIdAsync_ShouldReturnCorrectData_WithValidId()
         {
             // Arrange
             var db = await this.PrepareCoursesWithDetails();
-            var courseService = new CourseService(db, Tests.Mapper);
+            var courseService = this.InitializeCourseService(db);
+
             var courseId = 4;
 
             // Act
@@ -312,11 +317,11 @@
         }
 
         [Fact]
-        public async Task IsUserEnrolledInCourseAsyncShouldReturnCorrectResult()
+        public async Task IsUserEnrolledInCourseAsync_ShouldReturnCorrectResult()
         {
             // Arrange
             var db = await this.PrepareStudentInCourse();
-            var courseService = new CourseService(db, null);
+            var courseService = this.InitializeCourseService(db);
 
             // Act
             var resultValid = await courseService.IsUserEnrolledInCourseAsync(CourseValid, StudentEnrolled);
@@ -338,17 +343,16 @@
             var courses = new List<Course>
             {
                 new Course{Id = 1, StartDate = startDate.AddDays(-1) }, // past
-                new Course{Id = 2, StartDate = startDate.AddDays(0) }, // past
-                new Course{Id = 3, StartDate = startDate.AddDays(1) }, // valid date
-                new Course{Id = 4, StartDate = startDate.AddDays(1) }, // valid date, enrolled
-                new Course{Id = 5, StartDate = startDate.AddDays(0) }, // past date, enrolled
+                new Course{Id = 2, StartDate = startDate.AddDays(0) },  // past
+                new Course{Id = 3, StartDate = startDate.AddDays(1) },  // valid date
+                new Course{Id = 4, StartDate = startDate.AddDays(1) },  // valid date, enrolled
+                new Course{Id = 5, StartDate = startDate.AddDays(0) },  // past date, enrolled
             };
 
             studentEnrolled.Courses.Add(new StudentCourse { CourseId = 4 });
             studentEnrolled.Courses.Add(new StudentCourse { CourseId = 5 });
 
             var db = Tests.InitializeDatabase();
-
             await db.Courses.AddRangeAsync(courses);
             await db.Users.AddRangeAsync(studentEnrolled, studentNotEnrolled);
             await db.SaveChangesAsync();
@@ -365,17 +369,16 @@
             var trainer = new User { Id = StudentValid };
             var courses = new List<Course>
             {
-                new Course{Id = 1, Name = "TTT", TrainerId = trainer.Id, StartDate = startDate.AddDays(0),  EndDate = endDate.AddDays(0) }, // active 2
-                new Course{Id = 2, Name = "ttt", TrainerId = trainer.Id, StartDate = startDate.AddDays(0),  EndDate = endDate.AddDays(1) }, // active 1
-                new Course{Id = 3, Name = "Tt",  TrainerId = trainer.Id, StartDate = startDate.AddDays(1),  EndDate = endDate.AddDays(1) }, // active 0
-                new Course{Id = 4, Name = "XXX", TrainerId = trainer.Id, StartDate = startDate.AddDays(0),  EndDate = endDate.AddDays(1) }, // no match
+                new Course{Id = 1, Name = "TTT", TrainerId = trainer.Id, StartDate = startDate.AddDays(0),  EndDate = endDate.AddDays(0) },  // active 2
+                new Course{Id = 2, Name = "ttt", TrainerId = trainer.Id, StartDate = startDate.AddDays(0),  EndDate = endDate.AddDays(1) },  // active 1
+                new Course{Id = 3, Name = "Tt",  TrainerId = trainer.Id, StartDate = startDate.AddDays(1),  EndDate = endDate.AddDays(1) },  // active 0
+                new Course{Id = 4, Name = "XXX", TrainerId = trainer.Id, StartDate = startDate.AddDays(0),  EndDate = endDate.AddDays(1) },  // no match
                 new Course{Id = 5, Name = "TTT", TrainerId = trainer.Id, StartDate = startDate.AddDays(-2), EndDate = endDate.AddDays(-2) }, // archived 2
                 new Course{Id = 6, Name = "ttt", TrainerId = trainer.Id, StartDate = startDate.AddDays(-2), EndDate = endDate.AddDays(-1) }, // archived 1
                 new Course{Id = 7, Name = "Tt",  TrainerId = trainer.Id, StartDate = startDate.AddDays(-1), EndDate = endDate.AddDays(-1) }, // archived 0
             };
 
             var db = Tests.InitializeDatabase();
-
             await db.Users.AddAsync(trainer);
             await db.Courses.AddRangeAsync(courses);
             await db.SaveChangesAsync();
@@ -385,11 +388,9 @@
 
         private async Task<LearningSystemDbContext> PrepareCoursesWithDetails()
         {
-            var db = Tests.InitializeDatabase();
-
             //Users
             var users = new List<User>();
-            for (int i = 1; i <= 5; i++)
+            for (var i = 1; i <= 5; i++)
             {
                 var user = new User
                 {
@@ -402,16 +403,12 @@
                 users.Add(user);
             }
 
-            await db.Users.AddRangeAsync(users);
-            //await db.SaveChangesAsync();
-
             //Courses
             var today = DateTime.Now;
             var startDate = today.ToStartDateUtc();
             var endDate = today.ToEndDateUtc();
-
             var courses = new List<Course>();
-            for (int i = 1; i <= 5; i++)
+            for (var i = 1; i <= 5; i++)
             {
                 var course = new Course
                 {
@@ -424,23 +421,22 @@
                 courses.Add(course);
             }
 
-            await db.Courses.AddRangeAsync(courses);
-            await db.SaveChangesAsync();
-
             // StudentCourse
             var student = users.FirstOrDefault();
-
-            for (int i = 0; i < courses.Count; i++)
+            for (var i = 0; i < courses.Count; i++)
             {
                 var course = courses[i];
                 course.TrainerId = student.Id;
 
-                for (int j = 0; j <= i; j++)
+                for (var j = 0; j <= i; j++)
                 {
                     course.Students.Add(new StudentCourse { StudentId = users[j].Id });
                 }
             }
 
+            var db = Tests.InitializeDatabase();
+            await db.Users.AddRangeAsync(users);
+            await db.Courses.AddRangeAsync(courses);
             await db.SaveChangesAsync();
 
             return db;
@@ -454,12 +450,14 @@
             course.Students.Add(new StudentCourse { StudentId = StudentEnrolled });
 
             var db = Tests.InitializeDatabase();
-
             await db.Courses.AddAsync(course);
             await db.Users.AddAsync(student);
             await db.SaveChangesAsync();
 
             return db;
         }
+
+        private ICourseService InitializeCourseService(LearningSystemDbContext db)
+            => new CourseService(db, Tests.Mapper);
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace LearningSystem.Web.Infrastructure.Mapping
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using AutoMapper;
@@ -9,41 +10,38 @@
     public class AutoMapperProfile : Profile
     {
         private const string ModelSuffix = "model";
-        private readonly string SolutionAssemblyName;
 
         public AutoMapperProfile()
         {
-            this.SolutionAssemblyName = Assembly
-                .GetExecutingAssembly()
-                .GetName()
-                .Name // LearningSystem.Web
-                .Split('.')
-                .First(); // LearningSystem
+            var modelTypes = this.GetModelTypes();
 
-            var assemblies = AppDomain
-                .CurrentDomain
-                .GetAssemblies()
-                .Where(a => a.GetName().Name.Contains(this.SolutionAssemblyName))
+            this.RegisterFromMappings(modelTypes);
+
+            this.RegisterCustomMappings(modelTypes);
+        }
+
+        private void RegisterCustomMappings(IEnumerable<Type> modelTypes)
+        {
+            var mappings = modelTypes
+                .Where(t => typeof(IHaveCustomMapping).IsAssignableFrom(t))
+                .Select(Activator.CreateInstance)
+                .Cast<IHaveCustomMapping>()
                 .ToList();
 
-            var modelTypes = assemblies
-                .SelectMany(a => a.GetTypes())
-                .Where(t => t.IsClass
-                    && !t.IsAbstract
-                    && t.IsPublic
-                    && t.Name.ToLower().EndsWith(ModelSuffix)) // models
-                .ToList();
+            mappings.ForEach(mapping => mapping.ConfigureMapping(this));
+        }
 
+        private void RegisterFromMappings(IEnumerable<Type> modelTypes)
+        {
             var destinationTypes = modelTypes
                 .Where(t => t
                     .GetInterfaces()
                     .Where(i => i.IsGenericType)
                     .Select(i => i.GetGenericTypeDefinition())
-                    .Contains(typeof(IMapFrom<>))) // IMapFrom<>
+                    .Contains(typeof(IMapFrom<>)))
                 .ToList();
 
-            // Register IMapFrom mappings
-            destinationTypes
+            var mappings = destinationTypes
                 .Select(t => new
                 {
                     Destination = t,
@@ -59,16 +57,35 @@
                         .SelectMany(i => i.Arguments)
                         .First()
                 })
-                .ToList()
-                .ForEach(mapping => this.CreateMap(mapping.Source, mapping.Destination));
+                .ToList();
 
-            // Register IHaveCustomMapping mappings
-            modelTypes
-                .Where(t => typeof(IHaveCustomMapping).IsAssignableFrom(t))
-                .Select(Activator.CreateInstance)
-                .Cast<IHaveCustomMapping>()
-                .ToList()
-                .ForEach(mapping => mapping.ConfigureMapping(this));
+            mappings.ForEach(mapping => this.CreateMap(mapping.Source, mapping.Destination));
+        }
+
+        private IEnumerable<Type> GetModelTypes()
+        {
+            var solutionAssemblyName = Assembly
+                .GetExecutingAssembly()
+                .GetName()
+                .Name // LearningSystem.Web
+                .Split('.')
+                .First(); // LearningSystem
+
+            var assemblies = AppDomain
+                .CurrentDomain
+                .GetAssemblies()
+                .Where(a => a.GetName().Name.Contains(solutionAssemblyName))
+                .ToList();
+
+            var modelTypes = assemblies
+                .SelectMany(a => a.GetTypes())
+                .Where(t => t.IsClass
+                        && !t.IsAbstract
+                        && t.IsPublic
+                        && t.Name.ToLower().EndsWith(ModelSuffix)) // models
+                .ToList();
+
+            return modelTypes;
         }
     }
 }

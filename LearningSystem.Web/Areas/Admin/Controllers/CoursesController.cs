@@ -18,7 +18,7 @@
 
     public class CoursesController : BaseAdminController
     {
-        private const string CourseFormView = "CourseForm";
+        public const string CourseFormView = "CourseForm";
 
         private readonly UserManager<User> userManager;
         private readonly IAdminCourseService adminCourseService;
@@ -42,8 +42,8 @@
             var model = new CourseFormModel
             {
                 Trainers = await this.GetTrainersAsync(),
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow
+                StartDate = DateTime.Now, // local time
+                EndDate = DateTime.Now    // local time
             };
 
             return this.View(CourseFormView, model);
@@ -64,14 +64,23 @@
                 return this.View(CourseFormView, model);
             }
 
-            await this.adminCourseService.CreateAsync(
+            var id = await this.adminCourseService.CreateAsync(
                 model.Name,
                 model.Description,
                 model.StartDate,
                 model.EndDate,
                 model.TrainerId);
 
+            if (id < 0)
+            {
+                this.TempData.AddErrorMessage(WebConstants.CourseNotCreatedMsg);
+
+                model.Trainers = await this.GetTrainersAsync();
+                return this.View(CourseFormView, model);
+            }
+
             this.TempData.AddSuccessMessage(WebConstants.CourseCreatedMsg);
+
             return this.RedirectToAction(nameof(Web.Controllers.CoursesController.Index), WebConstants.CoursesController);
         }
 

@@ -6,7 +6,10 @@
     using LearningSystem.Data.Models;
     using LearningSystem.Services.Models.Courses;
     using LearningSystem.Services.Models.Users;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.EntityFrameworkCore;
+    using Moq;
 
     public class Tests
     {
@@ -16,6 +19,11 @@
         }
 
         public static IMapper Mapper { get; private set; }
+
+        public static ITempDataDictionary GetTempDataDictionary()
+            => new TempDataDictionary(
+                context: new DefaultHttpContext(),
+                provider: Mock.Of<ITempDataProvider>());
 
         public static LearningSystemDbContext InitializeDatabase()
         {

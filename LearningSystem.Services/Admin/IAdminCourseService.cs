@@ -6,7 +6,7 @@
 
     public interface IAdminCourseService
     {
-        Task CreateAsync(
+        Task<int> CreateAsync(
             string name,
             string description,
             DateTime startDate,
