@@ -45,6 +45,13 @@
         // Pagination
         public const int PageSize = 12;
 
+        // Routing
+        public const string WithId = "{id}";
+
+        // ContentType
+        public const string ApplicationPdf = "application/pdf";
+        public const string CertificateFileName = "Certificate.pdf";
+
         // Bootstrap Styles
         public const string DangerStyle = "danger";
         public const string ErrorStyle = "danger";

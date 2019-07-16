@@ -9,7 +9,6 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Routing;
-    using SelectPdf;
 
     [Authorize]
     public class UsersController : Controller
@@ -52,7 +51,7 @@
         }
 
         [AllowAnonymous]
-        [Route(nameof(Certificate) + "/{id}")]
+        [Route(nameof(Certificate) + "/" + WebConstants.WithId)]
         public async Task<IActionResult> Certificate(string id) // read by pdfConverter
         {
             var certificate = await this.userService.GetCertificateDataAsync(id);
@@ -69,7 +68,7 @@
 
         [AllowAnonymous]
         [HttpPost]
-        [Route(nameof(Certificate) + "/{id}")]
+        [Route(nameof(Certificate) + "/" + WebConstants.WithId)]
         public IActionResult DownloadCertificate(string id)
         {
             var downloadUrl = this.HttpContext.Request.GetRequestUrl();
@@ -81,7 +80,7 @@
                 return this.RedirectToAction(nameof(HomeController.Index));
             }
 
-            return this.File(pdf, "application/pdf", "Certificate.pdf");
+            return this.File(pdf, WebConstants.ApplicationPdf, WebConstants.CertificateFileName);
         }
     }
 }
