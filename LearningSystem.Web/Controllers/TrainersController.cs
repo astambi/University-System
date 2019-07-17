@@ -43,7 +43,7 @@
                 SearchTerm = search,
                 Action = nameof(Index),
                 RequestedPage = currentPage,
-                TotalItems = await this.trainerService.TotalCoursesAsync(search)
+                TotalItems = await this.trainerService.TotalCoursesAsync(userId, search)
             };
 
             var courses = await this.trainerService.CoursesAsync(userId, search, pagination.CurrentPage, WebConstants.PageSize);

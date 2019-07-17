@@ -66,10 +66,8 @@
         public async Task CreateGet_ShouldReturnViewWithCorrectModel()
         {
             // Arrange
-            var trainers = this.GetTrainers();
-
             var userManager = UserManagerMock.GetMock;
-            UserManagerMock.GetUsersInRoleAsync(userManager, trainers);
+            userManager.GetUsersInRoleTrainerAsync(this.GetTrainers());
 
             var controller = new CoursesController(
                 userManager.Object,
@@ -83,10 +81,11 @@
             Assert.Equal(CoursesController.CourseFormView, viewResult.ViewName);
 
             var model = Assert.IsType<CourseFormModel>(viewResult.Model);
+
             Assert.NotNull(model);
-            this.AssertEqualTrainersSelectList(trainers, model.Trainers);
-            this.AssertEqualDate(DateTime.Now, model.StartDate);
-            this.AssertEqualDate(DateTime.Now, model.EndDate);
+            this.AssertTrainersSelectList(model.Trainers);
+            this.AssertDate(model.StartDate);
+            this.AssertDate(model.EndDate);
 
             userManager.Verify();
         }
@@ -99,11 +98,8 @@
             var trainers = this.GetTrainers();
 
             var userManager = UserManagerMock.GetMock;
-            UserManagerMock.GetUsersInRoleAsync(userManager, trainers);
-            userManager
-               .Setup(u => u.FindByIdAsync(It.IsAny<string>()))
-               .ReturnsAsync((User)null) // invalid user
-               .Verifiable();
+            userManager.GetUsersInRoleTrainerAsync(trainers);
+            userManager.FindByIdAsync(null);
 
             var controller = new CoursesController(
                 userManager.Object,
@@ -113,7 +109,7 @@
             var result = await controller.Create(form);
 
             // Assert
-            this.AssertEqualViewResultWithModel(form, trainers, result);
+            this.AssertEqualViewResultWithModel(form, result);
 
             userManager.Verify();
         }
@@ -124,15 +120,10 @@
             // Arrange
             var form = this.GetCreateForm();
             var trainers = this.GetTrainers();
-            string modelTrainerId = null;
 
             var userManager = UserManagerMock.GetMock;
-            UserManagerMock.GetUsersInRoleAsync(userManager, trainers);
-            userManager
-               .Setup(u => u.FindByIdAsync(It.IsAny<string>()))
-               .Callback((string trainerId) => modelTrainerId = trainerId) // service input
-               .ReturnsAsync(new User() { Id = form.TrainerId }) // valid user
-               .Verifiable();
+            userManager.GetUsersInRoleTrainerAsync(trainers);
+            userManager.FindByIdAsync(new User() { Id = form.TrainerId });
 
             var controller = new CoursesController(
                 userManager.Object,
@@ -144,9 +135,7 @@
             var result = await controller.Create(form);
 
             // Assert
-            Assert.Equal(form.TrainerId, modelTrainerId); // correct service model input
-
-            this.AssertEqualViewResultWithModel(form, trainers, result);
+            this.AssertEqualViewResultWithModel(form, result);
 
             userManager.Verify();
         }
@@ -159,35 +148,27 @@
             var trainers = this.GetTrainers();
 
             var userManager = UserManagerMock.GetMock;
-            UserManagerMock.GetUsersInRoleAsync(userManager, trainers);
-            userManager
-               .Setup(u => u.FindByIdAsync(It.IsAny<string>()))
-               .ReturnsAsync(new User() { Id = form.TrainerId }) // valid user
-               .Verifiable();
+            userManager.GetUsersInRoleTrainerAsync(trainers);
+            userManager.FindByIdAsync(new User() { Id = form.TrainerId });
 
-            var adminCourseService = new Mock<IAdminCourseService>();
-            adminCourseService
-                .Setup(a => a.CreateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>()))
-                .ReturnsAsync(int.MinValue) // service error
-                .Verifiable();
+            var adminCourseService = AdminCourseServiceMock.GetMock;
+            adminCourseService.CreateAsync(int.MinValue);
 
             var controller = new CoursesController(
                 userManager.Object,
                 adminCourseService.Object,
                 courseService: null, mapper: null)
             {
-                TempData = Tests.GetTempDataDictionary()
+                TempData = TempDataMock.GetMock
             };
 
             // Act
             var result = await controller.Create(form);
 
             // Assert
-            // TempData Error
-            Assert.Contains(controller.TempData.Keys, k => k == WebConstants.TempDataErrorMessageKey);
-            Assert.Equal(WebConstants.CourseNotCreatedMsg, controller.TempData[WebConstants.TempDataErrorMessageKey]);
+            controller.TempData.AssertErrorMsg(WebConstants.CourseNotCreatedMsg);
 
-            this.AssertEqualViewResultWithModel(form, trainers, result);
+            this.AssertEqualViewResultWithModel(form, result);
 
             userManager.Verify();
             adminCourseService.Verify();
@@ -199,74 +180,37 @@
             // Arrange
             var form = this.GetCreateForm();
 
-            string modelName = null;
-            string modelDescription = null;
-            string modelTrainerId = null;
-            var modelStartDate = DateTime.UtcNow.AddDays(-120);
-            var modelEndDate = DateTime.UtcNow.AddDays(-120);
-
             var userManager = UserManagerMock.GetMock;
-            userManager
-               .Setup(u => u.FindByIdAsync(form.TrainerId))
-               .ReturnsAsync(new User() { Id = form.TrainerId })
-               .Verifiable();
+            userManager.FindByIdAsync(new User() { Id = form.TrainerId });
 
             var adminCourseService = new Mock<IAdminCourseService>();
-            adminCourseService
-                .Setup(a => a.CreateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>()))
-                .Callback((string name, string description, DateTime startDate, DateTime endDate, string trainerId) =>
-                {
-                    modelName = name;
-                    modelDescription = description;
-                    modelStartDate = startDate;
-                    modelEndDate = endDate;
-                    modelTrainerId = trainerId;
-                }) // service model input
-                .ReturnsAsync(100) // service success, saved courseId
-                .Verifiable();
+            adminCourseService.CreateAsync(100);
 
             var controller = new CoursesController(
                 userManager.Object,
                 adminCourseService.Object,
                 courseService: null, mapper: null)
             {
-                TempData = Tests.GetTempDataDictionary()
+                TempData = TempDataMock.GetMock
             };
 
             // Act
             var result = await controller.Create(form);
 
             // Assert
-            // Service Model Input
-            Assert.Equal(form.Name, modelName);
-            Assert.Equal(form.Description, modelDescription);
-            Assert.Equal(form.StartDate, modelStartDate);
-            Assert.Equal(form.EndDate, modelEndDate);
-            Assert.Equal(form.TrainerId, modelTrainerId);
+            controller.TempData.AssertSuccessMsg(WebConstants.CourseCreatedMsg);
 
-            // TempData Success
-            Assert.Contains(controller.TempData.Keys, k => k == WebConstants.TempDataSuccessMessageKey);
-            Assert.Equal(
-                WebConstants.CourseCreatedMsg,
-                controller.TempData[WebConstants.TempDataSuccessMessageKey]);
-
-            // ActionResult
             var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+
             Assert.NotNull(redirectToActionResult);
-
-            Assert.Equal(
-                nameof(LearningSystem.Web.Controllers.CoursesController.Index),
-                redirectToActionResult.ActionName);
-
-            Assert.Equal(
-                WebConstants.CoursesController,
-                redirectToActionResult.ControllerName);
+            Assert.Equal(nameof(LearningSystem.Web.Controllers.CoursesController.Index), redirectToActionResult.ActionName);
+            Assert.Equal(WebConstants.CoursesController, redirectToActionResult.ControllerName);
 
             userManager.Verify();
             adminCourseService.Verify();
         }
 
-        private void AssertEqualViewResultWithModel(CourseFormModel form, IList<User> trainers, IActionResult result)
+        private void AssertEqualViewResultWithModel(CourseFormModel form, IActionResult result)
         {
             var viewResult = Assert.IsType<ViewResult>(result);
 
@@ -275,12 +219,14 @@
             var model = Assert.IsType<CourseFormModel>(viewResult.Model);
             Assert.NotNull(model);
 
-            this.AssertEqualTrainersSelectList(trainers, model.Trainers);
+            this.AssertTrainersSelectList(model.Trainers);
             Assert.Equal(form, model);
         }
 
-        private void AssertEqualTrainersSelectList(IList<User> expectedTrainers, IEnumerable<SelectListItem> resultTrainers)
+        private void AssertTrainersSelectList(IEnumerable<SelectListItem> resultTrainers)
         {
+            var expectedTrainers = this.GetTrainers();
+
             Assert.IsAssignableFrom<IEnumerable<SelectListItem>>(resultTrainers);
 
             Assert.Equal(expectedTrainers.Count, resultTrainers.Count());
@@ -298,8 +244,10 @@
                 resultTrainers.Select(t => t.Text).ToList());
         }
 
-        private void AssertEqualDate(DateTime expectedDate, DateTime resultDate)
+        private void AssertDate(DateTime resultDate)
         {
+            var expectedDate = DateTime.Now;
+
             Assert.Equal(expectedDate.Year, resultDate.Year);
             Assert.Equal(expectedDate.Month, resultDate.Month);
             Assert.Equal(expectedDate.Day, resultDate.Day);

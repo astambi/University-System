@@ -46,6 +46,7 @@
         public const int PageSize = 12;
 
         // Routing
+        public const string Id = "id";
         public const string WithId = "{id}";
 
         // ContentType
