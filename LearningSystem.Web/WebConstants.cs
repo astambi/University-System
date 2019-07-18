@@ -51,6 +51,7 @@
 
         // ContentType
         public const string ApplicationPdf = "application/pdf";
+        public const string ApplicationZip = "application/zip";
         public const string CertificateFileName = "Certificate.pdf";
 
         // Bootstrap Styles
@@ -91,6 +92,7 @@
         public const string FormErrorsMsg = "Review the form for errors.";
 
         public const string ExamAssessedMsg = "Exam was assessed successfully.";
+        public const string ExamAssessmentErrorMsg = "Exam was not assessed.";
         public const string ExamSubmittedMsg = "Exam file submitted successfully.";
 
         public const string FileFormatInvalidMsg = "File format should be {0}.";

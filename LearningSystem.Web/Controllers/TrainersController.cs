@@ -5,6 +5,7 @@
     using LearningSystem.Data.Models;
     using LearningSystem.Services;
     using LearningSystem.Web.Infrastructure.Extensions;
+    using LearningSystem.Web.Infrastructure.Helpers;
     using LearningSystem.Web.Models;
     using LearningSystem.Web.Models.Courses;
     using LearningSystem.Web.Models.Trainers;
@@ -135,7 +136,13 @@
             }
 
             var gradeValue = model.Grade.Value;
-            await this.trainerService.AssessStudentCoursePerformanceAsync(userId, id, model.StudentId, gradeValue);
+            var assessmentSuccess = await this.trainerService.AssessStudentCoursePerformanceAsync(userId, id, model.StudentId, gradeValue);
+            if (!assessmentSuccess)
+            {
+                this.TempData.AddErrorMessage(WebConstants.ExamAssessmentErrorMsg);
+                return this.RedirectToAction(nameof(Students), routeValues: new { id });
+            }
+
             this.TempData.AddSuccessMessage(WebConstants.ExamAssessedMsg);
 
             // Issue new certificate
@@ -153,8 +160,8 @@
 
         public async Task<IActionResult> DownloadExam(int id, string studentId)
         {
-            var course = await this.courseService.GetByIdAsync(id);
-            if (course == null)
+            var courseExists = this.courseService.Exists(id);
+            if (!courseExists)
             {
                 this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
                 return this.RedirectToAction(nameof(Index));
@@ -188,9 +195,9 @@
                 return this.RedirectToAction(nameof(Students), routeValues: new { id });
             }
 
-            var fileName = $"{exam.Course} - {exam.Student} - {exam.SubmissionDate.ToLocalTime()}.{DataConstants.FileType}";
+            var fileName = FileHelpers.ExamFileName(exam.Course, exam.Student, exam.SubmissionDate);
 
-            return this.File(exam.FileSubmission, "application/zip", fileName);
+            return this.File(exam.FileSubmission, WebConstants.ApplicationZip, fileName);
         }
     }
 }

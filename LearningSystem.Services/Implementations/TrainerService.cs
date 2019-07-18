@@ -66,22 +66,24 @@
             return true;
         }
 
-        public async Task AssessStudentCoursePerformanceAsync(string trainerId, int courseId, string studentId, Grade grade)
+        public async Task<bool> AssessStudentCoursePerformanceAsync(string trainerId, int courseId, string studentId, Grade grade)
         {
             if (!await this.IsTrainerForCourseAsync(trainerId, courseId)
                 || !await this.CourseHasEndedAsync(courseId))
             {
-                return;
+                return false;
             }
 
             var studentCourse = await this.db.FindAsync<StudentCourse>(studentId, courseId);
             if (studentCourse == null)
             {
-                return;
+                return false;
             }
 
             studentCourse.Grade = grade;
-            await this.db.SaveChangesAsync();
+            var result = await this.db.SaveChangesAsync();
+
+            return result > 0;
         }
 
         public async Task<IEnumerable<CourseServiceModel>> CoursesAsync(

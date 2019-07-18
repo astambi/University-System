@@ -1,6 +1,7 @@
 ﻿namespace LearningSystem.Tests.Mocks
 {
     using System.Collections.Generic;
+    using LearningSystem.Data.Models;
     using LearningSystem.Services;
     using LearningSystem.Services.Models.Courses;
     using Moq;
@@ -24,6 +25,26 @@
         {
             mock
                 .Setup(s => s.Exists(It.IsAny<int>()))
+                .Returns(result)
+                .Verifiable();
+
+            return mock;
+        }
+
+        public static Mock<ICourseService> GetByIdAsync(this Mock<ICourseService> mock, CourseDetailsServiceModel course)
+        {
+            mock
+               .Setup(s => s.GetByIdAsync(It.IsAny<int>()))
+               .ReturnsAsync(course)
+               .Verifiable();
+
+            return mock;
+        }
+
+        public static Mock<ICourseService> IsGradeEligibleForCertificate(this Mock<ICourseService> mock, bool result)
+        {
+            mock
+                .Setup(s => s.IsGradeEligibleForCertificate(It.IsAny<Grade?>()))
                 .Returns(result)
                 .Verifiable();
 

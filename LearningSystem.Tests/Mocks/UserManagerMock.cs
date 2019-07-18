@@ -23,6 +23,15 @@
             return mock;
         }
 
+        public static Mock<UserManager<User>> GetRolesAsync(this Mock<UserManager<User>> mock, IList<string> roles)
+        {
+            mock.Setup(u => u.GetRolesAsync(It.IsAny<User>()))
+            //.Callback((User userParam) => userInput = userParam) // service input
+            .ReturnsAsync(roles)
+            .Verifiable();
+            return mock;
+        }
+
         public static Mock<UserManager<User>> GetUserAsync(this Mock<UserManager<User>> mock, User user)
         {
             mock.Setup(u => u.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
@@ -49,14 +58,5 @@
 
         public static Mock<UserManager<User>> GetUsersInRoleTrainerAsync(this Mock<UserManager<User>> mock, IList<User> trainers)
             => GetUsersInRoleAsync(mock, WebConstants.TrainerRole, trainers);
-
-        public static Mock<UserManager<User>> GetRolesAsync(this Mock<UserManager<User>> mock, IList<string> roles)
-        {
-            mock.Setup(u => u.GetRolesAsync(It.IsAny<User>()))
-            //.Callback((User userParam) => userInput = userParam) // service input
-            .ReturnsAsync(roles)
-            .Verifiable();
-            return mock;
-        }
     }
 }
