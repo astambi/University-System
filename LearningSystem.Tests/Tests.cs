@@ -6,9 +6,12 @@
     using AutoMapper;
     using LearningSystem.Data;
     using LearningSystem.Data.Models;
+    using LearningSystem.Services.Admin.Models;
     using LearningSystem.Services.Models.Courses;
     using LearningSystem.Services.Models.Users;
     using LearningSystem.Web;
+    using LearningSystem.Web.Areas.Admin.Models.Courses;
+    using LearningSystem.Web.Infrastructure.Mapping;
     using LearningSystem.Web.Models;
     using Microsoft.EntityFrameworkCore;
     using Xunit;
@@ -27,6 +30,7 @@
             var config = new MapperConfiguration(cfg =>
             {
                 //cfg.AddProfile<AutoMapperProfile>();
+                cfg.CreateMap<AdminCourseServiceModel, CourseFormModel>();
                 cfg.CreateMap<Course, CourseServiceModel>();
                 cfg.CreateMap<Course, CourseWithDescriptionServiceModel>();
                 cfg.CreateMap<User, UserBasicServiceModel>();

@@ -84,6 +84,7 @@
         public const string CourseHasNotEndedMsg = "Course has not ended.";
         public const string CourseNotCreatedMsg = "Course not created.";
         public const string CourseNotFoundMsg = "Course not found.";
+        public const string CourseNotUpdatedMsg = "Course not updated.";
         public const string CourseUpdatedMsg = "Course updated successfully.";
 
         public const string Disable2faErrorMsg = "Cannot disable 2FA for user.";

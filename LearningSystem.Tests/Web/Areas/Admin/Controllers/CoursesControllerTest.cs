@@ -5,15 +5,15 @@
     using System.Linq;
     using System.Threading.Tasks;
     using LearningSystem.Data.Models;
-    using LearningSystem.Services.Admin;
+    using LearningSystem.Services.Admin.Models;
     using LearningSystem.Tests.Mocks;
     using LearningSystem.Web;
     using LearningSystem.Web.Areas.Admin.Controllers;
     using LearningSystem.Web.Areas.Admin.Models.Courses;
+    using LearningSystem.Web.Models;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
-    using Moq;
     using Xunit;
 
     public class CoursesControllerTest
@@ -29,6 +29,8 @@
         private const string FirstUserUsername = "A";
         private const string SecondUserUsernname = "A";
         private const string ThirdUserUsername = "B";
+
+        private const int TestCourseId = 100;
 
         [Fact]
         public void CoursesController_ShouldBeInAdminArea()
@@ -78,8 +80,8 @@
 
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.Equal(CoursesController.CourseFormView, viewResult.ViewName);
 
+            Assert.Equal(CoursesController.CourseFormView, viewResult.ViewName);
             var model = Assert.IsType<CourseFormModel>(viewResult.Model);
 
             Assert.NotNull(model);
@@ -95,10 +97,9 @@
         {
             // Arrange
             var form = this.GetCreateForm();
-            var trainers = this.GetTrainers();
 
             var userManager = UserManagerMock.GetMock;
-            userManager.GetUsersInRoleTrainerAsync(trainers);
+            userManager.GetUsersInRoleTrainerAsync(this.GetTrainers());
             userManager.FindByIdAsync(null);
 
             var controller = new CoursesController(
@@ -119,10 +120,9 @@
         {
             // Arrange
             var form = this.GetCreateForm();
-            var trainers = this.GetTrainers();
 
             var userManager = UserManagerMock.GetMock;
-            userManager.GetUsersInRoleTrainerAsync(trainers);
+            userManager.GetUsersInRoleTrainerAsync(this.GetTrainers());
             userManager.FindByIdAsync(new User() { Id = form.TrainerId });
 
             var controller = new CoursesController(
@@ -145,10 +145,9 @@
         {
             // Arrange
             var form = this.GetCreateForm();
-            var trainers = this.GetTrainers();
 
             var userManager = UserManagerMock.GetMock;
-            userManager.GetUsersInRoleTrainerAsync(trainers);
+            userManager.GetUsersInRoleTrainerAsync(this.GetTrainers());
             userManager.FindByIdAsync(new User() { Id = form.TrainerId });
 
             var adminCourseService = AdminCourseServiceMock.GetMock;
@@ -183,8 +182,8 @@
             var userManager = UserManagerMock.GetMock;
             userManager.FindByIdAsync(new User() { Id = form.TrainerId });
 
-            var adminCourseService = new Mock<IAdminCourseService>();
-            adminCourseService.CreateAsync(100);
+            var adminCourseService = AdminCourseServiceMock.GetMock;
+            adminCourseService.CreateAsync(TestCourseId);
 
             var controller = new CoursesController(
                 userManager.Object,
@@ -200,14 +199,320 @@
             // Assert
             controller.TempData.AssertSuccessMsg(WebConstants.CourseCreatedMsg);
 
-            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
-
-            Assert.NotNull(redirectToActionResult);
-            Assert.Equal(nameof(LearningSystem.Web.Controllers.CoursesController.Index), redirectToActionResult.ActionName);
-            Assert.Equal(WebConstants.CoursesController, redirectToActionResult.ControllerName);
+            this.AssertRedirectToCoursesIndex(result);
 
             userManager.Verify();
             adminCourseService.Verify();
+        }
+
+        [Fact]
+        public async Task EditGet_ShouldReturnRedirectToActionWithCorrectData_GivenInvalidCourse()
+        {
+            // Arrange
+            var adminCourseService = AdminCourseServiceMock.GetMock;
+            adminCourseService.GetByIdAsync(null);
+
+            var controller = new CoursesController(
+                userManager: null,
+                adminCourseService.Object,
+                courseService: null, mapper: null)
+            {
+                TempData = TempDataMock.GetMock
+            };
+
+            // Act
+            var result = await controller.Edit(TestCourseId);
+
+            // Assert
+            controller.TempData.AssertErrorMsg(WebConstants.CourseNotFoundMsg);
+
+            this.AssertRedirectToCoursesIndex(result);
+
+            adminCourseService.Verify();
+        }
+
+        [Fact]
+        public async Task EditGet_ShouldReturnViewResultWithCorrectModel_GivenValidCourse()
+        {
+            // Arrange
+            var userManager = UserManagerMock.GetMock;
+            userManager.GetUsersInRoleTrainerAsync(this.GetTrainers());
+
+            var adminCourseService = AdminCourseServiceMock.GetMock;
+            adminCourseService.GetByIdAsync(this.GetAdminCourse());
+
+            var controller = new CoursesController(
+                userManager.Object,
+                adminCourseService.Object,
+                courseService: null,
+                mapper: Tests.Mapper);
+
+            // Act
+            var result = await controller.Edit(TestCourseId);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.Equal(CoursesController.CourseFormView, viewResult.ViewName);
+
+            var model = Assert.IsType<CourseFormModel>(viewResult.Model);
+            this.AssertAdminCourseForm(model, FormActionEnum.Edit);
+
+            userManager.Verify();
+            adminCourseService.Verify();
+        }
+
+        [Fact]
+        public async Task EditPost_ShouldReturnRedirectToActionWithCorrectData_GivenInvalidCourse()
+        {
+            // Arrange
+            var courseService = CourseServiceMock.GetMock;
+            courseService.Exists(false);
+
+            var controller = new CoursesController(
+                userManager: null,
+                adminCourseService: null,
+                courseService.Object,
+                mapper: null)
+            {
+                TempData = TempDataMock.GetMock
+            };
+
+            // Act
+            var result = await controller.Edit(TestCourseId, this.GetEditDeleteForm());
+
+            // Assert
+            controller.TempData.AssertErrorMsg(WebConstants.CourseNotFoundMsg);
+
+            this.AssertRedirectToCoursesIndex(result);
+
+            courseService.Verify();
+        }
+
+        [Fact]
+        public async Task EditPost_ShouldReturnViewWithCorrectModel_GivenInvalidTrainer()
+        {
+            // Arrange
+            var form = this.GetEditDeleteForm();
+
+            var courseService = CourseServiceMock.GetMock;
+            courseService.Exists(true);
+
+            var userManager = UserManagerMock.GetMock;
+            userManager.GetUsersInRoleTrainerAsync(this.GetTrainers());
+            userManager.FindByIdAsync(null);
+
+            var controller = new CoursesController(
+                userManager.Object,
+                adminCourseService: null,
+                courseService.Object,
+                mapper: null);
+
+            // Act
+            var result = await controller.Edit(TestCourseId, form);
+
+            // Assert
+            this.AssertEqualViewResultWithModel(form, result);
+
+            courseService.Verify();
+            userManager.Verify();
+        }
+
+        [Fact]
+        public async Task EditPost_ShouldReturnViewWithCorrectModel_GivenInvalidModelState()
+        {
+            // Arrange
+            var form = this.GetEditDeleteForm();
+
+            var courseService = CourseServiceMock.GetMock;
+            courseService.Exists(true);
+
+            var userManager = UserManagerMock.GetMock;
+            userManager.GetUsersInRoleTrainerAsync(this.GetTrainers());
+            userManager.FindByIdAsync(new User { Id = form.TrainerId });
+
+            var controller = new CoursesController(
+                userManager.Object,
+                adminCourseService: null,
+                courseService.Object,
+                mapper: null);
+
+            controller.ModelState.AddModelError(string.Empty, "Error"); // model error
+
+            // Act
+            var result = await controller.Edit(TestCourseId, form);
+
+            // Assert
+            this.AssertEqualViewResultWithModel(form, result);
+
+            courseService.Verify();
+            userManager.Verify();
+        }
+
+        [Fact]
+        public async Task EditPost_ShouldReturnViewWithCorrectModel_GivenServiceError()
+        {
+            // Arrange
+            var form = this.GetEditDeleteForm();
+
+            var courseService = CourseServiceMock.GetMock;
+            courseService.Exists(true);
+
+            var userManager = UserManagerMock.GetMock;
+            userManager.GetUsersInRoleTrainerAsync(this.GetTrainers());
+            userManager.FindByIdAsync(new User { Id = form.TrainerId });
+
+            var adminCourseService = AdminCourseServiceMock.GetMock;
+            adminCourseService.UpdateAsync(false);
+
+            var controller = new CoursesController(
+                userManager.Object,
+                adminCourseService.Object,
+                courseService.Object,
+                mapper: null)
+            {
+                TempData = TempDataMock.GetMock
+            };
+
+            // Act
+            var result = await controller.Edit(TestCourseId, form);
+
+            // Assert
+            controller.TempData.AssertErrorMsg(WebConstants.CourseNotUpdatedMsg);
+
+            this.AssertEqualViewResultWithModel(form, result);
+
+            adminCourseService.Verify();
+            courseService.Verify();
+            userManager.Verify();
+        }
+
+        [Fact]
+        public async Task EditPost_ShouldReturnRedirectWithCorrectRoute_GivenUpdateSuccess()
+        {
+            // Arrange
+            var form = this.GetEditDeleteForm();
+
+            var courseService = CourseServiceMock.GetMock;
+            courseService.Exists(true);
+
+            var userManager = UserManagerMock.GetMock;
+            userManager.FindByIdAsync(new User { Id = form.TrainerId });
+
+            var adminCourseService = AdminCourseServiceMock.GetMock;
+            adminCourseService.UpdateAsync(true);
+
+            var controller = new CoursesController(
+                userManager.Object,
+                adminCourseService.Object,
+                courseService.Object,
+                mapper: null)
+            {
+                TempData = TempDataMock.GetMock
+            };
+
+            // Act
+            var result = await controller.Edit(TestCourseId, form);
+
+            // Assert
+            controller.TempData.AssertSuccessMsg(WebConstants.CourseUpdatedMsg);
+
+            this.AssertRedirectToCoursesDetailsWithCorrectRouteValues(result);
+
+            adminCourseService.Verify();
+            courseService.Verify();
+            userManager.Verify();
+        }
+
+        [Fact]
+        public async Task DeleteGet_ShouldReturnRedirectToActionWithCorrectData_GivenInvalidCourse()
+        {
+            // Arrange
+            var adminCourseService = AdminCourseServiceMock.GetMock;
+            adminCourseService.GetByIdAsync(null);
+
+            var controller = new CoursesController(
+                userManager: null,
+                adminCourseService.Object,
+                courseService: null, mapper: null)
+            {
+                TempData = TempDataMock.GetMock
+            };
+
+            // Act
+            var result = await controller.Delete(TestCourseId);
+
+            // Assert
+            controller.TempData.AssertErrorMsg(WebConstants.CourseNotFoundMsg);
+
+            this.AssertRedirectToCoursesIndex(result);
+
+            adminCourseService.Verify();
+        }
+
+        [Fact]
+        public async Task DeleteGet_ShouldReturnViewResultWithCorrectModel_GivenValidCourse()
+        {
+            // Arrange
+            var userManager = UserManagerMock.GetMock;
+            userManager.GetUsersInRoleTrainerAsync(this.GetTrainers());
+
+            var adminCourseService = AdminCourseServiceMock.GetMock;
+            adminCourseService.GetByIdAsync(this.GetAdminCourse());
+
+            var controller = new CoursesController(
+                userManager.Object,
+                adminCourseService.Object,
+                courseService: null,
+                mapper: Tests.Mapper);
+
+            // Act
+            var result = await controller.Delete(TestCourseId);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.Equal(CoursesController.CourseFormView, viewResult.ViewName);
+
+            var model = Assert.IsType<CourseFormModel>(viewResult.Model);
+            this.AssertAdminCourseForm(model, FormActionEnum.Delete);
+
+            userManager.Verify();
+            adminCourseService.Verify();
+        }
+
+
+
+
+
+
+
+
+
+
+
+        // TODO delete
+
+        private void AssertAdminCourseForm(CourseFormModel model, FormActionEnum expectedAction)
+        {
+            var expectedCourse = this.GetAdminCourse();
+
+            Assert.NotNull(model);
+            Assert.Equal(expectedAction, model.Action);
+            Assert.Equal(expectedCourse.Name, model.Name);
+            Assert.Equal(expectedCourse.Description, model.Description);
+            Assert.Equal(expectedCourse.StartDate, model.StartDate);
+            Assert.Equal(expectedCourse.EndDate, model.EndDate);
+            Assert.Equal(expectedCourse.TrainerId, model.TrainerId);
+
+            this.AssertTrainersSelectList(model.Trainers);
+        }
+
+        private void AssertDate(DateTime resultDate)
+        {
+            var expectedDate = DateTime.Now;
+
+            Assert.Equal(expectedDate.Year, resultDate.Year);
+            Assert.Equal(expectedDate.Month, resultDate.Month);
+            Assert.Equal(expectedDate.Day, resultDate.Day);
         }
 
         private void AssertEqualViewResultWithModel(CourseFormModel form, IActionResult result)
@@ -221,6 +526,30 @@
 
             this.AssertTrainersSelectList(model.Trainers);
             Assert.Equal(form, model);
+        }
+
+        private void AssertRedirectToCoursesDetailsWithCorrectRouteValues(IActionResult result)
+        {
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+
+            Assert.NotNull(redirectToActionResult);
+
+            Assert.Equal(nameof(LearningSystem.Web.Controllers.CoursesController.Details), redirectToActionResult.ActionName);
+            Assert.Equal(WebConstants.CoursesController, redirectToActionResult.ControllerName);
+
+            Assert.NotNull(redirectToActionResult.RouteValues);
+            Assert.Contains(redirectToActionResult.RouteValues.Keys, k => k == WebConstants.Id);
+            Assert.Equal(TestCourseId, redirectToActionResult.RouteValues[WebConstants.Id]);
+        }
+
+        private void AssertRedirectToCoursesIndex(IActionResult result)
+        {
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+
+            Assert.NotNull(redirectToActionResult);
+
+            Assert.Equal(nameof(LearningSystem.Web.Controllers.CoursesController.Index), redirectToActionResult.ActionName);
+            Assert.Equal(WebConstants.CoursesController, redirectToActionResult.ControllerName);
         }
 
         private void AssertTrainersSelectList(IEnumerable<SelectListItem> resultTrainers)
@@ -244,14 +573,16 @@
                 resultTrainers.Select(t => t.Text).ToList());
         }
 
-        private void AssertDate(DateTime resultDate)
-        {
-            var expectedDate = DateTime.Now;
-
-            Assert.Equal(expectedDate.Year, resultDate.Year);
-            Assert.Equal(expectedDate.Month, resultDate.Month);
-            Assert.Equal(expectedDate.Day, resultDate.Day);
-        }
+        private AdminCourseServiceModel GetAdminCourse()
+            => new AdminCourseServiceModel
+            {
+                Id = TestCourseId,
+                Name = "Name",
+                Description = "Description",
+                StartDate = new DateTime(2019, 3, 10).ToLocalTime(),
+                EndDate = new DateTime(2019, 6, 30).ToLocalTime(),
+                TrainerId = "TrainerId"
+            };
 
         private CourseFormModel GetCreateForm()
             => new CourseFormModel()
@@ -260,7 +591,17 @@
                 Description = "Description",
                 StartDate = DateTime.Now.AddDays(1),
                 EndDate = DateTime.Now.AddDays(15),
-                TrainerId = "userId"
+                TrainerId = "TrainerId"
+            };
+
+        private CourseFormModel GetEditDeleteForm()
+            => new CourseFormModel()
+            {
+                Name = "Name",
+                Description = "Description",
+                StartDate = new DateTime(2019, 3, 10).ToLocalTime(),
+                EndDate = new DateTime(2019, 6, 30).ToLocalTime(),
+                TrainerId = "TrainerId"
             };
 
         private IList<User> GetTrainers()

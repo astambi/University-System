@@ -69,7 +69,7 @@
             await this.db.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(
+        public async Task<bool> UpdateAsync(
             int id,
             string name,
             string description,
@@ -80,13 +80,13 @@
             var course = await this.db.Courses.FindAsync(id);
             if (course == null)
             {
-                return;
+                return false;
             }
 
             var trainerExists = this.db.Users.Any(u => u.Id == trainerId);
             if (!trainerExists)
             {
-                return;
+                return false;
             }
 
             course.Name = name;
@@ -95,7 +95,9 @@
             course.EndDate = endDate.ToEndDateUtc();
             course.TrainerId = trainerId;
 
-            await this.db.SaveChangesAsync();
+            var result = await this.db.SaveChangesAsync();
+
+            return result > 0;
         }
     }
 }

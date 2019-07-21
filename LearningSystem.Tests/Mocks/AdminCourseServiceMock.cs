@@ -2,6 +2,7 @@
 {
     using System;
     using LearningSystem.Services.Admin;
+    using LearningSystem.Services.Admin.Models;
     using Moq;
 
     public static class AdminCourseServiceMock
@@ -17,5 +18,24 @@
 
             return mock;
         }
+
+        public static Mock<IAdminCourseService> GetByIdAsync(this Mock<IAdminCourseService> mock, AdminCourseServiceModel course)
+        {
+            mock.Setup(a => a.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(course)
+                .Verifiable();
+
+            return mock;
+        }
+
+        public static Mock<IAdminCourseService> UpdateAsync(this Mock<IAdminCourseService> mock, bool success)
+        {
+            mock.Setup(a => a.UpdateAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>()))
+                .ReturnsAsync(success)
+                .Verifiable();
+
+            return mock;
+        }
+
     }
 }

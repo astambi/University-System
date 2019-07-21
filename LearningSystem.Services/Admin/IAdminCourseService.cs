@@ -15,7 +15,7 @@
 
         Task<AdminCourseServiceModel> GetByIdAsync(int id);
 
-        Task UpdateAsync(
+        Task<bool> UpdateAsync(
             int id,
             string name,
             string description,

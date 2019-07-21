@@ -109,7 +109,7 @@
                 return this.View(CourseFormView, model);
             }
 
-            await this.adminCourseService.UpdateAsync(
+            var success = await this.adminCourseService.UpdateAsync(
                  id,
                  model.Name,
                  model.Description,
@@ -117,7 +117,16 @@
                  model.EndDate,
                  model.TrainerId);
 
+            if (!success)
+            {
+                this.TempData.AddErrorMessage(WebConstants.CourseNotUpdatedMsg);
+
+                model.Trainers = await this.GetTrainersAsync();
+                return this.View(CourseFormView, model);
+            }
+
             this.TempData.AddSuccessMessage(WebConstants.CourseUpdatedMsg);
+
             return this.RedirectToAction(
                 nameof(Web.Controllers.CoursesController.Details),
                 WebConstants.CoursesController,
