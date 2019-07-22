@@ -20,6 +20,8 @@
 
         Task<CourseServiceModel> CourseByIdAsync(string trainerId, int courseId);
 
+        Task<CourseWithResourcesServiceModel> CourseWithResourcesByIdAsync(string trainerId, int courseId);
+
         Task<bool> CourseHasEndedAsync(int courseId);
 
         Task<ExamDownloadServiceModel> DownloadExam(string trainerId, int courseId, string studentId);

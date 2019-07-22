@@ -19,6 +19,8 @@
 
         public DbSet<Certificate> Certificates { get; set; }
 
+        public DbSet<Resource> Resources { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -77,6 +79,12 @@
                 .HasOne(c => c.Student)
                 .WithMany(st => st.Certificates)
                 .HasForeignKey(c => c.StudentId);
+
+            builder
+                .Entity<Resource>()
+                .HasOne(r => r.Course)
+                .WithMany(c => c.Resources)
+                .HasForeignKey(r => r.CourseId);
         }
     }
 }

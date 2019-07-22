@@ -1,6 +1,6 @@
 ﻿@model StudentCourseGradeFormModel
 
-<form asp-action="@nameof(TrainersController.AssessPerformance)"
+<form asp-action="@nameof(TrainersController.AssessExam)"
       asp-route-id="@Model.CourseId" method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input asp-for="CourseId" hidden />

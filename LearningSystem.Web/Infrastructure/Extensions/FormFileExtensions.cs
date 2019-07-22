@@ -6,7 +6,7 @@
 
     public static class FormFileExtensions
     {
-        public static async Task<byte[]> ToByteArray(this IFormFile formFile)
+        public static async Task<byte[]> ToByteArrayAsync(this IFormFile formFile)
         {
             using (var memoryStream = new MemoryStream())
             {

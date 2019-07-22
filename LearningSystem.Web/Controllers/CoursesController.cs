@@ -154,7 +154,7 @@
                 return this.RedirectToAction(nameof(Details), routeValues: new { id });
             }
 
-            var fileBytes = await examFile.ToByteArray();
+            var fileBytes = await examFile.ToByteArrayAsync();
             await this.courseService.AddExamSubmissionAsync(id, userId, fileBytes);
 
             this.TempData.AddSuccessMessage(WebConstants.ExamSubmittedMsg);

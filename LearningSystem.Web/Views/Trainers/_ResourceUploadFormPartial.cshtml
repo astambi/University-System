@@ -1,0 +1,18 @@
+﻿@model int
+
+<form method="post" enctype="multipart/form-data"
+      asp-controller="@WebConstants.ResourcesController"
+      asp-action="@nameof(ResourcesController.Create)">
+    <h4>
+        Upload resource (max size @DataConstants.ResourceFileMaxLengthInMb MB):
+    </h4>
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group d-flex justify-content-ar align-items-center">
+        <input hidden name="courseId" value="@Model" />
+        <input name="resourceFile" type="file" accept=".@FileType.Pptx, .@FileType.Zip" class="form-control-file mr-2" required />
+        
+        <partial name="_FormSubmitPartial" model="FormActionEnum.Upload" />
+    </div>
+</form>
+
+@section Scripts {<partial name="_ValidationScriptsPartial" />}

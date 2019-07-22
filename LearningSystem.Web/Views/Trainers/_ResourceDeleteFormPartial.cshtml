@@ -1,0 +1,16 @@
+﻿@model ResourceFormViewModel
+
+@if (Model != null)
+{
+    <form asp-controller="@WebConstants.ResourcesController"
+          asp-action="@nameof(ResourcesController.Delete)"
+          asp-route-id="@Model.Id" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input hidden name="@nameof(Model.Id)" value="@Model.Id" />
+        <input hidden name="@nameof(Model.CourseId)" value="@Model.CourseId" />
+
+        <partial name="_FormSubmitPartial" model="@FormActionEnum.Delete" />
+    </form>
+}
+
+@section Scripts {<partial name="_ValidationScriptsPartial" />}

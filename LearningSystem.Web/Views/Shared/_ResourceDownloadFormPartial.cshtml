@@ -1,0 +1,10 @@
+﻿@model ResourceFormViewModel
+
+@if (Model != null)
+{
+    <a asp-controller="@WebConstants.ResourcesController"
+       asp-action="@nameof(ResourcesController.Download)"
+       asp-route-id="@Model.Id"
+       asp-route-courseId="@Model.CourseId"
+       class="btn btn-@StyleHelpers.ToStyle(FormActionEnum.Download)"><i class="fa fa-download"></i></a>
+}

@@ -1,7 +1,6 @@
 ﻿namespace LearningSystem.Web.Controllers
 {
     using System.Threading.Tasks;
-    using LearningSystem.Data;
     using LearningSystem.Data.Models;
     using LearningSystem.Services;
     using LearningSystem.Web.Infrastructure.Extensions;
@@ -59,6 +58,34 @@
             return this.View(model);
         }
 
+        public async Task<IActionResult> Resources(int id)
+        {
+            var courseExists = this.courseService.Exists(id);
+            if (!courseExists)
+            {
+                this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            var userId = this.userManager.GetUserId(this.User);
+            if (userId == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            var isTrainer = await this.trainerService.IsTrainerForCourseAsync(userId, id);
+            if (!isTrainer)
+            {
+                this.TempData.AddErrorMessage(WebConstants.NotTrainerForCourseMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            var model = await this.trainerService.CourseWithResourcesByIdAsync(userId, id);
+
+            return this.View(model);
+        }
+
         public async Task<IActionResult> Students(int id)
         {
             var courseExists = this.courseService.Exists(id);
@@ -92,7 +119,7 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> AssessPerformance(int id, StudentCourseGradeFormModel model)
+        public async Task<IActionResult> AssessExam(int id, StudentCourseGradeFormModel model)
         {
             var courseExists = this.courseService.Exists(id);
             if (!courseExists)

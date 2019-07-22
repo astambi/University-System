@@ -109,6 +109,21 @@
             .Select(c => this.mapper.Map<CourseServiceModel>(c))
             .FirstOrDefaultAsync();
 
+        public async Task<CourseWithResourcesServiceModel> CourseWithResourcesByIdAsync(string trainerId, int courseId)
+            => await this.db
+            .Courses
+            .Where(c => c.Id == courseId)
+            .Where(c => c.TrainerId == trainerId)
+            .Select(c => new CourseWithResourcesServiceModel
+            {
+                Course = this.mapper.Map<CourseServiceModel>(c),
+                Resources = c.Resources
+                    .Select(r => this.mapper.Map<CourseResourceServiceModel>(r))
+                    .OrderBy(r => r.FileName)
+                    .ToList()
+            })
+            .FirstOrDefaultAsync();
+
         public async Task<bool> CourseHasEndedAsync(int id)
             => await this.db
             .Courses

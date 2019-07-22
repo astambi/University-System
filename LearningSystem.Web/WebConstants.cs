@@ -37,6 +37,7 @@
         public const string CoursesController = "Courses";
         public const string HomeController = "Home";
         public const string TrainersController = "Trainers";
+        public const string ResourcesController = "Resources";
         public const string UsersController = "Users";
 
         // Actions
@@ -76,6 +77,8 @@
 
         public const string CertificateIssuedMsg = "Course certificate issued successfully.";
         public const string CertificateNotFoundMsg = "Certificate not found.";
+        public const string CertificateDownloadInProgressMsg = "Certificate download in progress. This could take a few more seconds.";
+        public const string CertificateDownloadSuccessMsg = "Certificate downloaded successfully.";
 
         public const string CourseCreatedMsg = "Course created successfully.";
         public const string CourseDeletedMsg = "Course deleted successfully.";
@@ -103,6 +106,14 @@
 
         public const string InvalidIdentityOrRoleMsg = "Invalid identity or role.";
         public const string InvalidUserMsg = "Invalid user.";
+
+        public const string ResourceCreatedMsg = "Resource created successfully.";
+        public const string ResourceDeletedMsg = "Resource deleted successfully.";
+        public const string ResourceDownloadErrorMsg = "Resource download error.";
+        public const string ResourceDownloadUnauthorizedMsg = "Resource download not allowed.";
+        public const string ResourceFileUploadErrorMsg = "Resource file upload error.";
+        public const string ResourceNotDeletedMsg = "Resource not deleted.";
+        public const string ResourceNotFoundMsg = "Resource not found.";
 
         public const string StudentAssessmentErrorMsg = "Student assessment error.";
         public const string StudentHasNotSubmittedExamMsg = "Student has not submitted an exam.";

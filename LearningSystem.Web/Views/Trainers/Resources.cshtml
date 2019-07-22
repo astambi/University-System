@@ -1,0 +1,35 @@
+﻿@model CourseWithResourcesServiceModel
+@{
+    ViewData["Title"] = "Resources";
+}
+
+<h1>Resources</h1>
+
+<section class="d-flex justify-content-around align-items-start">
+    <partial name="_CourseCardPartial" for="Course" />
+
+    <article>
+        <partial name="_ResourceUploadFormPartial" for="Course.Id" />
+        <table class="table">
+            <thead>
+                <tr class="align-bottom">
+                    <th>Resource</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var resource in Model.Resources)
+                {
+                    var resourceDloadModel = new ResourceFormViewModel { Id = resource.Id, CourseId = Model.Course.Id };
+                    <tr>
+                        <td>@resource.FileName</td>
+                        <td class="d-flex justify-content-around m-auto">
+                            <partial name="_ResourceDownloadFormPartial" model="@resourceDloadModel" />
+                            <partial name="_ResourceDeleteFormPartial" model="@resourceDloadModel" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </article>
+</section>

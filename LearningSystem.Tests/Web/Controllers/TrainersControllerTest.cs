@@ -233,10 +233,10 @@
         }
 
         [Fact]
-        public void AssessPerformance_ShouldHaveHttpPostAttribute()
+        public void AssessExam_ShouldHaveHttpPostAttribute()
         {
             // Arrange
-            var method = typeof(TrainersController).GetMethod(nameof(TrainersController.AssessPerformance));
+            var method = typeof(TrainersController).GetMethod(nameof(TrainersController.AssessExam));
 
             // Act 
             var attributes = method.GetCustomAttributes(true);
@@ -246,7 +246,7 @@
         }
 
         [Fact]
-        public async Task AssessPerformance_ShouldReturnRedirectToAction_GivenInvalidCourse()
+        public async Task AssessExam_ShouldReturnRedirectToAction_GivenInvalidCourse()
         {
             // Arrange
             var courseService = CourseServiceMock.GetMock;
@@ -261,7 +261,7 @@
             };
 
             // Act
-            var result = await controller.AssessPerformance(TestCourseId, It.IsAny<StudentCourseGradeFormModel>());
+            var result = await controller.AssessExam(TestCourseId, It.IsAny<StudentCourseGradeFormModel>());
 
             // Assert
             controller.TempData.AssertErrorMsg(WebConstants.CourseNotFoundMsg);
@@ -272,7 +272,7 @@
         }
 
         [Fact]
-        public async Task AssessPerformance_ShouldReturnRedirectToActionWithCorrectRouteValues_GivenModelError()
+        public async Task AssessExam_ShouldReturnRedirectToActionWithCorrectRouteValues_GivenModelError()
         {
             // Arrange
             var courseService = CourseServiceMock.GetMock;
@@ -288,7 +288,7 @@
             controller.ModelState.AddModelError(string.Empty, "Error"); // model error
 
             // Act
-            var result = await controller.AssessPerformance(TestCourseId, It.IsAny<StudentCourseGradeFormModel>());
+            var result = await controller.AssessExam(TestCourseId, It.IsAny<StudentCourseGradeFormModel>());
 
             // Assert
             controller.TempData.AssertErrorMsg(WebConstants.StudentAssessmentErrorMsg);
@@ -300,7 +300,7 @@
         }
 
         [Fact]
-        public async Task AssessPerformance_ShouldReturnRedirectToAction_GivenInvalidUser()
+        public async Task AssessExam_ShouldReturnRedirectToAction_GivenInvalidUser()
         {
             // Arrange
             var courseService = CourseServiceMock.GetMock;
@@ -318,7 +318,7 @@
             };
 
             // Act
-            var result = await controller.AssessPerformance(TestCourseId, It.IsAny<StudentCourseGradeFormModel>());
+            var result = await controller.AssessExam(TestCourseId, It.IsAny<StudentCourseGradeFormModel>());
 
             // Assert
             controller.TempData.AssertErrorMsg(WebConstants.InvalidUserMsg);
@@ -331,7 +331,7 @@
         }
 
         [Fact]
-        public async Task AssessPerformance_ShouldReturnRedirectToAction_GivenInvalidTrainer()
+        public async Task AssessExam_ShouldReturnRedirectToAction_GivenInvalidTrainer()
         {
             // Arrange
             var courseService = CourseServiceMock.GetMock;
@@ -352,7 +352,7 @@
             };
 
             // Act
-            var result = await controller.AssessPerformance(TestCourseId, It.IsAny<StudentCourseGradeFormModel>());
+            var result = await controller.AssessExam(TestCourseId, It.IsAny<StudentCourseGradeFormModel>());
 
             // Assert
             controller.TempData.AssertErrorMsg(WebConstants.NotTrainerForCourseMsg);
@@ -365,7 +365,7 @@
         }
 
         [Fact]
-        public async Task AssessPerformance_ShouldReturnRedirectToAction_BeforeCourseEndDate()
+        public async Task AssessExam_ShouldReturnRedirectToAction_BeforeCourseEndDate()
         {
             // Arrange
             var courseService = CourseServiceMock.GetMock;
@@ -388,7 +388,7 @@
             };
 
             // Act
-            var result = await controller.AssessPerformance(TestCourseId, It.IsAny<StudentCourseGradeFormModel>());
+            var result = await controller.AssessExam(TestCourseId, It.IsAny<StudentCourseGradeFormModel>());
 
             // Assert
             controller.TempData.AssertErrorMsg(WebConstants.CourseHasNotEndedMsg);
@@ -401,7 +401,7 @@
         }
 
         [Fact]
-        public async Task AssessPerformance_ShouldReturnRedirectToActionWithCorrectRouteValues_GivenStudentNotEnrolledInCourses()
+        public async Task AssessExam_ShouldReturnRedirectToActionWithCorrectRouteValues_GivenStudentNotEnrolledInCourses()
         {
             // Arrange
             var testModel = this.GetStudentInCourseWithGrade();
@@ -428,7 +428,7 @@
             };
 
             // Act
-            var result = await controller.AssessPerformance(TestCourseId, testModel);
+            var result = await controller.AssessExam(TestCourseId, testModel);
 
             // Assert
             controller.TempData.AssertErrorMsg(WebConstants.StudentNotEnrolledInCourseMsg);
@@ -442,7 +442,7 @@
         }
 
         [Fact]
-        public async Task AssessPerformance_ShouldReturnRedirectToActionWithCorrectRouteValues_GivenAssessmentError()
+        public async Task AssessExam_ShouldReturnRedirectToActionWithCorrectRouteValues_GivenAssessmentError()
         {
             // Arrange
             var testModel = this.GetStudentInCourseWithGrade();
@@ -470,7 +470,7 @@
             };
 
             // Act
-            var result = await controller.AssessPerformance(TestCourseId, testModel);
+            var result = await controller.AssessExam(TestCourseId, testModel);
 
             // Assert
             controller.TempData.AssertErrorMsg(WebConstants.ExamAssessmentErrorMsg);
@@ -484,7 +484,7 @@
         }
 
         [Fact]
-        public async Task AssessPerformance_ShouldReturnRedirectToActionWithCorrectRouteValuesAndAssessmentSuccessMsg_GivenAssessmentSuccessAndGradeNotEligibleForCertificate()
+        public async Task AssessExam_ShouldReturnRedirectToActionWithCorrectRouteValuesAndAssessmentSuccessMsg_GivenAssessmentSuccessAndGradeNotEligibleForCertificate()
         {
             // Arrange
             var testModel = this.GetStudentInCourseWithGrade();
@@ -513,7 +513,7 @@
             };
 
             // Act
-            var result = await controller.AssessPerformance(TestCourseId, testModel);
+            var result = await controller.AssessExam(TestCourseId, testModel);
 
             // Assert
             controller.TempData.AssertSuccessMsg(WebConstants.ExamAssessedMsg);
@@ -527,7 +527,7 @@
         }
 
         [Fact]
-        public async Task AssessPerformance_ShouldReturnRedirectToActionWithCorrectRouteValuesAndCertificateSuccessMsg_GivenCertificatetSuccess()
+        public async Task AssessExam_ShouldReturnRedirectToActionWithCorrectRouteValuesAndCertificateSuccessMsg_GivenCertificatetSuccess()
         {
             // Arrange
             var testModel = this.GetStudentInCourseWithGrade();
@@ -557,7 +557,7 @@
             };
 
             // Act
-            var result = await controller.AssessPerformance(TestCourseId, testModel);
+            var result = await controller.AssessExam(TestCourseId, testModel);
 
             // Assert
             controller.TempData.AssertSuccessMsg(WebConstants.CertificateIssuedMsg);

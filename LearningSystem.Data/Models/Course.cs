@@ -31,6 +31,8 @@
         [Display(Name = "End date")]
         public DateTime EndDate { get; set; }
 
+        public ICollection<Resource> Resources { get; set; } = new List<Resource>();
+
         public ICollection<StudentCourse> Students { get; set; } = new List<StudentCourse>();
 
         public ICollection<ExamSubmission> ExamSubmissions { get; set; } = new List<ExamSubmission>();
