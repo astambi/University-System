@@ -99,8 +99,9 @@
             var form = this.GetCreateForm();
 
             var userManager = UserManagerMock.GetMock;
-            userManager.GetUsersInRoleTrainerAsync(this.GetTrainers());
-            userManager.FindByIdAsync(null);
+            userManager
+                .GetUsersInRoleTrainerAsync(this.GetTrainers())
+                .FindByIdAsync(null);
 
             var controller = new CoursesController(
                 userManager.Object,
@@ -122,8 +123,9 @@
             var form = this.GetCreateForm();
 
             var userManager = UserManagerMock.GetMock;
-            userManager.GetUsersInRoleTrainerAsync(this.GetTrainers());
-            userManager.FindByIdAsync(new User() { Id = form.TrainerId });
+            userManager
+                .GetUsersInRoleTrainerAsync(this.GetTrainers())
+                .FindByIdAsync(new User() { Id = form.TrainerId });
 
             var controller = new CoursesController(
                 userManager.Object,
@@ -147,8 +149,9 @@
             var form = this.GetCreateForm();
 
             var userManager = UserManagerMock.GetMock;
-            userManager.GetUsersInRoleTrainerAsync(this.GetTrainers());
-            userManager.FindByIdAsync(new User() { Id = form.TrainerId });
+            userManager
+                .GetUsersInRoleTrainerAsync(this.GetTrainers())
+                .FindByIdAsync(new User() { Id = form.TrainerId });
 
             var adminCourseService = AdminCourseServiceMock.GetMock;
             adminCourseService.CreateAsync(int.MinValue);
@@ -298,8 +301,9 @@
             courseService.Exists(true);
 
             var userManager = UserManagerMock.GetMock;
-            userManager.GetUsersInRoleTrainerAsync(this.GetTrainers());
-            userManager.FindByIdAsync(null);
+            userManager
+                .GetUsersInRoleTrainerAsync(this.GetTrainers())
+                .FindByIdAsync(null);
 
             var controller = new CoursesController(
                 userManager.Object,
@@ -327,8 +331,9 @@
             courseService.Exists(true);
 
             var userManager = UserManagerMock.GetMock;
-            userManager.GetUsersInRoleTrainerAsync(this.GetTrainers());
-            userManager.FindByIdAsync(new User { Id = form.TrainerId });
+            userManager
+                .GetUsersInRoleTrainerAsync(this.GetTrainers())
+                .FindByIdAsync(new User { Id = form.TrainerId });
 
             var controller = new CoursesController(
                 userManager.Object,
@@ -358,8 +363,9 @@
             courseService.Exists(true);
 
             var userManager = UserManagerMock.GetMock;
-            userManager.GetUsersInRoleTrainerAsync(this.GetTrainers());
-            userManager.FindByIdAsync(new User { Id = form.TrainerId });
+            userManager
+                .GetUsersInRoleTrainerAsync(this.GetTrainers())
+                .FindByIdAsync(new User { Id = form.TrainerId });
 
             var adminCourseService = AdminCourseServiceMock.GetMock;
             adminCourseService.UpdateAsync(false);

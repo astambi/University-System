@@ -35,8 +35,9 @@
             var testPagination = Tests.GetPaginationViewModel(requestedPage, TestTotalItems, TestSearchTerm);
 
             var courseService = CourseServiceMock.GetMock;
-            courseService.TotalActiveAsync(TestTotalItems);
-            courseService.AllActiveWithTrainersAsync(Tests.GetCourseServiceModelCollection());
+            courseService
+                .TotalActiveAsync(TestTotalItems)
+                .AllActiveWithTrainersAsync(Tests.GetCourseServiceModelCollection());
 
             var controller = new HomeController(courseService.Object);
 

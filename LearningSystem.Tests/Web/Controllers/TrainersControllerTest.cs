@@ -81,8 +81,9 @@
             userManager.GetUserId(TestUserId);
 
             var trainerService = TrainerServiceMock.GetMock;
-            trainerService.TotalCoursesAsync(TestTotalItems);
-            trainerService.CoursesAsync(Tests.GetCourseServiceModelCollection());
+            trainerService
+                .TotalCoursesAsync(TestTotalItems)
+                .CoursesAsync(Tests.GetCourseServiceModelCollection());
 
             var controller = new TrainersController(
                 userManager.Object,
@@ -205,9 +206,10 @@
             userManager.GetUserId(TestUserId);
 
             var trainerService = TrainerServiceMock.GetMock;
-            trainerService.IsTrainerForCourseAsync(true);
-            trainerService.CourseByIdAsync(testCourse);
-            trainerService.StudentsInCourseAsync(this.GetStudentInCourseServiceModelCollection());
+            trainerService
+                .IsTrainerForCourseAsync(true)
+                .CourseByIdAsync(testCourse)
+                .StudentsInCourseAsync(this.GetStudentInCourseServiceModelCollection());
 
             var controller = new TrainersController(
                 userManager.Object,
@@ -373,8 +375,9 @@
             userManager.GetUserId(TestUserId);
 
             var trainerService = TrainerServiceMock.GetMock;
-            trainerService.IsTrainerForCourseAsync(true);
-            trainerService.CourseHasEndedAsync(false);
+            trainerService
+                .IsTrainerForCourseAsync(true)
+                .CourseHasEndedAsync(false);
 
             var controller = new TrainersController(
                 userManager.Object,
@@ -404,15 +407,17 @@
             var testModel = this.GetStudentInCourseWithGrade();
 
             var courseService = CourseServiceMock.GetMock;
-            courseService.Exists(true);
-            courseService.IsUserEnrolledInCourseAsync(false);
+            courseService
+                .Exists(true)
+                .IsUserEnrolledInCourseAsync(false);
 
             var userManager = UserManagerMock.GetMock;
             userManager.GetUserId(TestUserId);
 
             var trainerService = TrainerServiceMock.GetMock;
-            trainerService.IsTrainerForCourseAsync(true);
-            trainerService.CourseHasEndedAsync(true);
+            trainerService
+                .IsTrainerForCourseAsync(true)
+                .CourseHasEndedAsync(true);
 
             var controller = new TrainersController(
                 userManager.Object,
@@ -443,16 +448,18 @@
             var testModel = this.GetStudentInCourseWithGrade();
 
             var courseService = CourseServiceMock.GetMock;
-            courseService.Exists(true);
-            courseService.IsUserEnrolledInCourseAsync(true);
+            courseService
+                .Exists(true)
+                .IsUserEnrolledInCourseAsync(true);
 
             var userManager = UserManagerMock.GetMock;
             userManager.GetUserId(TestUserId);
 
             var trainerService = TrainerServiceMock.GetMock;
-            trainerService.IsTrainerForCourseAsync(true);
-            trainerService.CourseHasEndedAsync(true);
-            trainerService.AssessStudentCoursePerformanceAsync(false);
+            trainerService
+                .IsTrainerForCourseAsync(true)
+                .CourseHasEndedAsync(true)
+                .AssessStudentCoursePerformanceAsync(false);
 
             var controller = new TrainersController(
                 userManager.Object,
@@ -483,17 +490,19 @@
             var testModel = this.GetStudentInCourseWithGrade();
 
             var courseService = CourseServiceMock.GetMock;
-            courseService.Exists(true);
-            courseService.IsUserEnrolledInCourseAsync(true);
-            courseService.IsGradeEligibleForCertificate(false);
+            courseService
+                .Exists(true)
+                .IsUserEnrolledInCourseAsync(true)
+                .IsGradeEligibleForCertificate(false);
 
             var userManager = UserManagerMock.GetMock;
             userManager.GetUserId(TestUserId);
 
             var trainerService = TrainerServiceMock.GetMock;
-            trainerService.IsTrainerForCourseAsync(true);
-            trainerService.CourseHasEndedAsync(true);
-            trainerService.AssessStudentCoursePerformanceAsync(true);
+            trainerService
+                .IsTrainerForCourseAsync(true)
+                .CourseHasEndedAsync(true)
+                .AssessStudentCoursePerformanceAsync(true);
 
             var controller = new TrainersController(
                 userManager.Object,
@@ -524,18 +533,20 @@
             var testModel = this.GetStudentInCourseWithGrade();
 
             var courseService = CourseServiceMock.GetMock;
-            courseService.Exists(true);
-            courseService.IsUserEnrolledInCourseAsync(true);
-            courseService.IsGradeEligibleForCertificate(true);
+            courseService
+                .Exists(true)
+                .IsUserEnrolledInCourseAsync(true)
+                .IsGradeEligibleForCertificate(true);
 
             var userManager = UserManagerMock.GetMock;
             userManager.GetUserId(TestUserId);
 
             var trainerService = TrainerServiceMock.GetMock;
-            trainerService.IsTrainerForCourseAsync(true);
-            trainerService.CourseHasEndedAsync(true);
-            trainerService.AssessStudentCoursePerformanceAsync(true);
-            trainerService.AddCertificateAsync(true);
+            trainerService
+                .IsTrainerForCourseAsync(true)
+                .CourseHasEndedAsync(true)
+                .AssessStudentCoursePerformanceAsync(true)
+                .AddCertificateAsync(true);
 
             var controller = new TrainersController(
                 userManager.Object,
@@ -660,8 +671,9 @@
             userManager.GetUserId(TestUserId);
 
             var trainerService = TrainerServiceMock.GetMock;
-            trainerService.IsTrainerForCourseAsync(true);
-            trainerService.CourseHasEndedAsync(false);
+            trainerService
+                .IsTrainerForCourseAsync(true)
+                .CourseHasEndedAsync(false);
 
             var controller = new TrainersController(
                 userManager.Object,
@@ -695,9 +707,10 @@
             userManager.GetUserId(TestUserId);
 
             var trainerService = TrainerServiceMock.GetMock;
-            trainerService.IsTrainerForCourseAsync(true);
-            trainerService.CourseHasEndedAsync(true);
-            trainerService.DownloadExam(null);
+            trainerService
+                .IsTrainerForCourseAsync(true)
+                .CourseHasEndedAsync(true)
+                .DownloadExam(null);
 
             var controller = new TrainersController(
                 userManager.Object,
@@ -731,9 +744,10 @@
             userManager.GetUserId(TestUserId);
 
             var trainerService = TrainerServiceMock.GetMock;
-            trainerService.IsTrainerForCourseAsync(true);
-            trainerService.CourseHasEndedAsync(true);
-            trainerService.DownloadExam(this.GetExamDownload());
+            trainerService
+                .IsTrainerForCourseAsync(true)
+                .CourseHasEndedAsync(true)
+                .DownloadExam(this.GetExamDownload());
 
             var controller = new TrainersController(
                 userManager.Object,

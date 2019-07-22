@@ -202,8 +202,9 @@
             var testUser = new User() { Id = TestId };
 
             var userManager = UserManagerMock.GetMock;
-            userManager.GetUserAsync(testUser);
-            userManager.GetRolesAsync(this.GetRoles());
+            userManager
+                .GetUserAsync(testUser)
+                .GetRolesAsync(this.GetRoles());
 
             var userService = UserServiceMock.GetMock;
             userService.GetUserProfileAsync(this.GetProfile());
