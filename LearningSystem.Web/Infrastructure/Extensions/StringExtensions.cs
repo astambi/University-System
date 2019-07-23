@@ -25,7 +25,7 @@
             => price.ToString(CurrencyFormat);
 
         public static string ToFriendlyName(this Enum enumValue)
-            => ToFriendlyName(enumValue.ToString());
+            => enumValue.ToString().ToFriendlyName();
 
         public static string ToFriendlyName(this string text)
         {

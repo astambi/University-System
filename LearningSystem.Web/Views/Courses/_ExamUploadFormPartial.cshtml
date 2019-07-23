@@ -1,16 +1,15 @@
 ﻿@model int
 
 <form method="post" enctype="multipart/form-data"
-      asp-controller="@WebConstants.ResourcesController"
-      asp-action="@nameof(ResourcesController.Create)">
-    <h4>Upload resource (max size @DataConstants.ResourceFileMaxLengthInMb MB):</h4>
-
+      asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.UploadExam)"
+      asp-route-id="@Model">
+    <p>Upload exam (max size @DataConstants.FileMaxLengthInMb MB, .@FileType.Zip.ToString().ToUpper() only):</p>
+    
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-group d-flex justify-content-ar align-items-center">
-        <input hidden name="courseId" value="@Model" />
         <div class="custom-file">
             <input type="file" class="custom-file-input" id="customFile"
-                   name="resourceFile" accept=".@FileType.Pptx, .@FileType.Zip" required>
+                   name="examFile" accept=".@FileType.Zip" required>
             <label class="custom-file-label" for="customFile">Choose file</label>
         </div>
         <div class="form-group m-0 ml-1">
