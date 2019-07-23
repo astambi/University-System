@@ -21,6 +21,7 @@
 
         private const string FileName = "   Resource name  ";
         private const string ContentType = "ContentType";
+
         private readonly byte[] FileBytes = new byte[] { 100, 11, 127 };
 
         [Fact]
