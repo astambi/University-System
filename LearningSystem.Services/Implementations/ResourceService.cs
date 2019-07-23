@@ -12,22 +12,21 @@
     {
         private readonly LearningSystemDbContext db;
         private readonly IMapper mapper;
-        private readonly ICourseService courseService;
 
         public ResourceService(
             LearningSystemDbContext db,
-            IMapper mapper,
-            ICourseService courseService)
+            IMapper mapper)
         {
             this.db = db;
             this.mapper = mapper;
-            this.courseService = courseService;
         }
-
 
         public async Task<bool> CreateAsync(int courseId, string fileName, string contentType, byte[] fileBytes)
         {
-            if (!this.courseService.Exists(courseId))
+            var courseExists = this.db.Courses.Any(c => c.Id == courseId);
+            if (!courseExists
+                || string.IsNullOrWhiteSpace(fileName)
+                || string.IsNullOrWhiteSpace(contentType))
             {
                 return false;
             }
@@ -35,7 +34,7 @@
             var resource = new Resource
             {
                 CourseId = courseId,
-                FileName = fileName,
+                FileName = fileName.Trim(),
                 ContentType = contentType,
                 FileBytes = fileBytes,
             };
@@ -69,7 +68,6 @@
             var result = await this.db.SaveChangesAsync();
 
             var success = result > 0;
-
             return success;
         }
     }

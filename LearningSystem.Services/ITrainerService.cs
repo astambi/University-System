@@ -10,7 +10,7 @@
     {
         Task<bool> AddCertificateAsync(string trainerId, int courseId, string studentId, Grade grade);
 
-        Task<bool> AssessStudentCoursePerformanceAsync(string trainerId, int courseId, string studentId, Grade grade);
+        Task<bool> AssessExamAsync(string trainerId, int courseId, string studentId, Grade grade);
 
         Task<IEnumerable<CourseServiceModel>> CoursesAsync(
             string trainerId,

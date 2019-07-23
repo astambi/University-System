@@ -25,7 +25,7 @@
         public static Mock<ITrainerService> AssessStudentCoursePerformanceAsync(this Mock<ITrainerService> mock, bool result)
         {
             mock
-                .Setup(s => s.AssessStudentCoursePerformanceAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<Grade>()))
+                .Setup(s => s.AssessExamAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<Grade>()))
                 .ReturnsAsync(result)
                 .Verifiable();
 

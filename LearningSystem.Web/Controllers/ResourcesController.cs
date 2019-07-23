@@ -37,6 +37,7 @@
             if (!this.ModelState.IsValid
                 || resourceFile == null)
             {
+                this.TempData.AddErrorMessage(WebConstants.ResourceNotFoundMsg);
                 return this.RedirectToTrainersResources(courseId);
             }
 

@@ -8,6 +8,7 @@
     using LearningSystem.Data.Models;
     using LearningSystem.Services.Admin.Models;
     using LearningSystem.Services.Models.Courses;
+    using LearningSystem.Services.Models.Resources;
     using LearningSystem.Services.Models.Users;
     using LearningSystem.Web;
     using LearningSystem.Web.Areas.Admin.Models.Courses;
@@ -33,6 +34,7 @@
                 cfg.CreateMap<AdminCourseServiceModel, CourseFormModel>();
                 cfg.CreateMap<Course, CourseServiceModel>();
                 cfg.CreateMap<Course, CourseWithDescriptionServiceModel>();
+                cfg.CreateMap<Resource, ResourceDownloadServiceModel>();
                 cfg.CreateMap<User, UserBasicServiceModel>();
                 cfg.CreateMap<User, UserServiceModel>();
             });

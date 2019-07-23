@@ -66,7 +66,7 @@
             return true;
         }
 
-        public async Task<bool> AssessStudentCoursePerformanceAsync(string trainerId, int courseId, string studentId, Grade grade)
+        public async Task<bool> AssessExamAsync(string trainerId, int courseId, string studentId, Grade grade)
         {
             if (!await this.IsTrainerForCourseAsync(trainerId, courseId)
                 || !await this.CourseHasEndedAsync(courseId))
