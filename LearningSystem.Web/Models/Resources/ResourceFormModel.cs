@@ -1,6 +1,6 @@
 ﻿namespace LearningSystem.Web.Models.Resources
 {
-    public class ResourceFormViewModel
+    public class ResourceFormModel
     {
         public int Id { get; set; }
 

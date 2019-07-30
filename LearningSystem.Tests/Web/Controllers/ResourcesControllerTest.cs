@@ -19,8 +19,6 @@
         private const string TestContentType = "application/zip";
         private const string TestFileName = "TestFileName";
 
-        private readonly byte[] TestFileBytes = new byte[] { 158, 201, 3, 7 };
-
         [Fact]
         public void ResourcesController_ShouldBeForAuthorizedUsersOnly()
         {
@@ -54,22 +52,58 @@
             {
                 TempData = TempDataMock.GetMock
             };
-            controller.ModelState.AddModelError(string.Empty, "Error");
 
-            // Act
-            var result = await controller.Create(TestCourseId, null);
+            using (controller)
+            {
+                controller.ModelState.AddModelError(string.Empty, "Error");
 
-            // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.ResourceNotFoundMsg);
+                // Act
+                var result = await controller.Create(TestCourseId, null);
 
-            this.AssertRedirectToTrainersResources(result);
-            this.AssertRouteWithId(result);
+                // Assert
+                controller.TempData.AssertErrorMsg(WebConstants.FileInvalidMsg);
+
+                this.AssertRedirectToTrainersResourcesWithRouteId(result);
+            }
+        }
+
+        [Fact]
+        public async Task Create_ShouldRedirectToTrainersIndex_GivenMismatchingCourseAndModel()
+        {
+            // Arrange
+            var testModel = GetResourceCreateModel();
+
+            var courseService = CourseServiceMock.GetMock;
+
+            var controller = new ResourcesController(
+                userManager: null,
+                courseService.Object,
+                resourceService: null,
+                trainerService: null)
+            {
+                TempData = TempDataMock.GetMock
+            };
+
+            using (controller)
+            {
+                // Act
+                var result = await controller.Create(TestCourseId + 1, testModel);
+
+                // Assert
+                controller.TempData.AssertErrorMsg(WebConstants.CourseInvalidMsg);
+
+                this.AssertRedirectToTrainersIndex(result);
+
+                courseService.Verify();
+            }
         }
 
         [Fact]
         public async Task Create_ShouldRedirectToTrainersIndex_GivenInvalidCourse()
         {
             // Arrange
+            var testModel = GetResourceCreateModel();
+
             var courseService = CourseServiceMock.GetMock;
             courseService.Exists(false);
 
@@ -82,23 +116,26 @@
                 TempData = TempDataMock.GetMock
             };
 
-            var testIFormFile = IFormFileMock.GetMock;
+            using (controller)
+            {
+                // Act
+                var result = await controller.Create(TestCourseId, testModel);
 
-            // Act
-            var result = await controller.Create(TestCourseId, testIFormFile.Object);
+                // Assert
+                controller.TempData.AssertErrorMsg(WebConstants.CourseNotFoundMsg);
 
-            // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.CourseNotFoundMsg);
+                this.AssertRedirectToTrainersIndex(result);
 
-            this.AssertRedirectToTrainersIndex(result);
-
-            courseService.Verify();
+                courseService.Verify();
+            }
         }
 
         [Fact]
         public async Task Create_ShouldRedirectToTrainersIndex_GivenInvalidUser()
         {
             // Arrange
+            var testModel = GetResourceCreateModel();
+
             var courseService = CourseServiceMock.GetMock;
             courseService.Exists(true);
 
@@ -114,24 +151,27 @@
                 TempData = TempDataMock.GetMock
             };
 
-            var testIFormFile = IFormFileMock.GetMock;
+            using (controller)
+            {
+                // Act
+                var result = await controller.Create(TestCourseId, testModel);
 
-            // Act
-            var result = await controller.Create(TestCourseId, testIFormFile.Object);
+                // Assert
+                controller.TempData.AssertErrorMsg(WebConstants.InvalidUserMsg);
 
-            // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.InvalidUserMsg);
+                this.AssertRedirectToTrainersIndex(result);
 
-            this.AssertRedirectToTrainersIndex(result);
-
-            courseService.Verify();
-            userManager.Verify();
+                courseService.Verify();
+                userManager.Verify();
+            }
         }
 
         [Fact]
         public async Task Create_ShouldRedirectToTrainersIndex_GivenInvalidTrainer()
         {
             // Arrange
+            var testModel = GetResourceCreateModel();
+
             var courseService = CourseServiceMock.GetMock;
             courseService.Exists(true);
 
@@ -150,25 +190,28 @@
                 TempData = TempDataMock.GetMock
             };
 
-            var testIFormFile = IFormFileMock.GetMock;
+            using (controller)
+            {
+                // Act
+                var result = await controller.Create(TestCourseId, testModel);
 
-            // Act
-            var result = await controller.Create(TestCourseId, testIFormFile.Object);
+                // Assert
+                controller.TempData.AssertErrorMsg(WebConstants.NotTrainerForCourseMsg);
 
-            // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.NotTrainerForCourseMsg);
+                this.AssertRedirectToTrainersIndex(result);
 
-            this.AssertRedirectToTrainersIndex(result);
-
-            courseService.Verify();
-            userManager.Verify();
-            trainerService.Verify();
+                courseService.Verify();
+                userManager.Verify();
+                trainerService.Verify();
+            }
         }
 
         [Fact]
         public async Task Create_ShouldRedirectToTrainersResourcesWithErrorMsg_GivenCreateError()
         {
             // Arrange
+            var testModel = GetResourceCreateModel();
+
             var courseService = CourseServiceMock.GetMock;
             courseService.Exists(true);
 
@@ -190,27 +233,29 @@
                 TempData = TempDataMock.GetMock
             };
 
-            var testIFormFile = IFormFileMock.GetMock;
+            using (controller)
+            {
+                // Act
+                var result = await controller.Create(TestCourseId, testModel);
 
-            // Act
-            var result = await controller.Create(TestCourseId, testIFormFile.Object);
+                // Assert
+                controller.TempData.AssertErrorMsg(WebConstants.ResourceFileUploadErrorMsg);
 
-            // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.ResourceFileUploadErrorMsg);
+                this.AssertRedirectToTrainersResourcesWithRouteId(result);
 
-            this.AssertRedirectToTrainersResources(result);
-            this.AssertRouteWithId(result);
-
-            courseService.Verify();
-            userManager.Verify();
-            trainerService.Verify();
-            resourceService.Verify();
+                courseService.Verify();
+                userManager.Verify();
+                trainerService.Verify();
+                resourceService.Verify();
+            }
         }
 
         [Fact]
         public async Task Create_ShouldRedirectToTrainersResourcesWithSuccessMsg_GivenCreateSuccess()
         {
             // Arrange
+            var testModel = GetResourceCreateModel();
+
             var courseService = CourseServiceMock.GetMock;
             courseService.Exists(true);
 
@@ -232,21 +277,21 @@
                 TempData = TempDataMock.GetMock
             };
 
-            var testIFormFile = IFormFileMock.GetMock;
+            using (controller)
+            {
+                // Act
+                var result = await controller.Create(TestCourseId, testModel);
 
-            // Act
-            var result = await controller.Create(TestCourseId, testIFormFile.Object);
+                // Assert
+                controller.TempData.AssertSuccessMsg(WebConstants.ResourceCreatedMsg);
 
-            // Assert
-            controller.TempData.AssertSuccessMsg(WebConstants.ResourceCreatedMsg);
+                this.AssertRedirectToTrainersResourcesWithRouteId(result);
 
-            this.AssertRedirectToTrainersResources(result);
-            this.AssertRouteWithId(result);
-
-            courseService.Verify();
-            userManager.Verify();
-            trainerService.Verify();
-            resourceService.Verify();
+                courseService.Verify();
+                userManager.Verify();
+                trainerService.Verify();
+                resourceService.Verify();
+            }
         }
 
         [Fact]
@@ -261,7 +306,7 @@
         public async Task Delete_ShouldRedirectToTrainersIndex_GivenInvalidUser()
         {
             // Arrange
-            var testModel = new ResourceFormViewModel { CourseId = TestCourseId, Id = TestResourceId };
+            var testModel = this.GetResource();
 
             var userManager = UserManagerMock.GetMock;
             userManager.GetUserId(null);
@@ -275,22 +320,25 @@
                 TempData = TempDataMock.GetMock
             };
 
-            // Act
-            var result = await controller.Delete(TestResourceId, testModel);
+            using (controller)
+            {
+                // Act
+                var result = await controller.Delete(TestResourceId, testModel);
 
-            // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.InvalidUserMsg);
+                // Assert
+                controller.TempData.AssertErrorMsg(WebConstants.InvalidUserMsg);
 
-            this.AssertRedirectToTrainersIndex(result);
+                this.AssertRedirectToTrainersIndex(result);
 
-            userManager.Verify();
+                userManager.Verify();
+            }
         }
 
         [Fact]
         public async Task Delete_ShouldRedirectToTrainersIndex_GivenInvalidTrainer()
         {
             // Arrange
-            var testModel = new ResourceFormViewModel { CourseId = TestCourseId, Id = TestResourceId };
+            var testModel = this.GetResource();
 
             var userManager = UserManagerMock.GetMock;
             userManager.GetUserId(TestUserId);
@@ -307,23 +355,26 @@
                 TempData = TempDataMock.GetMock
             };
 
-            // Act
-            var result = await controller.Delete(TestCourseId, testModel);
+            using (controller)
+            {
+                // Act
+                var result = await controller.Delete(TestCourseId, testModel);
 
-            // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.NotTrainerForCourseMsg);
+                // Assert
+                controller.TempData.AssertErrorMsg(WebConstants.NotTrainerForCourseMsg);
 
-            this.AssertRedirectToTrainersIndex(result);
+                this.AssertRedirectToTrainersIndex(result);
 
-            userManager.Verify();
-            trainerService.Verify();
+                userManager.Verify();
+                trainerService.Verify();
+            }
         }
 
         [Fact]
         public async Task Delete_ShouldRedirectToTrainersResources_GivenInvalidResource()
         {
             // Arrange
-            var testModel = new ResourceFormViewModel { CourseId = TestCourseId, Id = TestResourceId };
+            var testModel = this.GetResource();
 
             var userManager = UserManagerMock.GetMock;
             userManager.GetUserId(TestUserId);
@@ -343,25 +394,27 @@
                 TempData = TempDataMock.GetMock
             };
 
-            // Act
-            var result = await controller.Delete(TestCourseId, testModel);
+            using (controller)
+            {
+                // Act
+                var result = await controller.Delete(TestCourseId, testModel);
 
-            // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.ResourceNotFoundMsg);
+                // Assert
+                controller.TempData.AssertErrorMsg(WebConstants.ResourceNotFoundMsg);
 
-            this.AssertRedirectToTrainersResources(result);
-            this.AssertRouteWithId(result);
+                this.AssertRedirectToTrainersResourcesWithRouteId(result);
 
-            userManager.Verify();
-            trainerService.Verify();
-            resourceService.Verify();
+                userManager.Verify();
+                trainerService.Verify();
+                resourceService.Verify();
+            }
         }
 
         [Fact]
         public async Task Delete_ShouldRedirectToTrainersResourcesWithErrorMsg_GivenRemoveError()
         {
             // Arrange
-            var testModel = new ResourceFormViewModel { CourseId = TestCourseId, Id = TestResourceId };
+            var testModel = this.GetResource();
 
             var userManager = UserManagerMock.GetMock;
             userManager.GetUserId(TestUserId);
@@ -383,25 +436,27 @@
                 TempData = TempDataMock.GetMock
             };
 
-            // Act
-            var result = await controller.Delete(TestCourseId, testModel);
+            using (controller)
+            {
+                // Act
+                var result = await controller.Delete(TestCourseId, testModel);
 
-            // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.ResourceNotDeletedMsg);
+                // Assert
+                controller.TempData.AssertErrorMsg(WebConstants.ResourceNotDeletedMsg);
 
-            this.AssertRedirectToTrainersResources(result);
-            this.AssertRouteWithId(result);
+                this.AssertRedirectToTrainersResourcesWithRouteId(result);
 
-            userManager.Verify();
-            trainerService.Verify();
-            resourceService.Verify();
+                userManager.Verify();
+                trainerService.Verify();
+                resourceService.Verify();
+            }
         }
 
         [Fact]
         public async Task Delete_ShouldRedirectToTrainersResourcesWithSuccessMsg_GivenRemoveSuccess()
         {
             // Arrange
-            var testModel = new ResourceFormViewModel { CourseId = TestCourseId, Id = TestResourceId };
+            var testModel = this.GetResource();
 
             var userManager = UserManagerMock.GetMock;
             userManager.GetUserId(TestUserId);
@@ -423,18 +478,20 @@
                 TempData = TempDataMock.GetMock
             };
 
-            // Act
-            var result = await controller.Delete(TestCourseId, testModel);
+            using (controller)
+            {
+                // Act
+                var result = await controller.Delete(TestCourseId, testModel);
 
-            // Assert
-            controller.TempData.AssertSuccessMsg(WebConstants.ResourceDeletedMsg);
+                // Assert
+                controller.TempData.AssertSuccessMsg(WebConstants.ResourceDeletedMsg);
 
-            this.AssertRedirectToTrainersResources(result);
-            this.AssertRouteWithId(result);
+                this.AssertRedirectToTrainersResourcesWithRouteId(result);
 
-            userManager.Verify();
-            trainerService.Verify();
-            resourceService.Verify();
+                userManager.Verify();
+                trainerService.Verify();
+                resourceService.Verify();
+            }
         }
 
         [Fact]
@@ -453,16 +510,18 @@
                 TempData = TempDataMock.GetMock
             };
 
-            // Act
-            var result = await controller.Download(TestResourceId, TestCourseId);
+            using (controller)
+            {
+                // Act
+                var result = await controller.Download(TestResourceId, TestCourseId);
 
-            // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.InvalidUserMsg);
+                // Assert
+                controller.TempData.AssertErrorMsg(WebConstants.InvalidUserMsg);
 
-            this.AssertRedirectToCourseDetails(result);
-            this.AssertRouteWithId(result);
+                this.AssertRedirectToCourseDetails(result);
 
-            userManager.Verify();
+                userManager.Verify();
+            }
         }
 
         [Fact]
@@ -487,18 +546,20 @@
                 TempData = TempDataMock.GetMock
             };
 
-            // Act
-            var result = await controller.Download(TestResourceId, TestCourseId);
+            using (controller)
+            {
+                // Act
+                var result = await controller.Download(TestResourceId, TestCourseId);
 
-            // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.ResourceDownloadUnauthorizedMsg);
+                // Assert
+                controller.TempData.AssertErrorMsg(WebConstants.ResourceDownloadUnauthorizedMsg);
 
-            this.AssertRedirectToCourseDetails(result);
-            this.AssertRouteWithId(result);
+                this.AssertRedirectToCourseDetails(result);
 
-            userManager.Verify();
-            courseService.Verify();
-            trainerService.Verify();
+                userManager.Verify();
+                courseService.Verify();
+                trainerService.Verify();
+            }
         }
 
         [Theory]
@@ -528,19 +589,21 @@
                 TempData = TempDataMock.GetMock
             };
 
-            // Act
-            var result = await controller.Download(TestResourceId, TestCourseId);
+            using (controller)
+            {
+                // Act
+                var result = await controller.Download(TestResourceId, TestCourseId);
 
-            // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.ResourceNotFoundMsg);
+                // Assert
+                controller.TempData.AssertErrorMsg(WebConstants.ResourceNotFoundMsg);
 
-            this.AssertRedirectToCourseDetails(result);
-            this.AssertRouteWithId(result);
+                this.AssertRedirectToCourseDetails(result);
 
-            userManager.Verify();
-            courseService.Verify();
-            trainerService.Verify();
-            resourceService.Verify();
+                userManager.Verify();
+                courseService.Verify();
+                trainerService.Verify();
+                resourceService.Verify();
+            }
         }
 
         [Theory]
@@ -549,12 +612,7 @@
         public async Task Download_ShouldRedirectToCourseDetailsWithSuccessMsg_GivenDownloadSuccess(bool trainerOrStudentEnrolled)
         {
             // Arrange
-            var testResourceDload = new ResourceDownloadServiceModel
-            {
-                FileName = TestFileName,
-                ContentType = TestContentType,
-                FileBytes = TestFileBytes
-            };
+            var testResourceDload = this.GetResourceDownload();
 
             var userManager = UserManagerMock.GetMock;
             userManager.GetUserId(TestUserId);
@@ -574,19 +632,19 @@
                 resourceService.Object,
                 trainerService.Object);
 
-            // Act
-            var result = await controller.Download(TestResourceId, TestCourseId);
+            using (controller)
+            {
+                // Act
+                var result = await controller.Download(TestResourceId, TestCourseId);
 
-            // Assert
-            var fileContentResult = Assert.IsType<FileContentResult>(result);
-            Assert.Equal(this.TestFileBytes, fileContentResult.FileContents);
-            Assert.Equal(TestContentType, fileContentResult.ContentType);
-            Assert.Equal(TestFileName, fileContentResult.FileDownloadName);
+                // Assert
+                this.AssertResourceDownload(result);
 
-            userManager.Verify();
-            courseService.Verify();
-            trainerService.Verify();
-            resourceService.Verify();
+                userManager.Verify();
+                courseService.Verify();
+                trainerService.Verify();
+                resourceService.Verify();
+            }
         }
 
         private void AssertAuthorizeAttributeForRoleTrainer(string methodName)
@@ -635,20 +693,47 @@
             Assert.Equal(WebConstants.TrainersController, redirectToActionResult.ControllerName);
         }
 
-        private void AssertRedirectToTrainersResources(IActionResult result)
+        private void AssertRedirectToTrainersResourcesWithRouteId(IActionResult result)
         {
             var redirectToActionResult = this.AssertRedirectToAction(result);
+
             Assert.Equal(nameof(TrainersController.Resources), redirectToActionResult.ActionName);
             Assert.Equal(WebConstants.TrainersController, redirectToActionResult.ControllerName);
-        }
-
-        private void AssertRouteWithId(IActionResult result)
-        {
-            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
 
             Assert.NotNull(redirectToActionResult.RouteValues);
             Assert.Contains(redirectToActionResult.RouteValues.Keys, k => k == WebConstants.Id);
             Assert.Equal(TestCourseId, redirectToActionResult.RouteValues[WebConstants.Id]);
         }
+
+        private void AssertResourceDownload(IActionResult result)
+        {
+            var expected = this.GetResourceDownload();
+
+            var fileContentResult = Assert.IsType<FileContentResult>(result);
+
+            Assert.Equal(expected.FileBytes, fileContentResult.FileContents);
+            Assert.Equal(expected.ContentType, fileContentResult.ContentType);
+            Assert.Equal(expected.FileName, fileContentResult.FileDownloadName);
+        }
+
+        private byte[] GetFileBytes() => new byte[] { 158, 201, 3, 7 };
+
+        private ResourceFormModel GetResource()
+            => new ResourceFormModel { Id = TestResourceId, CourseId = TestCourseId };
+
+        private static ResourceCreateFormModel GetResourceCreateModel()
+            => new ResourceCreateFormModel
+            {
+                CourseId = TestCourseId,
+                ResourceFile = IFormFileMock.GetMock.Object
+            };
+
+        private ResourceDownloadServiceModel GetResourceDownload()
+            => new ResourceDownloadServiceModel
+            {
+                FileName = TestFileName,
+                ContentType = TestContentType,
+                FileBytes = this.GetFileBytes()
+            };
     }
 }

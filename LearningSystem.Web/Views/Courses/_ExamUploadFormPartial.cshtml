@@ -4,7 +4,7 @@
       asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.UploadExam)"
       asp-route-id="@Model">
     <p>Upload exam (max size @DataConstants.FileMaxLengthInMb MB, .@FileType.Zip.ToString().ToUpper() only):</p>
-    
+
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-group d-flex justify-content-ar align-items-center">
         <div class="custom-file">
@@ -18,4 +18,7 @@
     </div>
 </form>
 
-@section Scripts {<partial name="_ValidationScriptsPartial" />}
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    @* Custom File Upload form script => Details.cshtml & site.js *@
+}

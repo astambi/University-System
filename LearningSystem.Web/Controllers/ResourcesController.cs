@@ -6,7 +6,6 @@
     using LearningSystem.Web.Infrastructure.Extensions;
     using LearningSystem.Web.Models.Resources;
     using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
 
@@ -32,13 +31,18 @@
 
         [Authorize(Roles = WebConstants.TrainerRole)]
         [HttpPost]
-        public async Task<IActionResult> Create(int courseId, IFormFile resourceFile)
+        public async Task<IActionResult> Create(int courseId, ResourceCreateFormModel model)
         {
-            if (!this.ModelState.IsValid
-                || resourceFile == null)
+            if (!this.ModelState.IsValid)
             {
-                this.TempData.AddErrorMessage(WebConstants.ResourceNotFoundMsg);
+                this.TempData.AddErrorMessage(WebConstants.FileInvalidMsg);
                 return this.RedirectToTrainersResources(courseId);
+            }
+
+            if (courseId != model.CourseId)
+            {
+                this.TempData.AddErrorMessage(WebConstants.CourseInvalidMsg);
+                return this.RedirectToTrainersIndex();
             }
 
             var courseExists = this.courseService.Exists(courseId);
@@ -62,6 +66,7 @@
                 return this.RedirectToTrainersIndex();
             }
 
+            var resourceFile = model.ResourceFile;
             var fileBytes = await resourceFile.ToByteArrayAsync();
 
             var success = await this.resourceService.CreateAsync(
@@ -82,7 +87,7 @@
 
         [Authorize(Roles = WebConstants.TrainerRole)]
         [HttpPost]
-        public async Task<IActionResult> Delete(int id, ResourceFormViewModel model)
+        public async Task<IActionResult> Delete(int id, ResourceFormModel model)
         {
             var courseId = model.CourseId;
 

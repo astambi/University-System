@@ -1,22 +1,26 @@
-﻿@model int
+﻿@model ResourceCreateFormModel
 
 <form method="post" enctype="multipart/form-data"
       asp-controller="@WebConstants.ResourcesController"
-      asp-action="@nameof(ResourcesController.Create)">
+      asp-action="@nameof(ResourcesController.Create)"
+      asp-route-id="@Model.CourseId">
     <h4>Upload resource (max size @DataConstants.ResourceFileMaxLengthInMb MB):</h4>
 
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-group d-flex justify-content-ar align-items-center">
-        <input hidden name="courseId" value="@Model" />
+        <input asp-for="CourseId" hidden />
         <div class="custom-file">
-            <input type="file" class="custom-file-input" id="customFile"
-                   name="resourceFile" accept=".@FileType.Pptx, .@FileType.Zip" required>
+            <input asp-for="ResourceFile" class="custom-file-input" id="customFile"
+                   accept=".@FileType.Pptx, .@FileType.Zip" required>
             <label class="custom-file-label" for="customFile">Choose file</label>
         </div>
         <div class="form-group m-0 ml-1">
             <button type="submit" class="btn btn-@FormActionEnum.Upload.ToStyle()"><i class="fa fa-upload"></i></button>
-        </div>
+        </div>`
     </div>
 </form>
 
-@section Scripts {<partial name="_ValidationScriptsPartial" />}
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    @* Custom File Upload form script => Resources.cshtml & site.js *@
+}

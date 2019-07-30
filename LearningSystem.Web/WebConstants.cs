@@ -85,6 +85,7 @@
         public const string CourseEnrollmentClosedMsg = "Course is closed for enrollment after start date.";
         public const string CourseEnrollmentOpenMsg = "Course is open for enrollment for {0}."; // days/hours
         public const string CourseHasNotEndedMsg = "Course has not ended.";
+        public const string CourseInvalidMsg = "Invalid course.";
         public const string CourseNotCreatedMsg = "Course not created.";
         public const string CourseNotFoundMsg = "Course not found.";
         public const string CourseNotUpdatedMsg = "Course not updated.";
@@ -102,7 +103,9 @@
         public const string FileFormatInvalidMsg = "File format should be {0}.";
         public const string FileSubmittionDateMsg = "File can only be submitted on exam date.";
         public const string FileNotSubmittedMsg = "No file was submitted.";
+        public const string FileEmptyErrorMsg = "File cannot be empty.";
         public const string FileSizeInvalidMsg = "File size should not exceed {0} MB.";
+        public const string FileInvalidMsg = "Invalid file size.";
 
         public const string InvalidIdentityOrRoleMsg = "Invalid identity or role.";
         public const string InvalidUserMsg = "Invalid user.";
