@@ -34,7 +34,9 @@
             <a asp-controller="@WebConstants.CoursesController"
                asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Details)"
                asp-route-id="@Model.Id"
-               asp-route-name="@Model.Name.ToFriendlyUrl()" class="btn btn-outline-info"><i class="fa fa-info"></i></a>
+               asp-route-name="@Model.Name.ToFriendlyUrl()" class="btn btn-outline-info">
+                <i class="fa fa-info"></i>
+            </a>
         </div>
     </div>
 </article>

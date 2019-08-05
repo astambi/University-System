@@ -1,11 +1,10 @@
-﻿namespace LearningSystem.Web.Infrastructure.Mapping
+﻿namespace LearningSystem.Common.Mapping
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using AutoMapper;
-    using LearningSystem.Common.Mapping;
 
     public class AutoMapperProfile : Profile
     {
@@ -16,7 +15,6 @@
             var modelTypes = this.GetModelTypes();
 
             this.RegisterFromMappings(modelTypes);
-
             this.RegisterCustomMappings(modelTypes);
         }
 
@@ -80,9 +78,9 @@
             var modelTypes = assemblies
                 .SelectMany(a => a.GetTypes())
                 .Where(t => t.IsClass
-                        && !t.IsAbstract
-                        && t.IsPublic
-                        && t.Name.ToLower().EndsWith(ModelSuffix)) // models
+                    && !t.IsAbstract
+                    && t.IsPublic
+                    && t.Name.ToLower().EndsWith(ModelSuffix)) // models
                 .ToList();
 
             return modelTypes;

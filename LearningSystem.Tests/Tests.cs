@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using AutoMapper;
+    using LearningSystem.Common.Mapping;
     using LearningSystem.Data;
     using LearningSystem.Data.Models;
     using LearningSystem.Services.Admin.Models;
@@ -12,7 +13,6 @@
     using LearningSystem.Services.Models.Users;
     using LearningSystem.Web;
     using LearningSystem.Web.Areas.Admin.Models.Courses;
-    using LearningSystem.Web.Infrastructure.Mapping;
     using LearningSystem.Web.Models;
     using Microsoft.EntityFrameworkCore;
     using Xunit;
@@ -34,6 +34,7 @@
                 cfg.CreateMap<AdminCourseServiceModel, CourseFormModel>();
                 cfg.CreateMap<Course, CourseServiceModel>();
                 cfg.CreateMap<Course, CourseWithDescriptionServiceModel>();
+                cfg.CreateMap<ExamSubmission, CourseStudentExamSubmissionServiceModel>();
                 cfg.CreateMap<Resource, ResourceDownloadServiceModel>();
                 cfg.CreateMap<User, UserBasicServiceModel>();
                 cfg.CreateMap<User, UserServiceModel>();

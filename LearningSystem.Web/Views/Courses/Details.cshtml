@@ -22,31 +22,30 @@
             <div class="card-body card-subtitle d-flex flex-wrap justify-content-between align-items-center bg-success text-white">
                 <h5 class="col-8">@enrollmentMsg</h5>
                 @if (Model.IsUserEnrolled)
-                {
-                    <partial name="_CourseCancelFormPartial" for="Course.Id" />
-                }
+                {<partial name="_CourseCancelFormPartial" for="Course.Id" /> }
                 else
-                {
-                    <partial name="_CourseEnrollFormPartial" for="Course.Id" />
-                }
+                { <partial name="_CourseEnrollFormPartial" for="Course.Id" />}
             </div>
         }
 
         <ul class="list-group list-group-flush">
             @if (Model.IsUserEnrolled)
             {
-                @if (Model.IsExamSubmissionDate)
-                {
-                    <partial name="_CourseHeaderPartial" model="@(" Exam Submission")" />
-                    <li class="list-group-item">
-                        <partial name="_ExamUploadFormPartial" for="Course.Id" />
-                    </li>
-                }
-
                 <partial name="_CourseHeaderPartial" model="@(" Exam submissions")" />
                 <li class="list-group-item">
+                    @if (Model.IsExamSubmissionDate)
+                    {<partial name="_ExamUploadFormPartial" for="Course.Id" />}
+                    <a asp-controller="@WebConstants.CoursesController"
+                       asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.ExamSubmissions)"
+                       asp-route-id="@Model.Course.Id" class="btn btn-outline-info">Exam submissions</a>
                 </li>
+
                 <partial name="_CourseHeaderPartial" model="@(" Resources")" />
+                <li class="list-group-item">
+                    <a asp-controller="@WebConstants.CoursesController"
+                       asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Resources)"
+                       asp-route-id="@Model.Course.Id" class="btn btn-outline-info">Resources</a>
+                </li>
             }
 
             <partial name="_CourseHeaderPartial" model="@(" Description")" />
@@ -58,10 +57,7 @@
             <li class="list-group-item">Course duration: @Model.Course.Duration.ToDays()</li>
 
             <partial name="_CourseHeaderPartial" model="@(" Trainer")" />
-            <li class="list-group-item">
-                @Model.Trainer.Name
-                @*<a asp-area="" asp-controller="Users" asp-action="Profile" asp-route-id="@Model.Trainer.Id">@Model.Trainer.Name</a>*@
-            </li>
+            <li class="list-group-item">@Model.Trainer.Name</li>
 
             <partial name="_CourseHeaderPartial" model="@(" Students enrolled")" />
             <li class="list-group-item">@Model.Students</li>

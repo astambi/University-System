@@ -102,6 +102,18 @@
             await this.db.SaveChangesAsync();
         }
 
+        public async Task<IEnumerable<CourseStudentExamSubmissionServiceModel>> ExamSubmisionsAsync(int courseId, string userId)
+        {
+            var examSubmissions = this.db.ExamSubmissions
+                .Where(e => e.CourseId == courseId)
+                .Where(e => e.StudentId == userId)
+                .OrderByDescending(e => e.SubmissionDate);
+
+            return await this.mapper
+                .ProjectTo<CourseStudentExamSubmissionServiceModel>(examSubmissions)
+                .ToListAsync();
+        }
+
         public bool Exists(int id)
             => this.db.Courses.Any(c => c.Id == id);
 

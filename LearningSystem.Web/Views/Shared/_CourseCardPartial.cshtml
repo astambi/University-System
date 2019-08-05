@@ -36,7 +36,14 @@
             {
                 <a asp-controller="@WebConstants.TrainersController"
                    asp-action="@nameof(TrainersController.Students)"
-                   asp-route-id="@Model.Id" class="btn btn-outline-info">Students</a>
+                   asp-route-id="@Model.Id" class="btn btn-outline-info" data-toggle="tooltip" title="Students">
+                    <i class="fa fa-user-graduate"></i>
+                </a>
+                <a asp-controller="@WebConstants.TrainersController"
+                   asp-action="@nameof(TrainersController.Resources)"
+                   asp-route-id="@Model.Id" class="btn btn-outline-info" data-toggle="tooltip" title="Resources">
+                    <i class="fa fa-folder-open"></i>
+                </a>
             }
 
             <partial name="_AdminCourseActionsPartial" for="Id" />

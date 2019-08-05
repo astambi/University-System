@@ -26,6 +26,8 @@
 
         Task CancellUserEnrollmentInCourseAsync(int courseId, string userId);
 
+        Task<IEnumerable<CourseStudentExamSubmissionServiceModel>> ExamSubmisionsAsync(int courseId, string userId);
+
         bool Exists(int id);
 
         Task<CourseDetailsServiceModel> GetByIdAsync(int id);

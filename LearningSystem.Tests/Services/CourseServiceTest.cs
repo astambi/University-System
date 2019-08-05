@@ -266,6 +266,36 @@
         }
 
         [Fact]
+        public async Task ExamSubmisionsAsync_ShouldReturnCorrectDataAndOrder()
+        {
+            // Arrange
+            var db = await this.PrepareStudentInCourseExamSubmissions();
+            var courseService = this.InitializeCourseService(db);
+
+            var examsSortedByDateDesc = db.ExamSubmissions
+                .OrderByDescending(e => e.SubmissionDate)
+                .ToList();
+
+            // Act            
+            var result = await courseService.ExamSubmisionsAsync(CourseValid, StudentEnrolled);
+            var resultList = result.ToList();
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.IsAssignableFrom<IEnumerable<CourseStudentExamSubmissionServiceModel>>(result);
+            Assert.Equal(2, result.Count());
+
+            for (int i = 0; i < resultList.Count; i++)
+            {
+                var actual = resultList[i];
+                var expected = examsSortedByDateDesc[i];
+
+                Assert.Equal(actual.Id, expected.Id);
+                Assert.Equal(actual.SubmissionDate, expected.SubmissionDate);
+            }
+        }
+
+        [Fact]
         public async Task GetByIdAsync_ShouldReturnCorrectData_WithValidId()
         {
             // Arrange
@@ -452,6 +482,38 @@
             var db = Tests.InitializeDatabase();
             await db.Courses.AddAsync(course);
             await db.Users.AddAsync(student);
+            await db.SaveChangesAsync();
+
+            return db;
+        }
+
+        private async Task<LearningSystemDbContext> PrepareStudentInCourseExamSubmissions()
+        {
+            var student = new User { Id = StudentEnrolled };
+            var course = new Course { Id = CourseValid };
+            course.Students.Add(new StudentCourse { StudentId = StudentEnrolled });
+
+            var exam1 = new ExamSubmission
+            {
+                Id = 1,
+                SubmissionDate = new DateTime(2019, 7, 1, 14, 15, 00),
+                CourseId = CourseValid,
+                StudentId = StudentEnrolled,
+                FileSubmission = null
+            };
+            var exam2 = new ExamSubmission
+            {
+                Id = 2,
+                SubmissionDate = new DateTime(2019, 7, 1, 14, 15, 50),
+                CourseId = CourseValid,
+                StudentId = StudentEnrolled,
+                FileSubmission = null
+            };
+
+            var db = Tests.InitializeDatabase();
+            await db.Users.AddAsync(student);
+            await db.Courses.AddAsync(course);
+            await db.ExamSubmissions.AddRangeAsync(new List<ExamSubmission> { exam1, exam2 });
             await db.SaveChangesAsync();
 
             return db;

@@ -1,24 +1,43 @@
 ﻿@model ResourceCreateFormModel
 
-<form method="post" enctype="multipart/form-data"
-      asp-controller="@WebConstants.ResourcesController"
-      asp-action="@nameof(ResourcesController.Create)"
-      asp-route-id="@Model.CourseId">
-    <h4>Upload resource (max size @DataConstants.ResourceFileMaxLengthInMb MB):</h4>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-outline-info btn-block" data-toggle="modal" data-target="#fileModal">
+    Upload resource
+</button>
 
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="form-group d-flex justify-content-ar align-items-center">
-        <input asp-for="CourseId" hidden />
-        <div class="custom-file">
-            <input asp-for="ResourceFile" class="custom-file-input" id="customFile"
-                   accept=".@FileType.Pptx, .@FileType.Zip" required>
-            <label class="custom-file-label" for="customFile">Choose file</label>
+<!-- Modal -->
+<div class="modal fade" id="fileModal" tabindex="-1" role="dialog" aria-labelledby="fileModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fileModalLabel">Upload resource</h5>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data"
+                      asp-controller="@WebConstants.ResourcesController"
+                      asp-action="@nameof(ResourcesController.Create)"
+                      asp-route-id="@Model.CourseId">
+                    <p>File max size @DataConstants.ResourceFileMaxLengthInMb MB</p>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group d-flex justify-content-ar align-items-center">
+                        <input asp-for="CourseId" hidden />
+                        <div class="custom-file">
+                            <input asp-for="ResourceFile" class="custom-file-input" id="customFile" accept=".@FileType.Pptx, .@FileType.Zip" required>
+                            <label class="custom-file-label" for="customFile">Choose file</label>
+                        </div>
+                        <div class="form-group m-0 ml-1">
+                            <button type="submit" class="btn btn-@FormActionEnum.Upload.ToStyle()"><i class="fa fa-upload"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-info" data-dismiss="modal">Close</button>
+            </div>
         </div>
-        <div class="form-group m-0 ml-1">
-            <button type="submit" class="btn btn-@FormActionEnum.Upload.ToStyle()"><i class="fa fa-upload"></i></button>
-        </div>`
     </div>
-</form>
+</div>
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

@@ -1,0 +1,27 @@
+﻿@model IEnumerable<CourseStudentExamSubmissionServiceModel>
+@{
+    ViewData["Title"] = "Exam Submissions";
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Submission date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var exam in Model)
+        {
+            <tr>
+                <td>
+                    @exam.SubmissionDate.ToLocalTime()
+                    <a asp-controller="@WebConstants.CoursesController"
+                       asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.ExamSubmissions)"
+                       asp-route-id="@exam.Id" class="px-1">
+                        <i class="fa fa-download btn btn-outline-info"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

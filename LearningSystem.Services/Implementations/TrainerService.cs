@@ -110,19 +110,15 @@
             .FirstOrDefaultAsync();
 
         public async Task<CourseWithResourcesServiceModel> CourseWithResourcesByIdAsync(string trainerId, int courseId)
-            => await this.db
-            .Courses
-            .Where(c => c.Id == courseId)
-            .Where(c => c.TrainerId == trainerId)
-            .Select(c => new CourseWithResourcesServiceModel
-            {
-                Course = this.mapper.Map<CourseServiceModel>(c),
-                Resources = c.Resources
-                    .Select(r => this.mapper.Map<CourseResourceServiceModel>(r))
-                    .OrderBy(r => r.FileName)
-                    .ToList()
-            })
-            .FirstOrDefaultAsync();
+        {
+            var courses = this.db
+                .Courses
+                .Where(c => c.Id == courseId && c.TrainerId == trainerId);
+
+            return await this.mapper
+                .ProjectTo<CourseWithResourcesServiceModel>(courses)
+                .FirstOrDefaultAsync();
+        }
 
         public async Task<bool> CourseHasEndedAsync(int id)
             => await this.db

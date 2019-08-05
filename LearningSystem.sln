@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearningSystem.Services", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearningSystem.Common", "LearningSystem.Common\LearningSystem.Common.csproj", "{99BB4963-238A-42C8-B6E8-3DFA0E70BC53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LearningSystem.Tests", "LearningSystem.Tests\LearningSystem.Tests.csproj", "{3F55FFB9-B081-4DD7-9155-6D822998CCC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearningSystem.Tests", "LearningSystem.Tests\LearningSystem.Tests.csproj", "{3F55FFB9-B081-4DD7-9155-6D822998CCC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
