@@ -1,10 +1,10 @@
-﻿namespace LearningSystem.Services.Models.Courses
+﻿namespace LearningSystem.Services.Models.Exams
 {
     using System;
     using LearningSystem.Common.Mapping;
     using LearningSystem.Data.Models;
 
-    public class CourseStudentExamSubmissionServiceModel : IMapFrom<ExamSubmission>
+    public class ExamSubmissionServiceModel : IMapFrom<ExamSubmission>
     {
         public int Id { get; set; }
 

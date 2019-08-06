@@ -1,12 +1,15 @@
-﻿@model IEnumerable<CourseStudentExamSubmissionServiceModel>
+﻿@model IEnumerable<ExamSubmissionServiceModel>
 @{
     ViewData["Title"] = "Exam Submissions";
 }
 
-<table class="table">
+<h1>Exam submissions</h1>
+
+<table class="table table-hover">
     <thead>
         <tr>
             <th>Submission date</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -15,8 +18,10 @@
             <tr>
                 <td>
                     @exam.SubmissionDate.ToLocalTime()
-                    <a asp-controller="@WebConstants.CoursesController"
-                       asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.ExamSubmissions)"
+                </td>
+                <td>
+                    <a asp-controller="@WebConstants.ExamsController"
+                       asp-action="@nameof(ExamsController.Download)"
                        asp-route-id="@exam.Id" class="px-1">
                         <i class="fa fa-download btn btn-outline-info"></i>
                     </a>

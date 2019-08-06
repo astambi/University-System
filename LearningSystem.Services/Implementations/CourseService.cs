@@ -24,25 +24,6 @@
             this.mapper = mapper;
         }
 
-        public async Task AddExamSubmissionAsync(int id, string userId, byte[] examFileBytes)
-        {
-            if (!await this.IsUserEnrolledInCourseAsync(id, userId))
-            {
-                return;
-            }
-
-            var examSubmission = new ExamSubmission
-            {
-                CourseId = id,
-                StudentId = userId,
-                FileSubmission = examFileBytes,
-                SubmissionDate = DateTime.UtcNow
-            };
-
-            await this.db.ExamSubmissions.AddAsync(examSubmission);
-            await this.db.SaveChangesAsync();
-        }
-
         public async Task<IEnumerable<CourseServiceModel>> AllActiveWithTrainersAsync(
             string search = null,
             int page = 1,
@@ -101,16 +82,6 @@
             await this.db.AddAsync(new StudentCourse { CourseId = courseId, StudentId = userId });
             await this.db.SaveChangesAsync();
         }
-
-        public async Task<IEnumerable<CourseStudentExamSubmissionServiceModel>> ExamSubmisionsAsync(int courseId, string userId)
-            => await this.mapper
-            .ProjectTo<CourseStudentExamSubmissionServiceModel>(
-                this.db
-                .ExamSubmissions
-                .Where(e => e.CourseId == courseId)
-                .Where(e => e.StudentId == userId))
-            .OrderByDescending(e => e.SubmissionDate)
-            .ToListAsync();
 
         public bool Exists(int id)
             => this.db.Courses.Any(c => c.Id == id);

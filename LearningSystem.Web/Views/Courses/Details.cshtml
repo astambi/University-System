@@ -35,8 +35,8 @@
                 <li class="list-group-item">
                     @if (Model.IsExamSubmissionDate)
                     {<partial name="_ExamUploadFormPartial" for="Id" />}
-                    <a asp-controller="@WebConstants.CoursesController"
-                       asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.ExamSubmissions)"
+                    <a asp-controller="@WebConstants.ExamsController"
+                       asp-action="@nameof(ExamsController.All)"
                        asp-route-id="@Model.Id" class="btn btn-outline-info">Exam submissions</a>
                 </li>
 

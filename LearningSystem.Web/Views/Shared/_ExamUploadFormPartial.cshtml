@@ -1,6 +1,6 @@
 ﻿@model int
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#examModal">
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#examModal">
     Submit exam
 </button>
 
@@ -13,7 +13,8 @@
             </div>
             <div class="modal-body">
                 <form method="post" enctype="multipart/form-data"
-                      asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.UploadExam)"
+                      asp-controller="@WebConstants.ExamsController"
+                      asp-action="@nameof(ExamsController.Create)"
                       asp-route-id="@Model">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <p>File max size @DataConstants.FileMaxLengthInMb MB, .@FileType.Zip.ToString().ToUpper() only</p>

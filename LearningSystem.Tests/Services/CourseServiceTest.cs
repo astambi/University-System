@@ -22,46 +22,6 @@
         private const string StudentInvalid = "Invalid";
         private const string StudentNotEnrolled = "NotEnrolled";
         private const string StudentValid = "Valid";
-        private const int Precision = 100; // ms
-
-        [Fact]
-        public async Task AddExamSubmissionAsync_ShouldSaveCorrectData_WithEnrolledStudentInCourse()
-        {
-            // Arrange
-            var db = await this.PrepareStudentInCourse();
-            var courseService = this.InitializeCourseService(db);
-
-            var exam = new byte[] { 1, 1, 1 };
-
-            // Act
-            // Invalid student
-            await courseService.AddExamSubmissionAsync(CourseValid, StudentNotEnrolled, exam);
-            var countInvalidStudent = db.ExamSubmissions.Count();
-
-            // Invalid course
-            await courseService.AddExamSubmissionAsync(CourseInvalid, StudentEnrolled, exam);
-            var countInvalidCourse = db.ExamSubmissions.Count();
-
-            await courseService.AddExamSubmissionAsync(CourseValid, StudentEnrolled, exam);
-            var countValid = db.ExamSubmissions.Count();
-            var submissionSaved = db.ExamSubmissions
-                .FirstOrDefault(e => e.StudentId == StudentEnrolled
-                                  && e.CourseId == CourseValid);
-
-            // Assert
-            // Invalid student or course
-            countInvalidStudent.Should().Equals(0);
-            countInvalidCourse.Should().Equals(0);
-
-            // Valid exam submission data
-            countValid.Should().Equals(1);
-            submissionSaved.Should().NotBeNull();
-
-            submissionSaved.CourseId.Should().Equals(CourseValid);
-            submissionSaved.StudentId.Should().Equals(StudentEnrolled);
-            submissionSaved.FileSubmission.Should().BeSameAs(exam);
-            submissionSaved.SubmissionDate.Should().BeCloseTo(DateTime.UtcNow, Precision);
-        }
 
         [Fact]
         public async Task AllActiveWithTrainersAsync_ShouldReturnCorrectResult_BySearchFilterAndOrder()
@@ -266,36 +226,6 @@
         }
 
         [Fact]
-        public async Task ExamSubmisionsAsync_ShouldReturnCorrectDataAndOrder()
-        {
-            // Arrange
-            var db = await this.PrepareStudentInCourseExamSubmissions();
-            var courseService = this.InitializeCourseService(db);
-
-            var examsSortedByDateDesc = db.ExamSubmissions
-                .OrderByDescending(e => e.SubmissionDate)
-                .ToList();
-
-            // Act            
-            var result = await courseService.ExamSubmisionsAsync(CourseValid, StudentEnrolled);
-            var resultList = result.ToList();
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.IsAssignableFrom<IEnumerable<CourseStudentExamSubmissionServiceModel>>(result);
-            Assert.Equal(2, result.Count());
-
-            for (int i = 0; i < resultList.Count; i++)
-            {
-                var actual = resultList[i];
-                var expected = examsSortedByDateDesc[i];
-
-                Assert.Equal(actual.Id, expected.Id);
-                Assert.Equal(actual.SubmissionDate, expected.SubmissionDate);
-            }
-        }
-
-        [Fact]
         public async Task GetByIdAsync_ShouldReturnCorrectData_WithValidId()
         {
             // Arrange
@@ -458,38 +388,6 @@
             var db = Tests.InitializeDatabase();
             await db.Courses.AddAsync(course);
             await db.Users.AddAsync(student);
-            await db.SaveChangesAsync();
-
-            return db;
-        }
-
-        private async Task<LearningSystemDbContext> PrepareStudentInCourseExamSubmissions()
-        {
-            var student = new User { Id = StudentEnrolled };
-            var course = new Course { Id = CourseValid };
-            course.Students.Add(new StudentCourse { StudentId = StudentEnrolled });
-
-            var exam1 = new ExamSubmission
-            {
-                Id = 1,
-                SubmissionDate = new DateTime(2019, 7, 1, 14, 15, 00),
-                CourseId = CourseValid,
-                StudentId = StudentEnrolled,
-                FileSubmission = null
-            };
-            var exam2 = new ExamSubmission
-            {
-                Id = 2,
-                SubmissionDate = new DateTime(2019, 7, 1, 14, 15, 50),
-                CourseId = CourseValid,
-                StudentId = StudentEnrolled,
-                FileSubmission = null
-            };
-
-            var db = Tests.InitializeDatabase();
-            await db.Users.AddAsync(student);
-            await db.Courses.AddAsync(course);
-            await db.ExamSubmissions.AddRangeAsync(new List<ExamSubmission> { exam1, exam2 });
             await db.SaveChangesAsync();
 
             return db;

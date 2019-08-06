@@ -8,8 +8,6 @@
 
     public interface ICourseService
     {
-        Task AddExamSubmissionAsync(int id, string userId, byte[] examFileBytes);
-
         Task<IEnumerable<CourseServiceModel>> AllActiveWithTrainersAsync(
             string search = null,
             int page = 1,
@@ -25,8 +23,6 @@
         Task EnrollUserInCourseAsync(int courseId, string userId);
 
         Task CancellUserEnrollmentInCourseAsync(int courseId, string userId);
-
-        Task<IEnumerable<CourseStudentExamSubmissionServiceModel>> ExamSubmisionsAsync(int courseId, string userId);
 
         bool Exists(int id);
 
