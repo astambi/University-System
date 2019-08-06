@@ -26,13 +26,13 @@
         @foreach (var student in Model.Students)
         {
             <tr>
-                <td>@student.StudentName</td>
-                <td>@student.StudentUserName</td>
-                <td>@student.StudentEmail</td>
+                <td class="align-middle">@student.StudentName</td>
+                <td class="align-middle">@student.StudentUserName</td>
+                <td class="align-middle">@student.StudentEmail</td>
 
                 @if (courseHasEnded)
                 {
-                    <td>
+                    <td class="align-middle text-center">
                         @if (student.HasExamSubmission)
                         {
                             <a asp-action="@nameof(TrainersController.DownloadExam)"
@@ -45,8 +45,8 @@
                             <i class="fa fa-user-slash"></i>
                         }
                     </td>
-                    <td>@student.Grade</td>
-                    <td>
+                    <td class="align-middle">@student.Grade</td>
+                    <td class="align-middle">
                         @if (student.HasExamSubmission)
                         {
                             var formModel = new StudentCourseGradeFormModel

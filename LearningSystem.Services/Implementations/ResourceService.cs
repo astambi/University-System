@@ -1,10 +1,12 @@
 ﻿namespace LearningSystem.Services.Implementations
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
     using LearningSystem.Data;
     using LearningSystem.Data.Models;
+    using LearningSystem.Services.Models.Courses;
     using LearningSystem.Services.Models.Resources;
     using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +22,15 @@
             this.db = db;
             this.mapper = mapper;
         }
+
+        public async Task<IEnumerable<CourseResourceServiceModel>> AllByCourseAsync(int courseId)
+            => await this.mapper
+            .ProjectTo<CourseResourceServiceModel>(
+                this.db
+                .Resources
+                .Where(r => r.CourseId == courseId))
+            .OrderBy(r => r.FileName)
+            .ToListAsync();
 
         public async Task<bool> CreateAsync(int courseId, string fileName, string contentType, byte[] fileBytes)
         {

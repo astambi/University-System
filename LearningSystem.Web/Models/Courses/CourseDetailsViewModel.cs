@@ -1,6 +1,7 @@
 ﻿namespace LearningSystem.Web.Models.Courses
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using AutoMapper;
     using LearningSystem.Common.Mapping;
@@ -36,5 +37,8 @@
 
         [IgnoreMap]
         public bool IsUserEnrolled { get; set; }
+
+        [IgnoreMap]
+        public IEnumerable<CourseResourceServiceModel> Resources = new List<CourseResourceServiceModel>();
     }
 }

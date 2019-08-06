@@ -17,15 +17,18 @@
     {
         private readonly UserManager<User> userManager;
         private readonly ICourseService courseService;
+        private readonly IResourceService resourceService;
         private readonly IMapper mapper;
 
         public CoursesController(
             UserManager<User> userManager,
             ICourseService courseService,
+            IResourceService resourceService,
             IMapper mapper)
         {
             this.userManager = userManager;
             this.courseService = courseService;
+            this.resourceService = resourceService;
             this.mapper = mapper;
         }
 
@@ -95,6 +98,11 @@
             if (userId != null)
             {
                 model.IsUserEnrolled = await this.courseService.IsUserEnrolledInCourseAsync(id, userId);
+
+                if (model.IsUserEnrolled)
+                {
+                    model.Resources = await this.resourceService.AllByCourseAsync(id);
+                }
             }
 
             return this.View(model);
@@ -132,37 +140,6 @@
             var model = await this.courseService.ExamSubmisionsAsync(id, userId);
 
             return this.View(model);
-        }
-
-
-        [Authorize]
-        public async Task<IActionResult> Resources(int id)
-        {
-            var courseExists = this.courseService.Exists(id);
-            if (!courseExists)
-            {
-                this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
-                return this.RedirectToAction(nameof(Index));
-            }
-
-            var userId = this.userManager.GetUserId(this.User);
-            if (userId == null)
-            {
-                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RedirectToAction(nameof(Index));
-            }
-
-            var isEnrolledInCourse = await this.courseService.IsUserEnrolledInCourseAsync(id, userId);
-            if (!isEnrolledInCourse)
-            {
-                this.TempData.AddErrorMessage(WebConstants.ResourceDownloadUnauthorizedMsg);
-                return this.RedirectToAction(nameof(Index));
-            }
-
-            // TODO
-            //var model = await this.trainerService.CourseWithResourcesByIdAsync(userId, id);
-
-            return this.View(null);
         }
 
         [Authorize]

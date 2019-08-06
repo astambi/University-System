@@ -41,11 +41,21 @@
                 </li>
 
                 <partial name="_CourseHeaderPartial" model="@(" Resources")" />
-                <li class="list-group-item">
-                    <a asp-controller="@WebConstants.CoursesController"
-                       asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Resources)"
-                       asp-route-id="@Model.Id" class="btn btn-outline-info">Resources</a>
-                </li>
+                @if (Model.Resources.Any())
+                {
+                    @foreach (var resource in Model.Resources)
+                    {
+                        var resourceDloadModel = new ResourceFormModel { Id = resource.Id, CourseId = Model.Id };
+                        <li class="list-group-item">
+                            <partial name="_ResourceDownloadFormPartial" model="@resourceDloadModel" />
+                            @resource.FileName
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="list-group-item">No resources</li>
+                }
             }
 
             <partial name="_CourseHeaderPartial" model="@(" Description")" />
