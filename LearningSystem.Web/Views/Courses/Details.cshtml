@@ -1,30 +1,30 @@
-﻿@model CourseDetailsServiceModel
+﻿@model CourseDetailsViewModel
 @{
     ViewData["Title"] = "Course Details";
-    var enrollmentMsg = Model.Course.CanEnroll
-        ? string.Format(WebConstants.CourseEnrollmentOpenMsg, Model.Course.RemainingTimeTillStart.ToDaysOrHours())
+    var enrollmentMsg = Model.CanEnroll
+        ? string.Format(WebConstants.CourseEnrollmentOpenMsg, Model.RemainingTimeTillStart.ToDaysOrHours())
         : WebConstants.CourseEnrollmentClosedMsg;
 }
 
 <section class="col-lg-8 m-auto">
     <article class="card mb-3 shadow">
-        <h3 class="bg-gradient card-header text-center p-5">@Model.Course.Name</h3>
+        <h3 class="bg-gradient card-header text-center p-5">@Model.Name</h3>
         <div class="card-body">
             <div class="card-title d-flex flex-wrap justify-content-between align-items-center px-1">
-                <h5><i class="fa fa-hourglass-start"></i> @Model.Course.StartDate.ToDate()</h5>
-                <h5><i class="fa fa-hourglass-end"></i> @Model.Course.EndDate.ToDate()</h5>
-                <h5><i class="fa fa-clock"></i> @Model.Course.Duration.ToDays()</h5>
+                <h5><i class="fa fa-hourglass-start"></i> @Model.StartDate.ToDate()</h5>
+                <h5><i class="fa fa-hourglass-end"></i> @Model.EndDate.ToDate()</h5>
+                <h5><i class="fa fa-clock"></i> @Model.Duration.ToDays()</h5>
             </div>
         </div>
 
-        @if (Model.Course.CanEnroll)
+        @if (Model.CanEnroll)
         {
             <div class="card-body card-subtitle d-flex flex-wrap justify-content-between align-items-center bg-success text-white">
                 <h5 class="col-8">@enrollmentMsg</h5>
                 @if (Model.IsUserEnrolled)
-                {<partial name="_CourseCancelFormPartial" for="Course.Id" /> }
+                {<partial name="_CourseCancelFormPartial" for="Id" /> }
                 else
-                { <partial name="_CourseEnrollFormPartial" for="Course.Id" />}
+                { <partial name="_CourseEnrollFormPartial" for="Id" />}
             </div>
         }
 
@@ -34,40 +34,40 @@
                 <partial name="_CourseHeaderPartial" model="@(" Exam submissions")" />
                 <li class="list-group-item">
                     @if (Model.IsExamSubmissionDate)
-                    {<partial name="_ExamUploadFormPartial" for="Course.Id" />}
+                    {<partial name="_ExamUploadFormPartial" for="Id" />}
                     <a asp-controller="@WebConstants.CoursesController"
                        asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.ExamSubmissions)"
-                       asp-route-id="@Model.Course.Id" class="btn btn-outline-info">Exam submissions</a>
+                       asp-route-id="@Model.Id" class="btn btn-outline-info">Exam submissions</a>
                 </li>
 
                 <partial name="_CourseHeaderPartial" model="@(" Resources")" />
                 <li class="list-group-item">
                     <a asp-controller="@WebConstants.CoursesController"
                        asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Resources)"
-                       asp-route-id="@Model.Course.Id" class="btn btn-outline-info">Resources</a>
+                       asp-route-id="@Model.Id" class="btn btn-outline-info">Resources</a>
                 </li>
             }
 
             <partial name="_CourseHeaderPartial" model="@(" Description")" />
-            <li class="list-group-item">@Model.Course.Description</li>
+            <li class="list-group-item">@Model.Description</li>
 
             <partial name="_CourseHeaderPartial" model="@(" Schedule")" />
-            <li class="list-group-item">Start date: @Model.Course.StartDate.ToDate()</li>
-            <li class="list-group-item">End date: @Model.Course.EndDate.ToDate()</li>
-            <li class="list-group-item">Course duration: @Model.Course.Duration.ToDays()</li>
+            <li class="list-group-item">Start date: @Model.StartDate.ToDate()</li>
+            <li class="list-group-item">End date: @Model.EndDate.ToDate()</li>
+            <li class="list-group-item">Course duration: @Model.Duration.ToDays()</li>
 
             <partial name="_CourseHeaderPartial" model="@(" Trainer")" />
-            <li class="list-group-item">@Model.Trainer.Name</li>
+            <li class="list-group-item">@Model.TrainerName</li>
 
             <partial name="_CourseHeaderPartial" model="@(" Students enrolled")" />
-            <li class="list-group-item">@Model.Students</li>
+            <li class="list-group-item">@Model.StudentsCount</li>
 
             <partial name="_CourseHeaderPartial" model="@(" Enrollment")" />
             <li class="list-group-item">@enrollmentMsg</li>
         </ul>
     </article>
 
-    <partial name="_AdminCourseActionsPartial" for="Course.Id" />
+    <partial name="_AdminCourseActionsPartial" for="Id" />
 </section>
 
 <div>

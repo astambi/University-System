@@ -6,11 +6,11 @@
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using AutoMapper;
+    using LearningSystem.Common.Infrastructure.Extensions;
     using LearningSystem.Data;
     using LearningSystem.Data.Models;
     using LearningSystem.Services;
     using LearningSystem.Services.Blog.Models;
-    using LearningSystem.Services.Models.Users;
     using Microsoft.EntityFrameworkCore;
 
     public class ArticleService : IArticleService
@@ -29,19 +29,14 @@
             this.mapper = mapper;
         }
 
-        public async Task<IEnumerable<ArticleWithAuthorListingServiceModel>> AllAsync(
+        public async Task<IEnumerable<ArticleListingServiceModel>> AllAsync(
             string search = null,
             int page = 1,
             int pageSize = ServicesConstants.PageSize)
-            => await this.GetQuerableBySearchKeyword(search)
+            => await this.mapper
+            .ProjectTo<ArticleListingServiceModel>(this.GetQuerableBySearchKeyword(search))
             .OrderByDescending(a => a.PublishDate)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .Select(a => new ArticleWithAuthorListingServiceModel
-            {
-                Article = this.mapper.Map<ArticleListingServiceModel>(a),
-                Author = a.Author.Name
-            })
+            .GetPageItems(page, pageSize)
             .ToListAsync();
 
         public async Task CreateAsync(string title, string rawHtmlContent, string userId)
@@ -66,15 +61,10 @@
             await this.db.SaveChangesAsync();
         }
 
-        public async Task<ArticleDetailsWithAuthorServiceModel> GetByIdAsync(int id)
-            => await this.db
-            .Articles
+        public async Task<ArticleDetailsServiceModel> GetByIdAsync(int id)
+            => await this.mapper
+            .ProjectTo<ArticleDetailsServiceModel>(this.db.Articles)
             .Where(a => a.Id == id)
-            .Select(a => new ArticleDetailsWithAuthorServiceModel
-            {
-                Article = this.mapper.Map<ArticleDetailsServiceModel>(a),
-                Author = this.mapper.Map<UserServiceModel>(a.Author)
-            })
             .FirstOrDefaultAsync();
 
         public async Task<int> TotalAsync(string search = null)

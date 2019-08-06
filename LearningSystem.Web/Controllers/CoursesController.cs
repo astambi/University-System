@@ -89,13 +89,15 @@
                 return this.RedirectToAction(nameof(Index));
             }
 
+            var model = this.mapper.Map<CourseDetailsViewModel>(course);
+
             var userId = this.userManager.GetUserId(this.User);
             if (userId != null)
             {
-                course.IsUserEnrolled = await this.courseService.IsUserEnrolledInCourseAsync(id, userId);
+                model.IsUserEnrolled = await this.courseService.IsUserEnrolledInCourseAsync(id, userId);
             }
 
-            return this.View(course);
+            return this.View(model);
         }
 
         [Authorize]

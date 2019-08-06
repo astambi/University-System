@@ -11,5 +11,7 @@
         public string Title { get; set; }
 
         public DateTime PublishDate { get; set; }
+
+        public string AuthorName { get; set; }
     }
 }

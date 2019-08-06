@@ -1,19 +1,16 @@
 ﻿namespace LearningSystem.Services.Models.Courses
 {
     using System;
-    using LearningSystem.Services.Models.Users;
+    using LearningSystem.Common.Mapping;
+    using LearningSystem.Data.Models;
 
-    public class CourseDetailsServiceModel
+    public class CourseDetailsServiceModel : CourseServiceModel, IMapFrom<Course>
     {
-        public CourseWithDescriptionServiceModel Course { get; set; }
+        public string Description { get; set; }
 
-        public UserServiceModel Trainer { get; set; }
-
-        public int Students { get; set; }
-
-        public bool IsUserEnrolled { get; set; }
+        public int StudentsCount { get; set; }
 
         public bool IsExamSubmissionDate
-            => this.Course.EndDate.ToLocalTime().Date == DateTime.Now.Date;
+            => this.EndDate.ToLocalTime().Date == DateTime.Now.Date;
     }
 }

@@ -26,9 +26,9 @@
         @foreach (var student in Model.Students)
         {
             <tr>
-                <td>@student.Student.Name</td>
-                <td>@student.Student.Username</td>
-                <td>@student.Student.Email</td>
+                <td>@student.StudentName</td>
+                <td>@student.StudentUserName</td>
+                <td>@student.StudentEmail</td>
 
                 @if (courseHasEnded)
                 {
@@ -37,7 +37,7 @@
                         {
                             <a asp-action="@nameof(TrainersController.DownloadExam)"
                                asp-route-id="@Model.Course.Id"
-                               asp-route-studentId="@student.Student.Id"
+                               asp-route-studentId="@student.StudentId"
                                class="btn btn-@StyleHelpers.ToStyle(FormActionEnum.Download)"><i class="fa fa-download"></i></a>
                         }
                         else
@@ -52,7 +52,7 @@
                             var formModel = new StudentCourseGradeFormModel
                             {
                                 CourseId = Model.Course.Id,
-                                StudentId = student.Student.Id,
+                                StudentId = student.StudentId,
                                 Grade = student.Grade
                             };
                             <partial name="_GradeFormPartial" model="@formModel" />

@@ -1,18 +1,21 @@
-﻿@model ArticleDetailsWithAuthorServiceModel
+﻿@model ArticleDetailsServiceModel
 
 @{
     ViewData["Title"] = "Article Details";
 }
 
-<h1>@Model.Article.Title</h1>
+<h1>@Model.Title</h1>
 
 <h6 class="text-muted">
-    @Model.Article.PublishDate.ToLocalTime() |
-    <a asp-area="" asp-controller="Users" asp-action="Profile" asp-route-id="@Model.Author.Id">@Model.Author.Name</a>
-    <i class="fa fa-envelope"></i> <a href="mailto:@Model.Author.Email">@Model.Author.Email</a> |
+    @Model.PublishDate.ToLocalTime() |
+    <a asp-area=""
+       asp-controller="Users"
+       asp-action="Profile"
+       asp-route-id="@Model.AuthorId">@Model.AuthorName</a>
+    <i class="fa fa-envelope"></i> <a href="mailto:@Model.AuthorEmail">@Model.AuthorEmail</a> |
     <i class="fa fa-users"></i> 0
 </h6>
-<p class="shadow">@Html.Raw(Model.Article.Content)</p>
+<p class="shadow">@Html.Raw(Model.Content)</p>
 
 <div>
     <a asp-action="@nameof(ArticlesController.Index)">Back to Articles</a>

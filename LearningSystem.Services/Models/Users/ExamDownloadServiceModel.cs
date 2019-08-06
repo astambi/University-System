@@ -1,15 +1,17 @@
 ﻿namespace LearningSystem.Services.Models.Users
 {
     using System;
+    using LearningSystem.Common.Mapping;
+    using LearningSystem.Data.Models;
 
-    public class ExamDownloadServiceModel
+    public class ExamDownloadServiceModel : IMapFrom<ExamSubmission>
     {
         public DateTime SubmissionDate { get; set; }
 
         public byte[] FileSubmission { get; set; }
 
-        public string Student { get; set; }
+        public string StudentUserName { get; set; }
 
-        public string Course { get; set; }
+        public string CourseName { get; set; }
     }
 }

@@ -5,10 +5,10 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
+    using LearningSystem.Common.Infrastructure.Extensions;
     using LearningSystem.Data;
     using LearningSystem.Data.Models;
     using LearningSystem.Services.Models.Courses;
-    using LearningSystem.Services.Models.Users;
     using Microsoft.EntityFrameworkCore;
 
     public class CourseService : ICourseService
@@ -103,54 +103,46 @@
         }
 
         public async Task<IEnumerable<CourseStudentExamSubmissionServiceModel>> ExamSubmisionsAsync(int courseId, string userId)
-        {
-            var examSubmissions = this.db.ExamSubmissions
+            => await this.mapper
+            .ProjectTo<CourseStudentExamSubmissionServiceModel>(
+                this.db
+                .ExamSubmissions
                 .Where(e => e.CourseId == courseId)
-                .Where(e => e.StudentId == userId)
-                .OrderByDescending(e => e.SubmissionDate);
-
-            return await this.mapper
-                .ProjectTo<CourseStudentExamSubmissionServiceModel>(examSubmissions)
-                .ToListAsync();
-        }
+                .Where(e => e.StudentId == userId))
+            .OrderByDescending(e => e.SubmissionDate)
+            .ToListAsync();
 
         public bool Exists(int id)
             => this.db.Courses.Any(c => c.Id == id);
 
         public async Task<CourseDetailsServiceModel> GetByIdAsync(int id)
-            => await this.db
-            .Courses
+            => await this.mapper
+            .ProjectTo<CourseDetailsServiceModel>(this.db.Courses)
             .Where(c => c.Id == id)
-            .Select(c => new CourseDetailsServiceModel
-            {
-                Course = this.mapper.Map<CourseWithDescriptionServiceModel>(c),
-                Trainer = this.mapper.Map<UserServiceModel>(c.Trainer),
-                Students = c.Students.Count()
-            })
             .FirstOrDefaultAsync();
 
-        public IQueryable<Course> GetQuerableBySearch(string search)
+        public IQueryable<Course> GetQueryableBySearch(string search)
         {
-            var coursesAsQuerable = this.db.Courses.AsQueryable();
+            var coursesAsQueryable = this.db.Courses.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                coursesAsQuerable = coursesAsQuerable
+                coursesAsQueryable = coursesAsQueryable
                     .Where(c => c.Name.ToLower().Contains(search.Trim().ToLower()))
                     .AsQueryable();
             }
 
-            return coursesAsQuerable;
+            return coursesAsQueryable;
         }
 
-        public IQueryable<Course> GetQuerableByStatus(IQueryable<Course> coursesAsQuerable, bool? isActive)
+        public IQueryable<Course> GetQueryableByStatus(IQueryable<Course> coursesAsQueryable, bool? isActive)
             => isActive == null // all
-            ? coursesAsQuerable
+            ? coursesAsQueryable
             : (bool)isActive
-                ? coursesAsQuerable
+                ? coursesAsQueryable
                     .Where(c => DateTime.UtcNow <= c.EndDate) // active
                     .AsQueryable()
-                : coursesAsQuerable
+                : coursesAsQueryable
                     .Where(c => c.EndDate < DateTime.UtcNow) // archive
                     .AsQueryable();
 
@@ -162,15 +154,16 @@
         public async Task<bool> IsUserEnrolledInCourseAsync(int courseId, string userId)
             => await this.db
             .Courses
-            .AnyAsync(c => c.Id == courseId
-                        && c.Students.Any(sc => sc.StudentId == userId));
+            .AnyAsync(c =>
+                c.Id == courseId
+                && c.Students.Any(sc => sc.StudentId == userId));
 
         public async Task<int> TotalActiveAsync(string search = null)
-            => await this.GetQuerableByStatus(this.GetQuerableBySearch(search), true)
+            => await this.GetQueryableByStatus(this.GetQueryableBySearch(search), true)
             .CountAsync();
 
         public async Task<int> TotalArchivedAsync(string search = null)
-            => await this.GetQuerableByStatus(this.GetQuerableBySearch(search), false)
+            => await this.GetQueryableByStatus(this.GetQueryableBySearch(search), false)
             .CountAsync();
 
         private async Task<IEnumerable<CourseServiceModel>> AllWithTrainers(
@@ -187,27 +180,15 @@
                 pageSize = ServicesConstants.PageSize;
             }
 
-            var coursesAsQuerable = this.GetQuerableBySearch(search);
+            var coursesSearchQueryable = this.GetQueryableBySearch(search);
+            var coursesStatusQueryable = this.GetQueryableByStatus(coursesSearchQueryable, isActive);
 
-            var courses = await this.GetQuerableByStatus(coursesAsQuerable, isActive)
+            return await this.mapper
+                .ProjectTo<CourseServiceModel>(coursesStatusQueryable)
                 .OrderByDescending(c => c.StartDate)
                 .ThenByDescending(c => c.EndDate)
-                .Skip(((page - 1) * pageSize))
-                .Take(pageSize)
-                .Select(c => new CourseListingServiceModel
-                {
-                    Course = this.mapper.Map<CourseServiceModel>(c),
-                    Trainer = this.mapper.Map<UserBasicServiceModel>(c.Trainer)
-                })
+                .GetPageItems(page, pageSize)
                 .ToListAsync();
-
-            for (var i = 0; i < courses.Count; i++)
-            {
-                var course = courses[i].Course;
-                course.TrainerName = courses[i].Trainer.Name;
-            }
-
-            return courses.Select(c => c.Course).ToList();
         }
     }
 }

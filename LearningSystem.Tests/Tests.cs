@@ -32,6 +32,7 @@
             {
                 //cfg.AddProfile<AutoMapperProfile>();
                 cfg.CreateMap<AdminCourseServiceModel, CourseFormModel>();
+                cfg.CreateMap<Course, CourseDetailsServiceModel>();
                 cfg.CreateMap<Course, CourseServiceModel>();
                 cfg.CreateMap<Course, CourseWithDescriptionServiceModel>();
                 cfg.CreateMap<ExamSubmission, CourseStudentExamSubmissionServiceModel>();

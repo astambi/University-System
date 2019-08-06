@@ -6,7 +6,7 @@
 
     public class ArticlePageListingViewModel
     {
-        public IEnumerable<ArticleWithAuthorListingServiceModel> Articles { get; set; }
+        public IEnumerable<ArticleListingServiceModel> Articles { get; set; }
 
         public PaginationViewModel Pagination { get; set; }
 

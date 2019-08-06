@@ -1,23 +1,24 @@
 ﻿namespace LearningSystem.Services.Models.Users
 {
     using System;
+    using LearningSystem.Common.Mapping;
     using LearningSystem.Data.Models;
 
-    public class CertificateServiceModel
+    public class CertificateServiceModel : IMapFrom<Certificate>
     {
         public string Id { get; set; }
 
-        public string Course { get; set; }
+        public string CourseName { get; set; }
 
-        public DateTime StartDate { get; set; }
+        public DateTime CourseStartDate { get; set; }
 
-        public DateTime EndDate { get; set; }
+        public DateTime CourseEndDate { get; set; }
 
-        public string Student { get; set; }
+        public string StudentName { get; set; }
 
         public Grade Grade { get; set; }
 
-        public string Trainer { get; set; }
+        public string CourseTrainerName { get; set; }
 
         public DateTime IssueDate { get; set; }
 

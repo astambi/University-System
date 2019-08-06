@@ -2,7 +2,6 @@
 {
     using System;
     using System.ComponentModel.DataAnnotations;
-    using AutoMapper;
     using LearningSystem.Common.Mapping;
     using LearningSystem.Data.Models;
 
@@ -20,7 +19,6 @@
 
         public string TrainerId { get; set; }
 
-        [IgnoreMap]
         public string TrainerName { get; set; }
 
         public int Duration

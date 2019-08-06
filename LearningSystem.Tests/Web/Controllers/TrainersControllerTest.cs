@@ -770,7 +770,7 @@
         private void AssertExamDownloadFile(FileContentResult fileContentResult)
         {
             var expectedExam = this.GetExamDownload();
-            var expectedFileName = FileHelpers.ExamFileName(expectedExam.Course, expectedExam.Student, expectedExam.SubmissionDate);
+            var expectedFileName = FileHelpers.ExamFileName(expectedExam.CourseName, expectedExam.StudentUserName, expectedExam.SubmissionDate);
 
             Assert.NotNull(fileContentResult);
 
@@ -827,14 +827,14 @@
 
             foreach (var expected in expectedStudents)
             {
-                var actual = students.FirstOrDefault(st => st.Student.Id == expected.Student.Id);
+                var actual = students.FirstOrDefault(st => st.StudentId == expected.StudentId);
                 Assert.NotNull(actual);
 
                 Assert.Equal(expected.Grade, actual.Grade);
                 Assert.Equal(expected.HasExamSubmission, actual.HasExamSubmission);
-                Assert.Equal(expected.Student.Name, actual.Student.Name);
-                Assert.Equal(expected.Student.Username, actual.Student.Username);
-                Assert.Equal(expected.Student.Email, actual.Student.Email);
+                Assert.Equal(expected.StudentName, actual.StudentName);
+                Assert.Equal(expected.StudentUserName, actual.StudentUserName);
+                Assert.Equal(expected.StudentEmail, actual.StudentEmail);
             }
         }
 
@@ -843,17 +843,17 @@
             {
                 FileSubmission = new byte[] { 111, 17, 11, 37, 55, 23, 8 },
                 SubmissionDate = new DateTime(2019, 7, 18),
-                Student = "TestStudent",
-                Course = "TestCourse"
+                StudentUserName = "TestStudent",
+                CourseName = "TestCourse"
             };
 
         private IEnumerable<StudentInCourseServiceModel> GetStudentInCourseServiceModelCollection()
             => new List<StudentInCourseServiceModel>
             {
-                new StudentInCourseServiceModel {  Student = new UserServiceModel { Id = "1", Name = "Name1", Username = "Username1", Email = "email.1@email.com" }, Grade = Grade.A, HasExamSubmission = true },
-                new StudentInCourseServiceModel {  Student = new UserServiceModel { Id = "2", Name = "Name2", Username = "Username2", Email = "email.2@email.com" }, Grade = Grade.B, HasExamSubmission = true },
-                new StudentInCourseServiceModel {  Student = new UserServiceModel { Id = "3", Name = "Name3", Username = "Username3", Email = "email.3@email.com" }, Grade = null, HasExamSubmission = true},
-                new StudentInCourseServiceModel {  Student = new UserServiceModel { Id = "4", Name = "Name4", Username = "Username4", Email = "email.4@email.com" }, Grade = null, HasExamSubmission = false},
+                new StudentInCourseServiceModel { StudentId = "1", StudentName = "Name1", StudentUserName = "Username1", StudentEmail = "email.1@email.com", Grade = Grade.A, HasExamSubmission = true },
+                new StudentInCourseServiceModel { StudentId = "2", StudentName = "Name2", StudentUserName = "Username2", StudentEmail = "email.2@email.com", Grade = Grade.B, HasExamSubmission = true },
+                new StudentInCourseServiceModel { StudentId = "3", StudentName = "Name3", StudentUserName = "Username3", StudentEmail = "email.3@email.com", Grade = null, HasExamSubmission = true},
+                new StudentInCourseServiceModel { StudentId = "4", StudentName = "Name4", StudentUserName = "Username4", StudentEmail = "email.4@email.com", Grade = null, HasExamSubmission = false},
             };
 
         private StudentCourseGradeFormModel GetStudentInCourseWithGrade()

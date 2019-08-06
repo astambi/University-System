@@ -20,10 +20,9 @@
         }
 
         public async Task<IEnumerable<AdminUserListingServiceModel>> AllAsync()
-            => await this.db
-            .Users
-            .OrderBy(u => u.UserName)
-            .Select(u => this.mapper.Map<AdminUserListingServiceModel>(u))
+            => await this.mapper
+            .ProjectTo<AdminUserListingServiceModel>(this.db.Users)
+            .OrderBy(u => u.Username)
             .ToListAsync();
     }
 }

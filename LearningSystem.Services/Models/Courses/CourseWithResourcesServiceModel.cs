@@ -10,7 +10,7 @@
     {
         public IEnumerable<CourseResourceServiceModel> Resources { get; set; }
 
-        public void ConfigureMapping(/*IProfileExpression*/ Profile mapper)
+        public void ConfigureMapping(Profile mapper)
             => mapper
             .CreateMap<Course, CourseWithResourcesServiceModel>()
             .ForMember(dest => dest.Resources,

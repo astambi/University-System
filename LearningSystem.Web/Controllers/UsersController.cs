@@ -36,14 +36,14 @@
                 return this.RedirectToAction(nameof(HomeController.Index));
             }
 
-            var profile = await this.userService.GetUserProfileAsync(user.Id);
-
+            var userData = await this.userService.GetUserProfileDataAsync(user.Id);
+            var courses = await this.userService.GetUserProfileCoursesAsync(user.Id);
             var roles = await this.userManager.GetRolesAsync(user);
 
             var model = new UserProfileViewModel
             {
-                User = profile.User,
-                Courses = profile.Courses,
+                User = userData,
+                Courses = courses,
                 Roles = roles
             };
 

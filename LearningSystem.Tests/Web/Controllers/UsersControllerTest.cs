@@ -207,7 +207,9 @@
                 .GetRolesAsync(this.GetRoles());
 
             var userService = UserServiceMock.GetMock;
-            userService.GetUserProfileAsync(this.GetProfile());
+            userService
+                .GetUserProfileCoursesAsync(this.GetProfileCourses())
+                .GetUserProfileDataAsync(this.GetProfileUserData());
 
             var controller = new UsersController(
                 userManager.Object,
@@ -261,11 +263,11 @@
             Assert.NotNull(certificate);
 
             Assert.Equal(expectedCertificate.Id, certificate.Id);
-            Assert.Equal(expectedCertificate.Student, certificate.Student);
-            Assert.Equal(expectedCertificate.Course, certificate.Course);
-            Assert.Equal(expectedCertificate.StartDate, certificate.StartDate);
-            Assert.Equal(expectedCertificate.EndDate, certificate.EndDate);
-            Assert.Equal(expectedCertificate.Trainer, certificate.Trainer);
+            Assert.Equal(expectedCertificate.StudentName, certificate.StudentName);
+            Assert.Equal(expectedCertificate.CourseName, certificate.CourseName);
+            Assert.Equal(expectedCertificate.CourseStartDate, certificate.CourseStartDate);
+            Assert.Equal(expectedCertificate.CourseEndDate, certificate.CourseEndDate);
+            Assert.Equal(expectedCertificate.CourseTrainerName, certificate.CourseTrainerName);
             Assert.Equal(expectedCertificate.Grade, certificate.Grade);
             Assert.Equal(expectedCertificate.IssueDate, certificate.IssueDate);
             Assert.Equal(expectedCertificate.DownloadUrl, certificate.DownloadUrl);
@@ -296,12 +298,12 @@
 
             foreach (var expectedCourse in expectedCourses)
             {
-                var actualCourse = courses.FirstOrDefault(c => c.Id == expectedCourse.Id);
+                var actualCourse = courses.FirstOrDefault(c => c.CourseId == expectedCourse.CourseId);
                 Assert.NotNull(actualCourse);
 
-                Assert.Equal(expectedCourse.Name, actualCourse.Name);
-                Assert.Equal(expectedCourse.StartDate, actualCourse.StartDate);
-                Assert.Equal(expectedCourse.EndDate, actualCourse.EndDate);
+                Assert.Equal(expectedCourse.CourseName, actualCourse.CourseName);
+                Assert.Equal(expectedCourse.CourseStartDate, actualCourse.CourseStartDate);
+                Assert.Equal(expectedCourse.CourseEndDate, actualCourse.CourseEndDate);
                 Assert.Equal(expectedCourse.CertificateId, actualCourse.CertificateId);
                 Assert.Equal(expectedCourse.Grade, actualCourse.Grade);
             }
@@ -325,7 +327,7 @@
 
         private void AsserProfileUser(UserWithBirthdateServiceModel profileUser)
         {
-            var expectedUser = this.GetProfileUser();
+            var expectedUser = this.GetProfileUserData();
 
             Assert.NotNull(profileUser);
 
@@ -346,12 +348,12 @@
             => new CertificateServiceModel
             {
                 Id = TestId,
-                Student = "Student",
-                Course = "Course",
-                StartDate = new DateTime(2019, 1, 1),
-                EndDate = new DateTime(2019, 5, 15),
+                StudentName = "Student",
+                CourseName = "Course",
+                CourseStartDate = new DateTime(2019, 1, 1),
+                CourseEndDate = new DateTime(2019, 5, 15),
                 Grade = Grade.A,
-                Trainer = "TrainerId",
+                CourseTrainerName = "TrainerId",
                 IssueDate = new DateTime(2019, 7, 10),
                 DownloadUrl = CertificateDloadUrl
             };
@@ -359,21 +361,14 @@
         private byte[] GetCertificateFileBytes()
             => new byte[] { 101, 1, 27, 8, 11, 17, 57 };
 
-        private UserProfileServiceModel GetProfile()
-            => new UserProfileServiceModel
-            {
-                User = this.GetProfileUser(),
-                Courses = this.GetProfileCourses()
-            };
-
         private IList<CourseProfileServiceModel> GetProfileCourses()
             => new List<CourseProfileServiceModel>()
             {
-                new CourseProfileServiceModel { Id = 1, Name = "Name1", StartDate = new DateTime(2019, 1, 15), EndDate = new DateTime(2019, 4, 15), Grade = Grade.A, CertificateId = "1" },
-                new CourseProfileServiceModel { Id = 2, Name = "Name2", StartDate = new DateTime(2019, 3, 10), EndDate = new DateTime(2019, 5, 10), Grade = null, CertificateId = null },
+                new CourseProfileServiceModel { CourseId = 1, CourseName = "Name1", CourseStartDate = new DateTime(2019, 1, 15), CourseEndDate = new DateTime(2019, 4, 15), Grade = Grade.A, CertificateId = "1" },
+                new CourseProfileServiceModel { CourseId = 2, CourseName = "Name2", CourseStartDate = new DateTime(2019, 3, 10), CourseEndDate = new DateTime(2019, 5, 10), Grade = null, CertificateId = null },
             };
 
-        private UserWithBirthdateServiceModel GetProfileUser()
+        private UserWithBirthdateServiceModel GetProfileUserData()
             => new UserWithBirthdateServiceModel
             {
                 Id = TestId,

@@ -47,10 +47,11 @@
         }
 
         public async Task<ResourceDownloadServiceModel> DownloadAsync(int id)
-            => await this.db
-            .Resources
-            .Where(r => r.Id == id)
-            .Select(r => this.mapper.Map<ResourceDownloadServiceModel>(r))
+            => await this.mapper
+            .ProjectTo<ResourceDownloadServiceModel>(
+                this.db
+                .Resources
+                .Where(r => r.Id == id))
             .FirstOrDefaultAsync();
 
         public bool Exists(int id)

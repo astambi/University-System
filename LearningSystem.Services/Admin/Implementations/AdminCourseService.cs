@@ -52,9 +52,9 @@
         }
 
         public async Task<AdminCourseServiceModel> GetByIdAsync(int id)
-            => await this.db.Courses
+            => await this.mapper
+            .ProjectTo<AdminCourseServiceModel>(this.db.Courses)
             .Where(c => c.Id == id)
-            .Select(c => this.mapper.Map<AdminCourseServiceModel>(c))
             .FirstOrDefaultAsync();
 
         public async Task RemoveAsync(int id)

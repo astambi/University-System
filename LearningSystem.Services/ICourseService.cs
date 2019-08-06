@@ -32,9 +32,9 @@
 
         Task<CourseDetailsServiceModel> GetByIdAsync(int id);
 
-        IQueryable<Course> GetQuerableBySearch(string search);
+        IQueryable<Course> GetQueryableBySearch(string search);
 
-        IQueryable<Course> GetQuerableByStatus(IQueryable<Course> coursesAsQuerable, bool? isActive = null); // all by default
+        IQueryable<Course> GetQueryableByStatus(IQueryable<Course> coursesAsQuerable, bool? isActive = null); // all by default
 
         bool IsGradeEligibleForCertificate(Grade? grade);
 

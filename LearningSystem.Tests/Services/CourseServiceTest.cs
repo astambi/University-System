@@ -309,41 +309,17 @@
             var validCourse = await courseService.GetByIdAsync(courseId);
 
             // Assert
-            invalidCourse.Should().BeNull();
+            Assert.Null(invalidCourse);
 
-            validCourse
-                .Should()
-                .NotBeNull()
-                .And
-                .BeOfType(typeof(CourseDetailsServiceModel));
+            Assert.NotNull(validCourse);
+            Assert.IsType<CourseDetailsServiceModel>(validCourse);
 
-            validCourse.Course
-                .Should()
-                .NotBeNull()
-                .And
-                .BeOfType(typeof(CourseWithDescriptionServiceModel));
-
-            validCourse.Trainer
-                .Should()
-                .NotBeNull()
-                .And
-                .BeOfType(typeof(UserServiceModel));
-
-            validCourse.Students
-                .Should()
-                .BeOfType(typeof(int))
-                .And
-                .Equals(4);
-
-            validCourse.Course.Name.Should().Equals("Course-4");
-            validCourse.Course.Description.Should().BeNullOrWhiteSpace();
-            validCourse.Course.StartDate.Should().Equals(DateTime.Now.ToStartDateUtc().AddDays(4 + 1));
-            validCourse.Course.EndDate.Should().Equals(DateTime.Now.ToEndDateUtc().AddDays(4 + 5));
-
-            validCourse.Trainer.Id.Should().Equals(4);
-            validCourse.Trainer.Name.Should().Equals("Name-4");
-            validCourse.Trainer.Username.Should().Equals("Username-4");
-            validCourse.Trainer.Email.Should().Equals("Email-4@gmail.com");
+            Assert.Equal("Course-4", validCourse.Name);
+            Assert.Equal(DateTime.Now.ToStartDateUtc().AddDays(4 + 1), validCourse.StartDate);
+            Assert.Equal(DateTime.Now.ToEndDateUtc().AddDays(4 + 5), validCourse.EndDate);
+            Assert.Equal(4, validCourse.StudentsCount);
+            Assert.Equal("1", validCourse.TrainerId);
+            Assert.Equal("Name-1", validCourse.TrainerName);
         }
 
         [Fact]

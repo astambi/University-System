@@ -222,7 +222,7 @@
                 return this.RedirectToAction(nameof(Students), routeValues: new { id });
             }
 
-            var fileName = FileHelpers.ExamFileName(exam.Course, exam.Student, exam.SubmissionDate);
+            var fileName = FileHelpers.ExamFileName(exam.CourseName, exam.StudentUserName, exam.SubmissionDate);
 
             return this.File(exam.FileSubmission, WebConstants.ApplicationZip, fileName);
         }

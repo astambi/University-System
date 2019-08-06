@@ -12,17 +12,17 @@
 
         Task<bool> AssessExamAsync(string trainerId, int courseId, string studentId, Grade grade);
 
-        Task<IEnumerable<CourseServiceModel>> CoursesAsync(
-            string trainerId,
-            string search = null,
-            int page = 1,
-            int pageSize = ServicesConstants.PageSize);
-
         Task<CourseServiceModel> CourseByIdAsync(string trainerId, int courseId);
 
         Task<CourseWithResourcesServiceModel> CourseWithResourcesByIdAsync(string trainerId, int courseId);
 
         Task<bool> CourseHasEndedAsync(int courseId);
+
+        Task<IEnumerable<CourseServiceModel>> CoursesAsync(
+            string trainerId,
+            string search = null,
+            int page = 1,
+            int pageSize = ServicesConstants.PageSize);
 
         Task<ExamDownloadServiceModel> DownloadExam(string trainerId, int courseId, string studentId);
 
