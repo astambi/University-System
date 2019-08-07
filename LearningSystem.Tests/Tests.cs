@@ -36,6 +36,7 @@
                 cfg.CreateMap<Course, CourseDetailsServiceModel>();
                 cfg.CreateMap<Course, CourseServiceModel>();
                 cfg.CreateMap<Course, CourseWithDescriptionServiceModel>();
+                cfg.CreateMap<ExamSubmission, ExamDownloadServiceModel>();
                 cfg.CreateMap<ExamSubmission, ExamSubmissionServiceModel>();
                 cfg.CreateMap<Resource, ResourceDownloadServiceModel>();
                 cfg.CreateMap<User, UserBasicServiceModel>();
