@@ -9,6 +9,8 @@
     {
         Task<IEnumerable<CourseResourceServiceModel>> AllByCourseAsync(int courseId);
 
+        Task<bool> CanBeDownloadedByUser(int id, string userId);
+
         Task<bool> CreateAsync(int courseId, string fileName, string contentType, byte[] fileBytes);
 
         Task<ResourceDownloadServiceModel> DownloadAsync(int id);

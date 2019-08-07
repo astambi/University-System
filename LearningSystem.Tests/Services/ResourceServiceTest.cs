@@ -21,6 +21,11 @@
         private const int ResourceInvalid = -1;
         private const int ResourceValid = 100;
 
+        private const string StudentEnrolled = "StudentEnrolled";
+        private const string StudentNotEnrolled = "StudentNotEnrolled";
+        private const string TrainerInvalid = "TrainerInvalid";
+        private const string TrainerValid = "TrainerValid";
+
         private const string FileName = "   Resource name  ";
         private const string ContentType = "ContentType";
 
@@ -57,6 +62,38 @@
             Assert.IsAssignableFrom<IEnumerable<CourseResourceServiceModel>>(result);
 
             this.AssertResourcesCollection(resourcesOrdered, result);
+        }
+
+        [Fact]
+        public async Task CanBeDownloadedByUser_ShouldReturnFalse_GivenInvalidResource()
+        {
+            // Arrange
+            var db = Tests.InitializeDatabase();
+            var resourseService = this.InitializeResourceService(db);
+
+            // Act
+            var result = await resourseService.CanBeDownloadedByUser(ResourceInvalid, It.IsAny<string>());
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Theory]
+        [InlineData(TrainerInvalid, false)]
+        [InlineData(StudentNotEnrolled, false)]
+        [InlineData(TrainerValid, true)]
+        [InlineData(StudentEnrolled, true)]
+        public async Task CanBeDownloadedByUser_ShouldReturnCorrectResult_GivenValidResource(string testUser, bool expectedResult)
+        {
+            // Arrange
+            var db = await this.PrepareResourceWithStudentAndTrainer();
+            var resourseService = this.InitializeResourceService(db);
+
+            // Act
+            var result = await resourseService.CanBeDownloadedByUser(ResourceValid, testUser);
+
+            // Assert
+            Assert.Equal(expectedResult, result);
         }
 
         [Fact]
@@ -269,6 +306,31 @@
             };
 
             await db.Resources.AddAsync(testResource);
+            await db.SaveChangesAsync();
+
+            return db;
+        }
+
+        private async Task<LearningSystemDbContext> PrepareResourceWithStudentAndTrainer()
+        {
+            var db = Tests.InitializeDatabase();
+
+            var studentEnrolled = new User { Id = StudentEnrolled };
+            var studentNotEnrolled = new User { Id = StudentNotEnrolled };
+            var trainerValid = new User { Id = TrainerValid };
+            var trainerInvalid = new User { Id = TrainerInvalid };
+
+            var resource = new Resource { Id = ResourceValid, CourseId = CourseValid };
+
+            var course = new Course { Id = CourseValid, TrainerId = TrainerValid };
+
+            course.Resources.Add(resource);
+            course.Students.Add(new StudentCourse { StudentId = StudentEnrolled });
+
+            await db.Users.AddRangeAsync(studentEnrolled, studentNotEnrolled, trainerValid, trainerInvalid);
+            await db.Courses.AddAsync(course);
+            await db.Resources.AddAsync(resource);
+
             await db.SaveChangesAsync();
 
             return db;

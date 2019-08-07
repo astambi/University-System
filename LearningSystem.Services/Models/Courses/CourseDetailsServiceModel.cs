@@ -1,6 +1,6 @@
 ﻿namespace LearningSystem.Services.Models.Courses
 {
-    using System;
+    using LearningSystem.Common.Infrastructure.Extensions;
     using LearningSystem.Common.Mapping;
     using LearningSystem.Data.Models;
 
@@ -11,6 +11,6 @@
         public int StudentsCount { get; set; }
 
         public bool IsExamSubmissionDate
-            => this.EndDate.ToLocalTime().Date == DateTime.Now.Date;
+            => this.EndDate.IsToday();
     }
 }

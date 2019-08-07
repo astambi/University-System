@@ -26,6 +26,8 @@
 
         bool Exists(int id);
 
+        Task<CourseServiceModel> GetBasicByIdAsync(int id);
+
         Task<CourseDetailsServiceModel> GetByIdAsync(int id);
 
         IQueryable<Course> GetQueryableBySearch(string search);

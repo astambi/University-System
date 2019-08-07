@@ -86,11 +86,11 @@
         public bool Exists(int id)
             => this.db.Courses.Any(c => c.Id == id);
 
+        public async Task<CourseServiceModel> GetBasicByIdAsync(int id)
+            => await this.GetCourseByIdAsync<CourseServiceModel>(id);
+
         public async Task<CourseDetailsServiceModel> GetByIdAsync(int id)
-            => await this.mapper
-            .ProjectTo<CourseDetailsServiceModel>(this.db.Courses)
-            .Where(c => c.Id == id)
-            .FirstOrDefaultAsync();
+            => await this.GetCourseByIdAsync<CourseDetailsServiceModel>(id);
 
         public IQueryable<Course> GetQueryableBySearch(string search)
         {
@@ -161,5 +161,14 @@
                 .GetPageItems(page, pageSize)
                 .ToListAsync();
         }
+
+        private async Task<TModel> GetCourseByIdAsync<TModel>(int id)
+            where TModel : class
+            => await this.mapper
+            .ProjectTo<TModel>(
+                this.db
+                .Courses
+                .Where(c => c.Id == id))
+            .FirstOrDefaultAsync();
     }
 }

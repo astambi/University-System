@@ -23,6 +23,7 @@
 
         public string TrainerName { get; set; }
 
+
         public int Duration { get; set; }
 
         public TimeSpan RemainingTimeTillStart { get; set; }
@@ -34,6 +35,9 @@
         public int StudentsCount { get; set; }
 
         public bool IsExamSubmissionDate { get; set; }
+
+        [IgnoreMap]
+        public bool IsTrainer { get; set; }
 
         [IgnoreMap]
         public bool IsUserEnrolled { get; set; }

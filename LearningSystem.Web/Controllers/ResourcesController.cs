@@ -123,36 +123,41 @@
             return this.RedirectToTrainersResources(courseId);
         }
 
-        public async Task<IActionResult> Download(int id, int courseId)
+        public async Task<IActionResult> Download(int id)
         {
             var userId = this.userManager.GetUserId(this.User);
             if (userId == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RedirectToCourseDetails(courseId);
+                return this.RedirectToCoursesIndex();
             }
 
-            var isTrainer = await this.trainerService.IsTrainerForCourseAsync(userId, courseId);
-            var isEnrolledInCourse = await this.courseService.IsUserEnrolledInCourseAsync(courseId, userId);
+            var exists = this.resourceService.Exists(id);
+            if (!exists)
+            {
+                this.TempData.AddErrorMessage(WebConstants.ResourceNotFoundMsg);
+                return this.RedirectToCoursesIndex();
+            }
 
-            if (!isEnrolledInCourse && !isTrainer)
+            var canBeDownloadedByUser = await this.resourceService.CanBeDownloadedByUser(id, userId);
+            if (!canBeDownloadedByUser)
             {
                 this.TempData.AddErrorMessage(WebConstants.ResourceDownloadUnauthorizedMsg);
-                return this.RedirectToCourseDetails(courseId);
+                return this.RedirectToCoursesIndex();
             }
 
             var resource = await this.resourceService.DownloadAsync(id);
             if (resource == null)
             {
-                this.TempData.AddErrorMessage(WebConstants.ResourceNotFoundMsg);
-                return this.RedirectToCourseDetails(courseId);
+                this.TempData.AddErrorMessage(WebConstants.ResourceDownloadErrorMsg);
+                return this.RedirectToCoursesIndex();
             }
 
             return this.File(resource.FileBytes, resource.ContentType, resource.FileName);
         }
 
-        private IActionResult RedirectToCourseDetails(int courseId)
-            => this.RedirectToAction(nameof(CoursesController.Details), WebConstants.CoursesController, routeValues: new { id = courseId });
+        private IActionResult RedirectToCoursesIndex()
+            => this.RedirectToAction(nameof(CoursesController.Index), WebConstants.CoursesController);
 
         private IActionResult RedirectToTrainersIndex()
             => this.RedirectToAction(nameof(TrainersController.Index), WebConstants.TrainersController);

@@ -6,6 +6,7 @@
     using LearningSystem.Services;
     using LearningSystem.Web.Infrastructure.Extensions;
     using LearningSystem.Web.Infrastructure.Helpers;
+    using LearningSystem.Web.Models.Exams;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
@@ -28,6 +29,9 @@
             this.examService = examService;
         }
 
+        [Route(WebConstants.ExamsController
+            + "/course/"
+            + WebConstants.WithId)]
         public async Task<IActionResult> All(int id) // courseId
         {
             var courseExists = this.courseService.Exists(id);
@@ -51,7 +55,14 @@
                 return this.RedirectToCoursesIndex();
             }
 
-            var model = await this.examService.AllByStudentCourseAsync(id, userId);
+            var exams = await this.examService.AllByStudentCourseAsync(id, userId);
+            var course = await this.courseService.GetBasicByIdAsync(id);
+
+            var model = new ExamSubmissionsListingViewModel
+            {
+                ExamSubmissions = exams,
+                Course = course
+            };
 
             return this.View(model);
         }
@@ -111,7 +122,7 @@
 
             this.TempData.AddSuccessMessage(WebConstants.ExamSubmittedMsg);
 
-            return this.RedirectToCourseDetails(id);
+            return this.RedirectToAction(nameof(All), new { id });
         }
 
         public async Task<IActionResult> Download(int id)

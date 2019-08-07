@@ -21,6 +21,7 @@
         {
             <div class="card-body card-subtitle d-flex flex-wrap justify-content-between align-items-center bg-success text-white">
                 <h5 class="col-8">@enrollmentMsg</h5>
+
                 @if (Model.IsUserEnrolled)
                 {<partial name="_CourseCancelFormPartial" for="Id" /> }
                 else
@@ -32,12 +33,13 @@
             @if (Model.IsUserEnrolled)
             {
                 <partial name="_CourseHeaderPartial" model="@(" Exam submissions")" />
-                <li class="list-group-item">
-                    @if (Model.IsExamSubmissionDate)
-                    {<partial name="_ExamUploadFormPartial" for="Id" />}
+                <li class="list-group-item d-flex justify-content-between">
                     <a asp-controller="@WebConstants.ExamsController"
                        asp-action="@nameof(ExamsController.All)"
-                       asp-route-id="@Model.Id" class="btn btn-outline-info">Exam submissions</a>
+                       asp-route-id="@Model.Id" class="btn btn-outline-info">View exam submissions</a>
+
+                    @if (Model.IsExamSubmissionDate)
+                    {<partial name="_ExamUploadFormPartial" for="Id" />}
                 </li>
 
                 <partial name="_CourseHeaderPartial" model="@(" Resources")" />
@@ -46,15 +48,27 @@
                     @foreach (var resource in Model.Resources)
                     {
                         var resourceDloadModel = new ResourceFormModel { Id = resource.Id, CourseId = Model.Id };
-                        <li class="list-group-item">
-                            <partial name="_ResourceDownloadFormPartial" model="@resourceDloadModel" />
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
                             @resource.FileName
+                            <div class="d-flex">
+                                <partial name="_ResourceDownloadFormPartial" model="@resourceDloadModel" />
+
+                                @if (Model.IsTrainer)
+                                {<partial name="_ResourceDeleteFormPartial" model="@resourceDloadModel" />}
+                            </div>
                         </li>
                     }
                 }
                 else
                 {
                     <li class="list-group-item">No resources</li>
+                }
+                @if (Model.IsTrainer)
+                {
+                    var resourceCreateModel = new ResourceCreateFormModel { CourseId = Model.Id };
+                    <li class="list-group-item justify-content-end">
+                        <partial name="_ResourceUploadFormPartial" model="@resourceCreateModel" />
+                    </li>
                 }
             }
 

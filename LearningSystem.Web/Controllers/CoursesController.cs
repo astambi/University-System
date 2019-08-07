@@ -82,7 +82,9 @@
             => await this.UpdateEnrollment(id, false);
 
         // SEO friendly URL
-        [Route(WebConstants.CoursesController + "/{id}/{name?}")]
+        [Route(WebConstants.CoursesController
+            + "/" + WebConstants.WithId
+            + "/{name?}")]
         public async Task<IActionResult> Details(int id)
         {
             var course = await this.courseService.GetByIdAsync(id);
@@ -97,6 +99,7 @@
             var userId = this.userManager.GetUserId(this.User);
             if (userId != null)
             {
+                model.IsTrainer = userId == model.TrainerId;
                 model.IsUserEnrolled = await this.courseService.IsUserEnrolledInCourseAsync(id, userId);
 
                 if (model.IsUserEnrolled)

@@ -32,6 +32,13 @@
             .OrderBy(r => r.FileName)
             .ToListAsync();
 
+        public async Task<bool> CanBeDownloadedByUser(int id, string userId)
+            => await this.db
+            .Resources
+            .AnyAsync(r => r.Id == id
+                && (r.Course.TrainerId == userId // trainers or enrolled students only
+                || r.Course.Students.Any(sc => sc.StudentId == userId)));
+
         public async Task<bool> CreateAsync(int courseId, string fileName, string contentType, byte[] fileBytes)
         {
             var courseExists = this.db.Courses.Any(c => c.Id == courseId);

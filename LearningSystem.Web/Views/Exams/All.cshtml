@@ -1,32 +1,41 @@
-﻿@model IEnumerable<ExamSubmissionServiceModel>
+﻿@model ExamSubmissionsListingViewModel
 @{
     ViewData["Title"] = "Exam Submissions";
 }
 
 <h1>Exam submissions</h1>
 
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th>Submission date</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var exam in Model)
+<section class="d-flex justify-content-around align-items-start">
+    <partial name="_CourseCardPartial" for="Course" />
+
+    <article>
+        @if (Model.Course.EndDate.IsToday())
         {
-            <tr>
-                <td>
-                    @exam.SubmissionDate.ToLocalTime()
-                </td>
-                <td>
-                    <a asp-controller="@WebConstants.ExamsController"
-                       asp-action="@nameof(ExamsController.Download)"
-                       asp-route-id="@exam.Id" class="px-1">
-                        <i class="fa fa-download btn btn-outline-info"></i>
-                    </a>
-                </td>
-            </tr>
+            <div class="d-flex justify-content-end">
+                <partial name="_ExamUploadFormPartial" for="Course.Id" />
+            </div>
         }
-    </tbody>
-</table>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Submission date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var exam in Model.ExamSubmissions)
+                {
+                    <tr>
+                        <td>@exam.SubmissionDate.ToLocalTime()</td>
+                        <td>
+                            <a asp-controller="@WebConstants.ExamsController"
+                               asp-action="@nameof(ExamsController.Download)"
+                               asp-route-id="@exam.Id" class="px-1"><i class="fa fa-download btn btn-outline-info"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </article>
+</section>
