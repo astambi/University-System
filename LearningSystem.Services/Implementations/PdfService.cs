@@ -4,6 +4,18 @@
 
     public class PdfService : IPdfService
     {
+        private readonly HtmlToPdf converter;
+
+        public PdfService()
+        {
+            // Instantiate a html to pdf converter object
+            this.converter = new HtmlToPdf();
+
+            // Converter options
+            this.converter.Options.PdfPageSize = PdfPageSize.A4;
+            this.converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
+        }
+
         public byte[] ConvertToPdf(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
@@ -11,23 +23,16 @@
                 return null;
             }
 
-            // instantiate a html to pdf converter object
-            var converter = new HtmlToPdf();
+            // Create a new PDF document converting an URL
+            var doc = this.converter.ConvertUrl(url);
 
-            // set converter options
-            converter.Options.PdfPageSize = PdfPageSize.A4;
-            converter.Options.PdfPageOrientation = PdfPageOrientation.Portrait;
-
-            // create a new pdf document converting an url 
-            var doc = converter.ConvertUrl(url);
-
-            // save pdf document 
+            // Save PDF document 
             var pdf = doc.Save();
 
-            // close pdf document 
+            // Close PDF document 
             doc.Close();
 
-            // return pdf bytes 
+            // Return PDF bytes 
             return pdf;
         }
     }
