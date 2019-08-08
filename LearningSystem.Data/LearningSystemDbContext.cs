@@ -21,6 +21,10 @@
 
         public DbSet<Resource> Resources { get; set; }
 
+        public DbSet<Order> Orders { get; set; }
+
+        public DbSet<OrderItem> OrderItems { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -85,6 +89,18 @@
                 .HasOne(r => r.Course)
                 .WithMany(c => c.Resources)
                 .HasForeignKey(r => r.CourseId);
+
+            builder
+                .Entity<Order>()
+                .HasOne(o => o.User)
+                .WithMany(u => u.Orders)
+                .HasForeignKey(o => o.UserId);
+
+            builder
+                .Entity<Order>()
+                .HasMany(o => o.OrderItems)
+                .WithOne(oi => oi.Order)
+                .HasForeignKey(oi => oi.OrderId);
         }
     }
 }

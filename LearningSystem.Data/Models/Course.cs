@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public class Course : IValidatableObject
     {
@@ -30,6 +31,10 @@
         [DataType(DataType.Date)]
         [Display(Name = "End date")]
         public DateTime EndDate { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        [Range(0, double.MaxValue)]
+        public decimal Price { get; set; }
 
         public ICollection<Resource> Resources { get; set; } = new List<Resource>();
 

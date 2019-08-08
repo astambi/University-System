@@ -26,6 +26,7 @@
             string description,
             DateTime startDate, // local time
             DateTime endDate,   // local time
+            decimal price,
             string trainerId)
         {
             var trainerExists = this.db.Users.Any(u => u.Id == trainerId);
@@ -42,6 +43,7 @@
                 Description = description.Trim(),
                 StartDate = startDate.ToStartDateUtc(),
                 EndDate = endDate.ToEndDateUtc(),
+                Price = price,
                 TrainerId = trainerId
             };
 
@@ -75,6 +77,7 @@
             string description,
             DateTime startDate, // local time
             DateTime endDate, // local time
+            decimal price,
             string trainerId)
         {
             var course = await this.db.Courses.FindAsync(id);
@@ -94,6 +97,7 @@
             course.StartDate = startDate.ToStartDateUtc();
             course.EndDate = endDate.ToEndDateUtc();
             course.TrainerId = trainerId;
+            course.Price = price;
 
             var result = await this.db.SaveChangesAsync();
 

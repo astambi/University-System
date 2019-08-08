@@ -12,7 +12,7 @@
 
         public static Mock<IAdminCourseService> CreateAsync(this Mock<IAdminCourseService> mock, int courseId)
         {
-            mock.Setup(a => a.CreateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>()))
+            mock.Setup(a => a.CreateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<decimal>(), It.IsAny<string>()))
                 .ReturnsAsync(courseId)
                 .Verifiable();
 
@@ -30,7 +30,7 @@
 
         public static Mock<IAdminCourseService> UpdateAsync(this Mock<IAdminCourseService> mock, bool success)
         {
-            mock.Setup(a => a.UpdateAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string>()))
+            mock.Setup(a => a.UpdateAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<decimal>(), It.IsAny<string>()))
                 .ReturnsAsync(success)
                 .Verifiable();
 

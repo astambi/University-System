@@ -11,6 +11,7 @@
             string description,
             DateTime startDate,
             DateTime endDate,
+            decimal price,
             string trainerId);
 
         Task<AdminCourseServiceModel> GetByIdAsync(int id);
@@ -21,6 +22,7 @@
             string description,
             DateTime startDate,
             DateTime endDate,
+            decimal price,
             string trainerId);
 
         Task RemoveAsync(int id);

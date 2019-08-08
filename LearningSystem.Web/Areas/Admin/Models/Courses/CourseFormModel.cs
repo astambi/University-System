@@ -39,6 +39,9 @@
         [Display(Name = "End date")]
         public DateTime EndDate { get; set; }
 
+        [Range(0, double.MaxValue)]
+        public decimal Price { get; set; }
+
         [IgnoreMap]
         public FormActionEnum Action { get; set; } = FormActionEnum.Create;
 

@@ -69,6 +69,7 @@
                 model.Description,
                 model.StartDate,
                 model.EndDate,
+                model.Price,
                 model.TrainerId);
 
             if (id < 0)
@@ -115,6 +116,7 @@
                  model.Description,
                  model.StartDate,
                  model.EndDate,
+                 model.Price,
                  model.TrainerId);
 
             if (!success)
