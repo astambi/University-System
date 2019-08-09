@@ -23,6 +23,8 @@
         [Display(Name = "End date")]
         public DateTime EndDate { get; set; }
 
+        public decimal Price { get; set; }
+
         public int Duration
             => this.EndDate.AddDays(1).Subtract(this.StartDate).Days;
     }

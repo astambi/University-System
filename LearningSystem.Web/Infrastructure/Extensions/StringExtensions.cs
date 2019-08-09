@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
@@ -9,6 +10,7 @@
     public static class StringExtensions
     {
         private const string CurrencyFormat = "C2";
+        private const string CultureBg = "bg-BG";
         private const string NumberFormat = "N0";
         private const string PercentageFormat = "P2";
 
@@ -22,6 +24,7 @@
         }
 
         public static string ToCurrency(this decimal price)
+        //=> price.ToString(CurrencyFormat, CultureInfo.CreateSpecificCulture(CultureBg));
             => price.ToString(CurrencyFormat);
 
         public static string ToFriendlyName(this Enum enumValue)

@@ -26,6 +26,10 @@
                 {<partial name="_CourseCancelFormPartial" for="Id" /> }
                 else
                 { <partial name="_CourseEnrollFormPartial" for="Id" />}
+
+                <a asp-controller="@WebConstants.ShoppingCartController"
+                   asp-action="@nameof(ShoppingCartController.Add)"
+                   asp-route-id="@Model.Id" class="btn btn-light">Add to cart</a>
             </div>
         }
 

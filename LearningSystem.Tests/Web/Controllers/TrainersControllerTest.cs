@@ -560,7 +560,10 @@
             var result = await controller.AssessExam(TestCourseId, testModel);
 
             // Assert
-            controller.TempData.AssertSuccessMsg(WebConstants.CertificateIssuedMsg);
+            controller.TempData.AssertSuccessMsg(
+                WebConstants.ExamAssessedMsg
+                + Environment.NewLine
+                + WebConstants.CertificateIssuedMsg);
 
             this.AssertRedirectToTrainersControllerStudents(result);
             this.AssertRouteWithId(result);

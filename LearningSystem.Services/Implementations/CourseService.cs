@@ -9,6 +9,7 @@
     using LearningSystem.Data;
     using LearningSystem.Data.Models;
     using LearningSystem.Services.Models.Courses;
+    using LearningSystem.Services.Models.ShoppingCart;
     using Microsoft.EntityFrameworkCore;
 
     public class CourseService : ICourseService
@@ -81,6 +82,40 @@
 
             await this.db.AddAsync(new StudentCourse { CourseId = courseId, StudentId = userId });
             await this.db.SaveChangesAsync();
+        }
+
+        public async Task<bool> EnrollUserInCoursesForOrderAsync(int orderId, string userId)
+        {
+            var userExists = await this.db.Users.AnyAsync(u => u.Id == userId);
+            if (!userExists)
+            {
+                return false;
+            }
+
+            var courseIds = this.db
+                .OrderItems
+                .Where(oi => oi.OrderId == orderId)
+                .Select(oi => oi.CourseId)
+                .ToList();
+
+            if (!courseIds.Any())
+            {
+                return false;
+            }
+
+            var couseIdsToEnroll = this.GetCoursesToEnroll(courseIds)
+                .Where(c => !c.Students.Any(sc => sc.StudentId == userId)) // user is not enrolled in course
+                .Select(c => c.Id)
+                .ToList();
+
+            foreach (var courseId in couseIdsToEnroll)
+            {
+                await this.db.AddAsync(new StudentCourse { CourseId = courseId, StudentId = userId });
+            }
+
+            var result = await this.db.SaveChangesAsync();
+
+            return result == courseIds.Count();
         }
 
         public bool Exists(int id)
@@ -170,5 +205,30 @@
                 .Courses
                 .Where(c => c.Id == id))
             .FirstOrDefaultAsync();
+
+        public async Task<IEnumerable<CartItemDetailsServiceModel>> GetCartItemsDetailsForUser(
+            IEnumerable<CartItem> cartItems,
+            string userId = null)
+        {
+            var courseIds = cartItems.Select(i => i.CourseId);
+            var coursesQueryable = this.GetCoursesToEnroll(courseIds);
+
+            if (userId != null)
+            {
+                coursesQueryable = coursesQueryable
+                    .Where(c => !c.Students.Any(sc => sc.StudentId == userId)); // user not enrolled in course
+            }
+
+            return await this.mapper
+                .ProjectTo<CartItemDetailsServiceModel>(coursesQueryable)
+                .ToListAsync();
+        }
+
+        private IQueryable<Course> GetCoursesToEnroll(IEnumerable<int> courseIds)
+            => this.db
+            .Courses
+            .Where(c => courseIds.Contains(c.Id))
+            .Where(c => !c.StartDate.HasEnded())
+            .AsQueryable();
     }
 }

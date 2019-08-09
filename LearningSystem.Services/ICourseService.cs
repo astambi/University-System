@@ -5,6 +5,7 @@
     using System.Threading.Tasks;
     using LearningSystem.Data.Models;
     using LearningSystem.Services.Models.Courses;
+    using LearningSystem.Services.Models.ShoppingCart;
 
     public interface ICourseService
     {
@@ -22,6 +23,8 @@
 
         Task EnrollUserInCourseAsync(int courseId, string userId);
 
+        Task<bool> EnrollUserInCoursesForOrderAsync(int orderId, string userId);
+
         Task CancellUserEnrollmentInCourseAsync(int courseId, string userId);
 
         bool Exists(int id);
@@ -29,6 +32,8 @@
         Task<CourseServiceModel> GetBasicByIdAsync(int id);
 
         Task<CourseDetailsServiceModel> GetByIdAsync(int id);
+
+        Task<IEnumerable<CartItemDetailsServiceModel>> GetCartItemsDetailsForUser(IEnumerable<CartItem> cartItems, string userId = null);
 
         IQueryable<Course> GetQueryableBySearch(string search);
 

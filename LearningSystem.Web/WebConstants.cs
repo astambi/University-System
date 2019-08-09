@@ -35,16 +35,22 @@
         // Controllers
         public const string ArticlesController = "Articles";
         public const string CoursesController = "Courses";
+        public const string ExamsController = "Exams";
         public const string HomeController = "Home";
-        public const string TrainersController = "Trainers";
+        public const string OrdersController = "Orders";
         public const string ResourcesController = "Resources";
+        public const string ShoppingCartController = "ShoppingCart";
+        public const string TrainersController = "Trainers";
         public const string UsersController = "Users";
 
         // Actions
         public const string Index = "Index";
 
         // Pagination
-        public const int PageSize = 12;
+        public const int PageSize = 6;
+
+        // Session
+        public const string ShoppingCartKey = "ShoppingCartId";
 
         // Routing
         public const string Id = "id";
@@ -80,9 +86,13 @@
         public const string CertificateDownloadInProgressMsg = "Certificate download in progress. This could take a few more seconds.";
         public const string CertificateDownloadSuccessMsg = "Certificate downloaded successfully.";
 
+        public const string CourseAddedToShoppingCartMsg = "Course added to shopping cart successfully.";
+        public const string CourseRemovedFromShoppingCartMsg = "Course removed from shopping cart successfully.";
         public const string CourseCreatedMsg = "Course created successfully.";
         public const string CourseDeletedMsg = "Course deleted successfully.";
         public const string CourseEnrollmentClosedMsg = "Course is closed for enrollment after start date.";
+        public const string CourseEnrollmentErrorMsg = "Course enrollment error.";
+        public const string CoursesEnrollmentSuccessMsg = "Courses enrolled successfully.";
         public const string CourseEnrollmentOpenMsg = "Course is open for enrollment for {0}."; // days/hours
         public const string CourseHasNotEndedMsg = "Course has not ended.";
         public const string CourseInvalidMsg = "Invalid course.";
@@ -109,6 +119,12 @@
 
         public const string InvalidIdentityOrRoleMsg = "Invalid identity or role.";
         public const string InvalidUserMsg = "Invalid user.";
+
+        public const string PaymentSuccessMsg = "Payment success.";
+        public const string PaymentErrorMsg = "Payment error.";
+
+        public const string ShoppingCartEmptyMsg = "Shopping cart is empty.";
+        public const string ShoppingCartClearedMsg = "Shopping cart cleared successfully.";
 
         public const string ResourceCreatedMsg = "Resource created successfully.";
         public const string ResourceDeletedMsg = "Resource deleted successfully.";
@@ -162,5 +178,6 @@
                 [FormActionEnum.Upload.ToString()] = OutlineSuccessStyle,
             };
         }
+
     }
 }

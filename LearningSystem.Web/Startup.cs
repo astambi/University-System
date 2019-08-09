@@ -71,11 +71,18 @@
             // App Services
             services.AddDomainServices();
 
+            // Session
+            services.AddSession();
+
             // AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // Routing with lowercase Urls
-            services.AddRouting(options => options.LowercaseUrls = true);
+            services.AddRouting(options =>
+            {
+                options.LowercaseUrls = true;
+                options.LowercaseQueryStrings = true;
+            });
 
             services
                 .AddMvc(options =>
@@ -123,6 +130,9 @@
             app.UseCookiePolicy();
 
             app.UseAuthentication();
+
+            // Session
+            app.UseSession();
 
             app.UseMvc(routes =>
             {

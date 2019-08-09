@@ -82,6 +82,11 @@
                 return false;
             }
 
+            if (studentCourse.Grade == grade)
+            {
+                return true;
+            }
+
             studentCourse.Grade = grade;
             var result = await this.db.SaveChangesAsync();
 

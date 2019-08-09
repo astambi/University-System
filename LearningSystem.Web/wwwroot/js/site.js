@@ -17,7 +17,6 @@ const customFileUpload = inputSelector => {
     };
 
     const selector = inputSelector || customFileInput;
-
     $(selector).change(event => handleFileName(event));
 };
 
@@ -25,7 +24,13 @@ const customFileUpload = inputSelector => {
 $(() => $('[data-toggle="tooltip"]').tooltip());
 
 // File upload form with modal
-$("#form-submit").click(event => {
-    console.log(event.target);
-    $("#upload-form").submit();
-});
+$("#form-submit").click(() => $("#upload-form").submit());
+
+// Notifications fade out
+const notificationFadeOut = (selector, timeout = 3000) => selector
+    .fadeTo(timeout, 0.7)
+    .fadeOut(timeout / 2);
+
+notificationFadeOut($(".alert.alert-info"));
+notificationFadeOut($(".alert.alert-success"));
+notificationFadeOut($(".alert.alert-warning"));

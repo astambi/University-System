@@ -121,7 +121,7 @@
             if (!isEnrolled)
             {
                 this.TempData.AddInfoMessage(WebConstants.UserNotEnrolledInCourseMsg);
-                return this.RedirectToAction(nameof(Index));
+                return this.RedirectToAction(nameof(Details), routeValues: new { id });
             }
 
             await this.courseService.CancellUserEnrollmentInCourseAsync(id, userId);
@@ -135,7 +135,7 @@
             if (isEnrolled)
             {
                 this.TempData.AddInfoMessage(WebConstants.UserAlreadyEnrolledInCourseMsg);
-                return this.RedirectToAction(nameof(Index));
+                return this.RedirectToAction(nameof(Details), routeValues: new { id });
             }
 
             await this.courseService.EnrollUserInCourseAsync(id, userId);

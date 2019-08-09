@@ -1,5 +1,6 @@
 ﻿namespace LearningSystem.Web.Controllers
 {
+    using System;
     using System.Threading.Tasks;
     using LearningSystem.Data.Models;
     using LearningSystem.Services;
@@ -178,7 +179,10 @@
                 var success = await this.trainerService.AddCertificateAsync(userId, id, model.StudentId, model.Grade.Value);
                 if (success)
                 {
-                    this.TempData.AddSuccessMessage(WebConstants.CertificateIssuedMsg);
+                    this.TempData.AddSuccessMessage(
+                        WebConstants.ExamAssessedMsg
+                        + Environment.NewLine
+                        + WebConstants.CertificateIssuedMsg);
                 }
             }
 

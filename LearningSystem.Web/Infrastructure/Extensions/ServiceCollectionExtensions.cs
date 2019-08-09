@@ -9,18 +9,30 @@
     {
         public static IServiceCollection AddDomainServices(this IServiceCollection services)
         {
-            Assembly
-                .GetAssembly(typeof(IService))
-                .GetTypes()
-                .Where(t => t.IsClass
-                         && t.GetInterfaces().Any(i => i.Name == $"I{t.Name}"))
-                .Select(t => new
+            var domainServices = Assembly
+                 .GetAssembly(typeof(IService))
+                 .GetTypes()
+                 .Where(t => t.IsClass
+                          && t.GetInterfaces().Any(i => i.Name == $"I{t.Name}"))
+                 .Select(t => new
+                 {
+                     Interface = t.GetInterface($"I{t.Name}"),
+                     Implementation = t,
+                     IsSingleton = t.GetInterfaces().Any(i => i.Name == nameof(ISingletonService))
+                 })
+                 .ToList();
+
+            foreach (var service in domainServices)
+            {
+                if (service.IsSingleton)
                 {
-                    Interface = t.GetInterface($"I{t.Name}"),
-                    Implementation = t
-                })
-                .ToList()
-                .ForEach(s => services.AddTransient(s.Interface, s.Implementation));
+                    services.AddSingleton(service.Interface, service.Implementation);
+                }
+                else
+                {
+                    services.AddTransient(service.Interface, service.Implementation);
+                }
+            }
 
             return services;
         }
