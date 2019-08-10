@@ -3,9 +3,10 @@
 <section class="pb-3">
     <h1 class="d-flex flex-wrap justify-content-between align-items-center">
         My Profile
-        <a class="btn btn-outline-primary"
-           asp-area="Identity"
-           asp-page="/Account/Manage/Index" title="Manage">Edit profile</a>
+        <a asp-area="Identity"
+           asp-page="/Account/Manage/Index" title="Manage" class="btn btn-outline-primary">
+            <i class="fa fa-pen"></i>
+        </a>
     </h1>
     <p class="lead d-flex flex-wrap justify-content-around align-items-center">
         @Model.Name

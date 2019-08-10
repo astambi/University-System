@@ -20,6 +20,8 @@ const customFileUpload = inputSelector => {
     $(selector).change(event => handleFileName(event));
 };
 
+customFileUpload("#customFile");
+
 // Bootstrap Tooltips (requires Popper.js)
 $(() => $('[data-toggle="tooltip"]').tooltip());
 
@@ -34,3 +36,22 @@ const notificationFadeOut = (selector, timeout = 3000) => selector
 notificationFadeOut($(".alert.alert-info"));
 notificationFadeOut($(".alert.alert-success"));
 notificationFadeOut($(".alert.alert-warning"));
+
+// Toggle Order details (order items) on orders list
+const toggleOrderDetails = event => {
+    const { target } = event;
+    const { id } = target;
+
+    const orderSelector = "tr";
+    const orderDetailsClass = "table-info font-weight-bold";
+
+    const orderItemSelector = `.${id}`;
+    $(orderItemSelector).toggle("fast");
+
+    const order = $(target).parents(orderSelector);
+    order.hasClass(orderDetailsClass)
+        ? order.removeClass(orderDetailsClass)
+        : order.addClass(orderDetailsClass);
+};
+
+$(".order-details-toggler").click(event => toggleOrderDetails(event));

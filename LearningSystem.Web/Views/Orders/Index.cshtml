@@ -1,0 +1,55 @@
+﻿@model IEnumerable<OrderListingServiceModel>
+@{
+    ViewData["Title"] = "My Payments";
+}
+
+<h1>My payments</h1>
+
+@if (Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order date</th>
+                <th>Payment total</th>
+                <th>Payment method</th>
+                <th>Status</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                var orderSelector = $"order-{order.Id}";
+                <tr>
+                    <td>@order.OrderDate</td>
+                    <td>@order.TotalPrice.ToCurrency()</td>
+                    <td>@order.PaymentMethod.ToFriendlyName()</td>
+                    <td>@order.Status </td>
+                    <td>
+                        <button id=@orderSelector class="btn btn-outline-info order-details-toggler">
+                            Items @order.OrderItems.Count()
+                        </button>
+                    </td>
+                </tr>
+                @foreach (var item in order.OrderItems)
+                {
+                    <tr class="order-item @orderSelector table-light shadow">
+                        <td></td>
+                        <td>@item.Price.ToCurrency()</td>
+                        <td colspan="2">@item.CourseName</td>
+                        <td>
+                            <a asp-controller="@WebConstants.CoursesController"
+                               asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Details)"
+                               asp-route-id="@item.CourseId" class="btn btn-outline-info"><i class="fa fa-info"></i></a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h5>No orders</h5>
+}

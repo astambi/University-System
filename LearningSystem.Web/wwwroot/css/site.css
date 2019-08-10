@@ -54,6 +54,11 @@ section.certificate {
     padding-top: 120px;
 }
 
+/*Orders*/
+.order-item {
+    display: none;
+}
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {

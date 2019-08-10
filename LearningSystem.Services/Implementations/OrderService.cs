@@ -8,7 +8,9 @@
     using LearningSystem.Common.Infrastructure.Extensions;
     using LearningSystem.Data;
     using LearningSystem.Data.Models;
+    using LearningSystem.Services.Models.Orders;
     using LearningSystem.Services.Models.ShoppingCart;
+    using Microsoft.EntityFrameworkCore;
 
     public class OrderService : IOrderService
     {
@@ -22,6 +24,15 @@
             this.db = db;
             this.mapper = mapper;
         }
+
+        public async Task<IEnumerable<OrderListingServiceModel>> AllByUser(string userId)
+            => await this.mapper
+            .ProjectTo<OrderListingServiceModel>(
+                this.db
+                .Orders
+                .Where(o => o.UserId == userId)
+                .OrderByDescending(o => o.OrderDate))
+            .ToListAsync();
 
         public async Task<int> Create(
             string userId,
@@ -41,7 +52,7 @@
             var orderItems = this.db
                 .Courses
                 .Where(c => itemIds.Contains(c.Id))
-                .Where(c => !c.StartDate.HasEnded())
+                .Where(c => !c.StartDate.HasEnded()) // course has not started
                 .Select(c => new OrderItem
                 {
                     CourseId = c.Id,
@@ -70,5 +81,14 @@
 
             return order.Id;
         }
+
+        public async Task<OrderListingServiceModel> GetByIdForUser(int id, string userId)
+            => await this.mapper
+            .ProjectTo<OrderListingServiceModel>(
+                this.db
+                .Orders
+                .Where(o => o.Id == id)
+                .Where(o => o.UserId == userId))
+            .FirstOrDefaultAsync();
     }
 }

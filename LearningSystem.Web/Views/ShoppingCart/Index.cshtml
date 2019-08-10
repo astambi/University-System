@@ -49,19 +49,27 @@
     <div class="d-flex justify-content-between">
         <a asp-controller="@WebConstants.CoursesController"
            asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Index)"
-           class="btn btn-outline-info">Add courses</a>
+           class="btn btn-outline-info">
+            <i class="fa fa-angle-double-left"></i>
+            Add more courses
+        </a>
 
         @if (User.Identity.IsAuthenticated)
         {
             <form method="post" asp-action="Checkout">
-                <button type="submit" class="btn btn-outline-success">Checkout</button>
+                <button type="submit" class="btn btn-outline-success">
+                    Checkout
+                </button>
             </form>
         }
         else
         {
             <a asp-area="Identity" asp-page="/Account/Login"
                asp-route-returnUrl="@Url.Action(nameof(ShoppingCartController.Index), WebConstants.ShoppingCartController)"
-               class="btn btn-outline-info">Login to finalize order</a>
+               class="btn btn-outline-info">
+                Login to finalize order
+                <i class="fa fa-angle-double-right"></i>
+            </a>
         }
     </div>
 }

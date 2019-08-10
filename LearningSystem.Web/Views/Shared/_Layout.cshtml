@@ -33,21 +33,18 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <partial name="_LoginPartial" />
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark"
-                               asp-area="" asp-controller="@WebConstants.CoursesController"
-                               asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Index)">Courses</a>
-                        </li>
-                        @if (User.IsInRole(WebConstants.TrainerRole))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark"
-                                   asp-area="" asp-controller="@WebConstants.TrainersController"
-                                   asp-action="@nameof(TrainersController.Index)">Trainer</a>
-                            </li>
-                        }
-                        <partial name="_NavbarBlogPartial" />
+                        <partial name="_NavbarAllPartial" />
+                        <partial name="_NavbarTrainerPartial" />
                         <partial name="_NavbarAdminPartial" />
+                        <partial name="_NavbarBlogPartial" />
+                        <li class="nav-item">
+                            <a class="nav-link text-info"
+                               asp-area=""
+                               asp-controller="@WebConstants.ShoppingCartController"
+                               asp-action="@nameof(ShoppingCartController.Index)">
+                                <i class="fa fa-shopping-cart"></i>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>

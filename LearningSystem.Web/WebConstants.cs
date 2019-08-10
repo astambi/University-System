@@ -120,6 +120,8 @@
         public const string InvalidIdentityOrRoleMsg = "Invalid identity or role.";
         public const string InvalidUserMsg = "Invalid user.";
 
+        public const string OrderNotFoundMsg = "Order not found.";
+
         public const string PaymentSuccessMsg = "Payment success.";
         public const string PaymentErrorMsg = "Payment error.";
 

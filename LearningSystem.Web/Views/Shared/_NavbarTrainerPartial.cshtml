@@ -1,0 +1,9 @@
+﻿@if (User.IsInRole(WebConstants.TrainerRole))
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark"
+           asp-area=""
+           asp-controller="@WebConstants.TrainersController"
+           asp-action="@nameof(TrainersController.Index)">Trainer</a>
+    </li>
+}

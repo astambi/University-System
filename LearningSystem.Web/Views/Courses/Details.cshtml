@@ -36,7 +36,7 @@
         <ul class="list-group list-group-flush">
             @if (Model.IsUserEnrolled)
             {
-                <partial name="_CourseHeaderPartial" model="@(" Exam submissions")" />
+                <partial name="_TableHeaderPartial" model="@(" Exam submissions")" />
                 <li class="list-group-item d-flex justify-content-between">
                     <a asp-controller="@WebConstants.ExamsController"
                        asp-action="@nameof(ExamsController.All)"
@@ -46,7 +46,7 @@
                     {<partial name="_ExamUploadFormPartial" for="Id" />}
                 </li>
 
-                <partial name="_CourseHeaderPartial" model="@(" Resources")" />
+                <partial name="_TableHeaderPartial" model="@(" Resources")" />
                 @if (Model.Resources.Any())
                 {
                     @foreach (var resource in Model.Resources)
@@ -76,21 +76,21 @@
                 }
             }
 
-            <partial name="_CourseHeaderPartial" model="@(" Description")" />
+            <partial name="_TableHeaderPartial" model="@(" Description")" />
             <li class="list-group-item">@Model.Description</li>
 
-            <partial name="_CourseHeaderPartial" model="@(" Schedule")" />
+            <partial name="_TableHeaderPartial" model="@(" Schedule")" />
             <li class="list-group-item">Start date: @Model.StartDate.ToDate()</li>
             <li class="list-group-item">End date: @Model.EndDate.ToDate()</li>
             <li class="list-group-item">Course duration: @Model.Duration.ToDays()</li>
 
-            <partial name="_CourseHeaderPartial" model="@(" Trainer")" />
+            <partial name="_TableHeaderPartial" model="@(" Trainer")" />
             <li class="list-group-item">@Model.TrainerName</li>
 
-            <partial name="_CourseHeaderPartial" model="@(" Students enrolled")" />
+            <partial name="_TableHeaderPartial" model="@(" Students enrolled")" />
             <li class="list-group-item">@Model.StudentsCount</li>
 
-            <partial name="_CourseHeaderPartial" model="@(" Enrollment")" />
+            <partial name="_TableHeaderPartial" model="@(" Enrollment")" />
             <li class="list-group-item">@enrollmentMsg</li>
         </ul>
     </article>
@@ -101,8 +101,3 @@
 <div>
     <a asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Index)">Back to Courses</a>
 </div>
-
-@section Scripts {
-    @* Custom File Upload form script for _ExamUploadFormPartial => site.js *@
-    <script>customFileUpload("#customFile")</script>
-}
