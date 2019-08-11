@@ -24,7 +24,7 @@
             int page = 1,
             int pageSize = ServicesConstants.PageSize);
 
-        Task<ExamDownloadServiceModel> DownloadExam(string trainerId, int courseId, string studentId);
+        Task<ExamDownloadServiceModel> DownloadExamAsync(string trainerId, int courseId, string studentId);
 
         Task<bool> IsTrainerForCourseAsync(string userId, int courseId);
 

@@ -32,7 +32,7 @@
             .OrderBy(r => r.FileName)
             .ToListAsync();
 
-        public async Task<bool> CanBeDownloadedByUser(int id, string userId)
+        public async Task<bool> CanBeDownloadedByUserAsync(int id, string userId)
             => await this.db
             .Resources
             .AnyAsync(r => r.Id == id

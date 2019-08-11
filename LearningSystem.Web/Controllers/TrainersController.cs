@@ -219,7 +219,7 @@
                 return this.RedirectToAction(nameof(Students), routeValues: new { id });
             }
 
-            var exam = await this.trainerService.DownloadExam(userId, id, studentId);
+            var exam = await this.trainerService.DownloadExamAsync(userId, id, studentId);
             if (exam == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.StudentHasNotSubmittedExamMsg);

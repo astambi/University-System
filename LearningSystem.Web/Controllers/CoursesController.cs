@@ -125,7 +125,7 @@
             }
 
             await this.courseService.CancellUserEnrollmentInCourseAsync(id, userId);
-            this.TempData.AddSuccessMessage(WebConstants.UserCancelledEnrollmentInCourseMsg);
+            this.TempData.AddSuccessMessage(WebConstants.CourseEnrollmentCancellationSuccessMsg);
 
             return this.RedirectToAction(nameof(Details), routeValues: new { id });
         }
@@ -134,12 +134,12 @@
         {
             if (isEnrolled)
             {
-                this.TempData.AddInfoMessage(WebConstants.UserAlreadyEnrolledInCourseMsg);
+                this.TempData.AddInfoMessage(WebConstants.UserEnrolledInCourseAlreadyMsg);
                 return this.RedirectToAction(nameof(Details), routeValues: new { id });
             }
 
             await this.courseService.EnrollUserInCourseAsync(id, userId);
-            this.TempData.AddSuccessMessage(WebConstants.UserEnrolledInCourseMsg);
+            this.TempData.AddSuccessMessage(WebConstants.CourseEnrollmentSuccessMsg);
 
             return this.RedirectToAction(nameof(Details), routeValues: new { id });
         }

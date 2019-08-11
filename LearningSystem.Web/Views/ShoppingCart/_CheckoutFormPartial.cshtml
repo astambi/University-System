@@ -1,0 +1,18 @@
+﻿@model CheckoutFormModel
+
+<form method="post" asp-action="Checkout">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input asp-for="TotalPrice" hidden />
+    <div class="form-group">
+        <label asp-for="PaymentMethod" class="control-label"></label>
+        <select asp-for="PaymentMethod" asp-items="Html.GetEnumSelectList<PaymentType>()" class="form-control">
+            <option value="-1" selected disabled>Choose...</option>
+        </select>
+        <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-outline-success">
+            Checkout <i class="fa fa-wallet"></i>
+        </button>
+    </div>
+</form>

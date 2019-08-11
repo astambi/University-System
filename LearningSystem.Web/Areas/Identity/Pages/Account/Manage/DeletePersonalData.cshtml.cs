@@ -77,10 +77,10 @@
             }
 
             //Check DB ForeignKeys for user
-            var canBeDeleted = await this.userService.CanBeDeleted(user.Id);
+            var canBeDeleted = await this.userService.CanBeDeletedAsync(user.Id);
             if (!canBeDeleted)
             {
-                this.TempData.AddErrorMessage(WebConstants.UserCannotBeDeletedMsg);
+                this.TempData.AddErrorMessage(WebConstants.UserDeleteErrorMsg);
                 return this.Page();
             }
 

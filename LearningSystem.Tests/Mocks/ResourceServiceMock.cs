@@ -12,7 +12,7 @@
         public static Mock<IResourceService> CanBeDownloadedByUser(this Mock<IResourceService> mock, bool result)
         {
             mock
-                .Setup(s => s.CanBeDownloadedByUser(It.IsAny<int>(), It.IsAny<string>()))
+                .Setup(s => s.CanBeDownloadedByUserAsync(It.IsAny<int>(), It.IsAny<string>()))
                 .ReturnsAsync(result)
                 .Verifiable();
 

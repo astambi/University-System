@@ -5,6 +5,7 @@
     using LearningSystem.Data.Models;
     using LearningSystem.Services;
     using LearningSystem.Web.Infrastructure.Extensions;
+    using LearningSystem.Web.Models.ShoppingCart;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
@@ -35,7 +36,7 @@
 
             var userId = this.userManager.GetUserId(this.User);
 
-            var cartItemsWithDetails = await this.courseService.GetCartItemsDetailsForUser(cartItems, userId);
+            var cartItemsWithDetails = await this.courseService.GetCartItemsDetailsForUserAsync(cartItems, userId);
             if (!cartItemsWithDetails.Any())
             {
                 this.shoppingCartManager.EmptyCart(shoppingCartId);
@@ -50,7 +51,7 @@
             if (!courseExists)
             {
                 this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
-                return this.RedirectToAction(nameof(CoursesController.Index), WebConstants.CoursesController);
+                return this.RedirectToCourses();
             }
 
             var userId = this.userManager.GetUserId(this.User);
@@ -58,21 +59,28 @@
                 && await this.courseService.IsUserEnrolledInCourseAsync(id, userId);
             if (isUserEnrolled)
             {
-                this.TempData.AddInfoMessage(WebConstants.UserAlreadyEnrolledInCourseMsg);
-                return this.RedirectToAction(nameof(CoursesController.Details), WebConstants.CoursesController, new { id });
+                this.TempData.AddInfoMessage(WebConstants.UserEnrolledInCourseAlreadyMsg);
+                return this.RedirectToCourseDetails(id);
             }
 
             var shoppingCartId = this.GetShoppingCartId();
             this.shoppingCartManager.AddItemToCart(shoppingCartId, id);
-            this.TempData.AddSuccessMessage(WebConstants.CourseAddedToShoppingCartMsg);
+            this.TempData.AddSuccessMessage(WebConstants.CourseAddedToShoppingCartSuccessMsg);
 
             return this.RedirectToAction(nameof(Index));
         }
 
         [Authorize]
-        public async Task<IActionResult> Checkout()
+        [HttpPost]
+        public async Task<IActionResult> Checkout(CheckoutFormModel model)
         {
             // Validations
+            if (!this.ModelState.IsValid)
+            {
+                this.TempData.AddErrorMessage(WebConstants.PaymentMethodInvalidMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
             var userId = this.userManager.GetUserId(this.User);
             if (userId == null)
             {
@@ -88,7 +96,7 @@
                 return this.RedirectToAction(nameof(Index));
             }
 
-            var cartItemsWithDetails = await this.courseService.GetCartItemsDetailsForUser(cartItems, userId);
+            var cartItemsWithDetails = await this.courseService.GetCartItemsDetailsForUserAsync(cartItems, userId);
             if (!cartItemsWithDetails.Any())
             {
                 this.shoppingCartManager.EmptyCart(shoppingCartId); // empty any remaining items in cart
@@ -98,20 +106,26 @@
 
             // Create order with payment
             var totalPrice = cartItemsWithDetails.Sum(i => i.Price);
-            var orderId = await this.orderService.Create(userId, PaymentMethod.DebitCreditCard, totalPrice, cartItemsWithDetails);
+            if (totalPrice != model.TotalPrice)
+            {
+                this.TempData.AddInfoMessage(WebConstants.ShoppingCartItemsMismatchMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            var orderId = await this.orderService.CreateAsync(userId, model.PaymentMethod.Value, totalPrice, cartItemsWithDetails);
             if (orderId < 0)
             {
                 this.TempData.AddErrorMessage(WebConstants.PaymentErrorMsg);
                 return this.RedirectToAction(nameof(Index));
             }
 
-            this.TempData.AddSuccessMessage(WebConstants.PaymentSuccessMsg);
+            this.TempData.AddSuccessMessage(WebConstants.OrderCreatedSuccessMsg);
 
             // Clear shopping cart
             this.shoppingCartManager.EmptyCart(shoppingCartId);
 
             // Enroll user in order courses
-            var success = await this.courseService.EnrollUserInCoursesForOrderAsync(orderId, userId);
+            var success = await this.courseService.EnrollUserInOrderCoursesAsync(orderId, userId);
             if (!success)
             {
                 this.TempData.AddErrorMessage(WebConstants.CourseEnrollmentErrorMsg);
@@ -136,13 +150,13 @@
             if (!courseExists)
             {
                 this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
-                return this.RedirectToAction(nameof(CoursesController.Index), WebConstants.CoursesController);
+                return this.RedirectToCourses();
             }
 
             var shoppingCartId = this.GetShoppingCartId();
             this.shoppingCartManager.RemoveItemFromCart(shoppingCartId, id);
 
-            this.TempData.AddSuccessMessage(WebConstants.CourseRemovedFromShoppingCartMsg);
+            this.TempData.AddSuccessMessage(WebConstants.CourseRemovedFromShoppingCartSuccessMsg);
 
             return this.RedirectToAction(nameof(Index));
         }
@@ -150,10 +164,13 @@
         private string GetShoppingCartId()
             => this.HttpContext.Session.GetOrSetShoppingCartId();
 
+        private IActionResult RedirectToCourseDetails(int id)
+           => this.RedirectToAction(nameof(CoursesController.Details), WebConstants.CoursesController, new { id });
+
+        private IActionResult RedirectToCourses()
+            => this.RedirectToAction(nameof(CoursesController.Index), WebConstants.CoursesController);
+
         private IActionResult RedirectToOrderDetails(int orderId)
-            => this.RedirectToAction(
-                nameof(OrdersController.Details),
-                WebConstants.OrdersController,
-                new { id = orderId });
+            => this.RedirectToAction(nameof(OrdersController.Details), WebConstants.OrdersController, new { id = orderId });
     }
 }

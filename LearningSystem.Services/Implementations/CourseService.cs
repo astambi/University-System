@@ -71,6 +71,41 @@
             await this.db.SaveChangesAsync();
         }
 
+        public async Task<bool> CancelUserEnrollmentInOrderCoursesAsync(int orderId, string userId)
+        {
+            var userExists = await this.db.Users.AnyAsync(u => u.Id == userId);
+            if (!userExists)
+            {
+                return false;
+            }
+
+            var courseIds = this.db
+                .OrderItems
+                .Where(oi => oi.OrderId == orderId)
+                .Select(oi => oi.CourseId)
+                .ToList();
+
+            if (!courseIds.Any())
+            {
+                return false;
+            }
+
+            var studentCourses = await this.db.Users
+                .Where(u => u.Id == userId)
+                .SelectMany(u => u.Courses.Where(sc => courseIds.Contains(sc.CourseId)))
+                .ToListAsync();
+
+            foreach (var studentCourse in studentCourses)
+            {
+                this.db.Remove(studentCourse);
+            }
+
+            var result = await this.db.SaveChangesAsync();
+
+            return result == courseIds.Count();
+        }
+
+
         public async Task EnrollUserInCourseAsync(int courseId, string userId)
         {
             if (!await this.CanEnrollAsync(courseId)
@@ -84,7 +119,7 @@
             await this.db.SaveChangesAsync();
         }
 
-        public async Task<bool> EnrollUserInCoursesForOrderAsync(int orderId, string userId)
+        public async Task<bool> EnrollUserInOrderCoursesAsync(int orderId, string userId)
         {
             var userExists = await this.db.Users.AnyAsync(u => u.Id == userId);
             if (!userExists)
@@ -206,7 +241,7 @@
                 .Where(c => c.Id == id))
             .FirstOrDefaultAsync();
 
-        public async Task<IEnumerable<CartItemDetailsServiceModel>> GetCartItemsDetailsForUser(
+        public async Task<IEnumerable<CartItemDetailsServiceModel>> GetCartItemsDetailsForUserAsync(
             IEnumerable<CartItem> cartItems,
             string userId = null)
         {

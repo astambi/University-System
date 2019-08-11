@@ -123,7 +123,7 @@
             .GetPageItems(page, pageSize)
             .ToListAsync();
 
-        public async Task<ExamDownloadServiceModel> DownloadExam(string trainerId, int courseId, string studentId)
+        public async Task<ExamDownloadServiceModel> DownloadExamAsync(string trainerId, int courseId, string studentId)
             => await this.IsTrainerForCourseAsync(trainerId, courseId)
             && await this.CourseHasEndedAsync(courseId)
             ? await this.mapper

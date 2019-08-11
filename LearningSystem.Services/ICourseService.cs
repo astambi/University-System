@@ -19,13 +19,15 @@
             int page = 1,
             int pageSize = ServicesConstants.PageSize);
 
+        Task CancellUserEnrollmentInCourseAsync(int courseId, string userId);
+
+        Task<bool> CancelUserEnrollmentInOrderCoursesAsync(int orderId, string userId);
+
         Task<bool> CanEnrollAsync(int id);
 
         Task EnrollUserInCourseAsync(int courseId, string userId);
 
-        Task<bool> EnrollUserInCoursesForOrderAsync(int orderId, string userId);
-
-        Task CancellUserEnrollmentInCourseAsync(int courseId, string userId);
+        Task<bool> EnrollUserInOrderCoursesAsync(int orderId, string userId);
 
         bool Exists(int id);
 
@@ -33,7 +35,7 @@
 
         Task<CourseDetailsServiceModel> GetByIdAsync(int id);
 
-        Task<IEnumerable<CartItemDetailsServiceModel>> GetCartItemsDetailsForUser(IEnumerable<CartItem> cartItems, string userId = null);
+        Task<IEnumerable<CartItemDetailsServiceModel>> GetCartItemsDetailsForUserAsync(IEnumerable<CartItem> cartItems, string userId = null);
 
         IQueryable<Course> GetQueryableBySearch(string search);
 

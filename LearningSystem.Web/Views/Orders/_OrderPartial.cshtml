@@ -1,0 +1,46 @@
+﻿@model OrderListingServiceModel
+
+@if (Model != null)
+{
+    <header class="d-flex justify-content-between flex-wrap">
+        <h2>Id #@Model.Id</h2>
+        <h2>@Model.OrderDate</h2>
+        <h2><span class="badge badge-info">@Model.Status</span></h2>
+    </header>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Course</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.OrderItems)
+            {
+                <tr>
+                    <td>
+                        @item.CourseName
+                        <a asp-controller="@WebConstants.CoursesController"
+                           asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Details)"
+                           asp-route-id="@item.CourseId" class="btn btn-outline-info"><i class="fa fa-info"></i></a>
+                    </td>
+                    <td class="text-right">@item.Price.ToCurrency()</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot class="text-uppercase">
+            <tr>
+                <th>Total payment</th>
+                <th class="text-right">@Model.TotalPrice.ToCurrency()</th>
+            </tr>
+            <tr>
+                <th>Payment method</th>
+                <th class="text-right">@Model.PaymentMethod.ToFriendlyName()</th>
+            </tr>
+        </tfoot>
+    </table>
+}
+else
+{
+    <h5>Order not found</h5>
+}

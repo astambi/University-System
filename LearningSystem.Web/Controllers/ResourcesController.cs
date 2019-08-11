@@ -139,7 +139,7 @@
                 return this.RedirectToCoursesIndex();
             }
 
-            var canBeDownloadedByUser = await this.resourceService.CanBeDownloadedByUser(id, userId);
+            var canBeDownloadedByUser = await this.resourceService.CanBeDownloadedByUserAsync(id, userId);
             if (!canBeDownloadedByUser)
             {
                 this.TempData.AddErrorMessage(WebConstants.ResourceDownloadUnauthorizedMsg);

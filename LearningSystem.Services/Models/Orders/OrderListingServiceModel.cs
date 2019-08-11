@@ -13,7 +13,7 @@
 
         public decimal TotalPrice { get; set; }
 
-        public PaymentMethod PaymentMethod { get; set; }
+        public PaymentType PaymentMethod { get; set; }
 
         public Status Status { get; set; }
 

@@ -86,20 +86,23 @@
         public const string CertificateDownloadInProgressMsg = "Certificate download in progress. This could take a few more seconds.";
         public const string CertificateDownloadSuccessMsg = "Certificate downloaded successfully.";
 
-        public const string CourseAddedToShoppingCartMsg = "Course added to shopping cart successfully.";
-        public const string CourseRemovedFromShoppingCartMsg = "Course removed from shopping cart successfully.";
-        public const string CourseCreatedMsg = "Course created successfully.";
-        public const string CourseDeletedMsg = "Course deleted successfully.";
+        public const string CourseAddedToShoppingCartSuccessMsg = "Course added to shopping cart successfully.";
+        public const string CourseCreateErrorMsg = "Course not created.";
+        public const string CourseCreateSuccessMsg = "Course created successfully.";
+        public const string CourseDeleteSuccessMsg = "Course deleted successfully.";
+        public const string CourseEnrollmentCancellationErrorMsg = "Course enrollment cannot be cancelled after start date.";
+        public const string CourseEnrollmentCancellationSuccessMsg = "Course enrollment cancelled successfully.";
         public const string CourseEnrollmentClosedMsg = "Course is closed for enrollment after start date.";
         public const string CourseEnrollmentErrorMsg = "Course enrollment error.";
-        public const string CoursesEnrollmentSuccessMsg = "Courses enrolled successfully.";
         public const string CourseEnrollmentOpenMsg = "Course is open for enrollment for {0}."; // days/hours
+        public const string CourseEnrollmentSuccessMsg = "Enrolled in course successfully.";
+        public const string CoursesEnrollmentSuccessMsg = "Enrolled in courses successfully.";
         public const string CourseHasNotEndedMsg = "Course has not ended.";
         public const string CourseInvalidMsg = "Invalid course.";
-        public const string CourseNotCreatedMsg = "Course not created.";
         public const string CourseNotFoundMsg = "Course not found.";
-        public const string CourseNotUpdatedMsg = "Course not updated.";
-        public const string CourseUpdatedMsg = "Course updated successfully.";
+        public const string CourseRemovedFromShoppingCartSuccessMsg = "Course removed from shopping cart successfully.";
+        public const string CourseUpdateErrorMsg = "Course not updated.";
+        public const string CourseUpdateSuccessMsg = "Course updated successfully.";
 
         public const string Disable2faErrorMsg = "Cannot disable 2FA for user.";
         public const string ExternalLoginInfoErrorMsg = "Unable to load external login info.";
@@ -120,11 +123,16 @@
         public const string InvalidIdentityOrRoleMsg = "Invalid identity or role.";
         public const string InvalidUserMsg = "Invalid user.";
 
+        public const string OrderCoursesEnrollmentCancellationSuccessMsg = "Enrollment in all order courses cancelled successfully.";
+        public const string OrderCreatedSuccessMsg = "Payment success.";
+        public const string OrderDeletedSuccessMsg = "Order deleted successfully.";
+        public const string OrderDeletedErrorMsg = "Order not deleted.";
         public const string OrderNotFoundMsg = "Order not found.";
 
-        public const string PaymentSuccessMsg = "Payment success.";
+        public const string PaymentMethodInvalidMsg = "Invalid payment method.";
         public const string PaymentErrorMsg = "Payment error.";
 
+        public const string ShoppingCartItemsMismatchMsg = "Shopping cart items mismatch.";
         public const string ShoppingCartEmptyMsg = "Shopping cart is empty.";
         public const string ShoppingCartClearedMsg = "Shopping cart cleared successfully.";
 
@@ -140,21 +148,18 @@
         public const string StudentHasNotSubmittedExamMsg = "Student has not submitted an exam.";
         public const string StudentNotEnrolledInCourseMsg = "Student not enrolled in this course.";
 
-        public const string NotTrainerForCourseMsg = "Not authorized as trainer for this course.";
-        public const string TrainersAssessPerformanceAfterCourseEndsMsg = "Trainers can assess students' course performance only when the course is over.";
-
-        public const string UserAvddedToRoleMsg = "User {0} added to role {1}.";
-        public const string UserAlreadyEnrolledInCourseMsg = "User already enrolled in this course.";
-        public const string UserCancelledEnrollmentInCourseMsg = "Course enrollment cancelled successfully.";
-        public const string UserCannotBeDeletedMsg = "User cannot be deleted. Delete user's blog articles & remove user as trainer from all courses first.";
-        public const string UserEnrolledInCourseMsg = "Enrolled in course successfully.";
-        public const string UserNotEnrolledInCourseMsg = "User not enrolled in this course.";
-        public const string UserAddedToRoleMsg = "User {0} added to role {1}.";
-        public const string UserRemovedFromRoleMsg = "User {0} removed from role {1}.";
-
         public const string SearchByArticleTitleOrContent = "Search by title or content";
         public const string SearchByCourseName = "Search by course name";
         public const string SearchByUserName = "Search by name";
+
+        public const string NotTrainerForCourseMsg = "Not authorized as trainer for this course.";
+        public const string TrainersAssessPerformanceAfterCourseEndsMsg = "Trainers can assess students' course performance only when the course is over.";
+
+        public const string UserAddedToRoleMsg = "User {0} added to role {1}.";
+        public const string UserDeleteErrorMsg = "User cannot be deleted. Delete user's blog articles & remove user as trainer from all courses first.";
+        public const string UserEnrolledInCourseAlreadyMsg = "User already enrolled in this course.";
+        public const string UserNotEnrolledInCourseMsg = "User not enrolled in this course.";
+        public const string UserRemovedFromRoleMsg = "User {0} removed from role {1}.";
 
         public static Dictionary<string, string> Styles;
 

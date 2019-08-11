@@ -8,7 +8,7 @@
 
     public interface IUserService
     {
-        Task<bool> CanBeDeleted(string id);
+        Task<bool> CanBeDeletedAsync(string id);
 
         Task<UserEditServiceModel> GetProfileToEditAsync(string id);
 

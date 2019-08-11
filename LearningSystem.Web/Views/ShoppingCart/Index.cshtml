@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<CartItemDetailsServiceModel>
 @{
     ViewData["Title"] = "Shopping Cart";
+    var totalPrice = Model.Sum(i => i.Price);
 }
 
 <h1>Shopping cart</h1>
@@ -19,20 +20,14 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>
-                        @item.Name - @item.StartDate.ToDateString()
-                    </td>
+                    <td>@item.Name - @item.StartDate.ToDateString()</td>
                     <td class="text-right">@item.Price.ToCurrency()</td>
                     <td class="d-flex justify-content-around">
                         <a asp-controller="@WebConstants.CoursesController"
                            asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Details)"
-                           asp-route-id="@item.Id" class="btn btn-outline-info">
-                            <i class="fa fa-info"></i>
-                        </a>
+                           asp-route-id="@item.Id" class="btn btn-outline-info"><i class="fa fa-info"></i></a>
                         <a asp-action="@nameof(ShoppingCartController.Remove)"
-                           asp-route-id="@item.Id" class="btn btn-outline-danger">
-                            <i class="fa fa-trash"></i>
-                        </a>
+                           asp-route-id="@item.Id" class="btn btn-outline-danger"><i class="fa fa-trash"></i></a>
                     </td>
                 </tr>
             }
@@ -40,27 +35,31 @@
         <tfoot>
             <tr class="font-weight-bold">
                 <td>Total: </td>
-                <td class="text-right">@Model.Sum(c => c.Price).ToCurrency()</td>
+                <td class="text-right">@totalPrice.ToCurrency()</td>
                 <td></td>
             </tr>
         </tfoot>
     </table>
+}
+else
+{
+    <h5>No items in cart</h5>
+}
 
-    <div class="d-flex justify-content-between">
-        <a asp-controller="@WebConstants.CoursesController"
-           asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Index)"
-           class="btn btn-outline-info">
-            <i class="fa fa-angle-double-left"></i>
-            Add more courses
-        </a>
+<div class="d-flex justify-content-between align-items-baseline">
+    <a asp-controller="@WebConstants.CoursesController"
+       asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Index)"
+       class="btn btn-outline-info">
+        <i class="fa fa-angle-double-left"></i>
+        Add more courses
+    </a>
 
+    @if (Model.Any())
+    {
         @if (User.Identity.IsAuthenticated)
         {
-            <form method="post" asp-action="Checkout">
-                <button type="submit" class="btn btn-outline-success">
-                    Checkout
-                </button>
-            </form>
+            var checkoutModel = new CheckoutFormModel { TotalPrice = totalPrice };
+            <partial name="_CheckoutFormPartial" model="@checkoutModel" />
         }
         else
         {
@@ -71,9 +70,9 @@
                 <i class="fa fa-angle-double-right"></i>
             </a>
         }
-    </div>
-}
-else
-{
-    <h5>No items in cart</h5>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }

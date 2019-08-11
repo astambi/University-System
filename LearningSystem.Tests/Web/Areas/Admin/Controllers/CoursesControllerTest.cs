@@ -168,7 +168,7 @@
             var result = await controller.Create(form);
 
             // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.CourseNotCreatedMsg);
+            controller.TempData.AssertErrorMsg(WebConstants.CourseCreateErrorMsg);
 
             this.AssertEqualViewResultWithModel(form, result);
 
@@ -200,7 +200,7 @@
             var result = await controller.Create(form);
 
             // Assert
-            controller.TempData.AssertSuccessMsg(WebConstants.CourseCreatedMsg);
+            controller.TempData.AssertSuccessMsg(WebConstants.CourseCreateSuccessMsg);
 
             this.AssertRedirectToCoursesIndex(result);
 
@@ -383,7 +383,7 @@
             var result = await controller.Edit(TestCourseId, form);
 
             // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.CourseNotUpdatedMsg);
+            controller.TempData.AssertErrorMsg(WebConstants.CourseUpdateErrorMsg);
 
             this.AssertEqualViewResultWithModel(form, result);
 
@@ -420,7 +420,7 @@
             var result = await controller.Edit(TestCourseId, form);
 
             // Assert
-            controller.TempData.AssertSuccessMsg(WebConstants.CourseUpdatedMsg);
+            controller.TempData.AssertSuccessMsg(WebConstants.CourseUpdateSuccessMsg);
 
             this.AssertRedirectToCoursesDetailsWithCorrectRouteValues(result);
 

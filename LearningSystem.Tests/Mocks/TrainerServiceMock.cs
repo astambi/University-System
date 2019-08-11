@@ -64,7 +64,7 @@
         public static Mock<ITrainerService> DownloadExam(this Mock<ITrainerService> mock, ExamDownloadServiceModel exam)
         {
             mock
-                .Setup(s => s.DownloadExam(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>()))
+                .Setup(s => s.DownloadExamAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>()))
                 .ReturnsAsync(exam)
                 .Verifiable();
 

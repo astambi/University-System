@@ -72,7 +72,7 @@
             var resourseService = this.InitializeResourceService(db);
 
             // Act
-            var result = await resourseService.CanBeDownloadedByUser(ResourceInvalid, It.IsAny<string>());
+            var result = await resourseService.CanBeDownloadedByUserAsync(ResourceInvalid, It.IsAny<string>());
 
             // Assert
             Assert.False(result);
@@ -90,7 +90,7 @@
             var resourseService = this.InitializeResourceService(db);
 
             // Act
-            var result = await resourseService.CanBeDownloadedByUser(ResourceValid, testUser);
+            var result = await resourseService.CanBeDownloadedByUserAsync(ResourceValid, testUser);
 
             // Assert
             Assert.Equal(expectedResult, result);

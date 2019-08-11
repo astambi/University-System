@@ -24,7 +24,7 @@
             this.mapper = mapper;
         }
 
-        public async Task<bool> CanBeDeleted(string id)
+        public async Task<bool> CanBeDeletedAsync(string id)
             => !await this.db.Courses.AnyAsync(c => c.TrainerId == id)
             && !await this.db.Articles.AnyAsync(a => a.AuthorId == id);
 

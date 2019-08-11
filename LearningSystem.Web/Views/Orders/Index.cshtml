@@ -1,9 +1,9 @@
 ﻿@model IEnumerable<OrderListingServiceModel>
 @{
-    ViewData["Title"] = "My Payments";
+    ViewData["Title"] = "My Orders";
 }
 
-<h1>My payments</h1>
+<h1>My orders</h1>
 
 @if (Model.Any())
 {
@@ -30,6 +30,11 @@
                         <button id=@orderSelector class="btn btn-outline-info order-details-toggler">
                             Items @order.OrderItems.Count()
                         </button>
+                        <a asp-controller="@WebConstants.OrdersController"
+                           asp-action="@nameof(OrdersController.Delete)"
+                           asp-route-id="@order.Id" class="btn btn-outline-danger">
+                            <i class="fa fa-trash"></i>
+                        </a>
                     </td>
                 </tr>
                 @foreach (var item in order.OrderItems)
@@ -41,7 +46,9 @@
                         <td>
                             <a asp-controller="@WebConstants.CoursesController"
                                asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Details)"
-                               asp-route-id="@item.CourseId" class="btn btn-outline-info"><i class="fa fa-info"></i></a>
+                               asp-route-id="@item.CourseId" class="btn btn-outline-info">
+                                <i class="fa fa-info"></i>
+                            </a>
                         </td>
                     </tr>
                 }

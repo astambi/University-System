@@ -25,7 +25,7 @@
             this.mapper = mapper;
         }
 
-        public async Task<IEnumerable<OrderListingServiceModel>> AllByUser(string userId)
+        public async Task<IEnumerable<OrderListingServiceModel>> AllByUserAsync(string userId)
             => await this.mapper
             .ProjectTo<OrderListingServiceModel>(
                 this.db
@@ -34,9 +34,40 @@
                 .OrderByDescending(o => o.OrderDate))
             .ToListAsync();
 
-        public async Task<int> Create(
+        public async Task<bool> CanBeDeletedAsync(int id, string userId)
+        {
+            var exists = await this.ExistsAsync(id, userId);
+            if (!exists)
+            {
+                return false;
+            }
+
+            var orderCourseIds = await this.db
+                .Orders
+                .Where(o => o.Id == id)
+                .Where(o => o.UserId == userId)
+                .SelectMany(o => o.OrderItems.Select(oi => oi.CourseId))
+                .ToListAsync();
+
+            var courseStartDates = await this.db
+                .Courses
+                .Where(c => orderCourseIds.Contains(c.Id)) // db courses
+                .Select(c => c.StartDate)
+                .ToListAsync();
+
+            if (orderCourseIds.Count != courseStartDates.Count)
+            {
+                return false;
+            }
+
+            var canUnsubscribeFromAllCourses = !courseStartDates.Any(d => d.HasEnded());
+
+            return canUnsubscribeFromAllCourses;
+        }
+
+        public async Task<int> CreateAsync(
             string userId,
-            PaymentMethod paymentMethod,
+            PaymentType paymentMethod,
             decimal totalPrice,
             IEnumerable<CartItemDetailsServiceModel> cartItems)
         {
@@ -82,7 +113,31 @@
             return order.Id;
         }
 
-        public async Task<OrderListingServiceModel> GetByIdForUser(int id, string userId)
+        public async Task<bool> RemoveAsync(int id, string userId)
+        {
+            var order = await this.db.Orders.FindAsync(id);
+            if (order == null)
+            {
+                return false;
+            }
+
+            var canBeDeleted = await this.CanBeDeletedAsync(id, userId);
+            if (!canBeDeleted)
+            {
+                return false;
+            }
+
+            this.db.Orders.Remove(order);
+            var result = await this.db.SaveChangesAsync();
+
+            return result > 0;
+        }
+
+        public async Task<bool> ExistsAsync(int id, string userId)
+            => await this.db.Orders
+            .AnyAsync(o => o.Id == id && o.UserId == userId);
+
+        public async Task<OrderListingServiceModel> GetByIdForUserAsync(int id, string userId)
             => await this.mapper
             .ProjectTo<OrderListingServiceModel>(
                 this.db

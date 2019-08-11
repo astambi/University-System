@@ -74,13 +74,13 @@
 
             if (id < 0)
             {
-                this.TempData.AddErrorMessage(WebConstants.CourseNotCreatedMsg);
+                this.TempData.AddErrorMessage(WebConstants.CourseCreateErrorMsg);
 
                 model.Trainers = await this.GetTrainersAsync();
                 return this.View(CourseFormView, model);
             }
 
-            this.TempData.AddSuccessMessage(WebConstants.CourseCreatedMsg);
+            this.TempData.AddSuccessMessage(WebConstants.CourseCreateSuccessMsg);
 
             return this.RedirectToAction(nameof(Web.Controllers.CoursesController.Index), WebConstants.CoursesController);
         }
@@ -121,13 +121,13 @@
 
             if (!success)
             {
-                this.TempData.AddErrorMessage(WebConstants.CourseNotUpdatedMsg);
+                this.TempData.AddErrorMessage(WebConstants.CourseUpdateErrorMsg);
 
                 model.Trainers = await this.GetTrainersAsync();
                 return this.View(CourseFormView, model);
             }
 
-            this.TempData.AddSuccessMessage(WebConstants.CourseUpdatedMsg);
+            this.TempData.AddSuccessMessage(WebConstants.CourseUpdateSuccessMsg);
 
             return this.RedirectToAction(
                 nameof(Web.Controllers.CoursesController.Details),
@@ -150,7 +150,7 @@
 
             await this.adminCourseService.RemoveAsync(id);
 
-            this.TempData.AddSuccessMessage(WebConstants.CourseDeletedMsg);
+            this.TempData.AddSuccessMessage(WebConstants.CourseDeleteSuccessMsg);
             return this.RedirectToAction(nameof(Web.Controllers.CoursesController.Index), WebConstants.CoursesController);
         }
 
