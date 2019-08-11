@@ -11,26 +11,34 @@
 
     <article>
         <partial name="_ResourceUploadFormPartial" model="@resourceCreateModel" />
-        <table class="table">
-            <thead>
-                <tr class="align-bottom">
-                    <th>Resource</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var resource in Model.Resources)
-                {
-                    var resourceDloadModel = new ResourceFormModel { Id = resource.Id, CourseId = Model.Id };
-                    <tr>
-                        <td>@resource.FileName</td>
-                        <td class="d-flex justify-content-around m-auto">
-                            <partial name="_ResourceDownloadFormPartial" model="@resourceDloadModel" />
-                            <partial name="_ResourceDeleteFormPartial" model="@resourceDloadModel" />
-                        </td>
+
+        @if (Model.Resources.Any())
+        {
+            <table class="table">
+                <thead>
+                    <tr class="align-bottom">
+                        <th>Resource</th>
+                        <th>Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var resource in Model.Resources)
+                    {
+                        var resourceDloadModel = new ResourceFormModel { Id = resource.Id, CourseId = Model.Id };
+                        <tr>
+                            <td>@resource.FileName</td>
+                            <td class="d-flex justify-content-around m-auto">
+                                <partial name="_ResourceDownloadFormPartial" model="@resourceDloadModel" />
+                                <partial name="_ResourceDeleteFormPartial" model="@resourceDloadModel" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <h5>No resources</h5>
+        }
     </article>
 </section>

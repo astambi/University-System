@@ -16,26 +16,35 @@
             </div>
         }
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Submission date</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var exam in Model.ExamSubmissions)
-                {
+        @if (Model.ExamSubmissions.Any())
+        {
+            <table class="table">
+                <thead>
                     <tr>
-                        <td>@exam.SubmissionDate.ToLocalTime()</td>
-                        <td>
-                            <a asp-controller="@WebConstants.ExamsController"
-                               asp-action="@nameof(ExamsController.Download)"
-                               asp-route-id="@exam.Id" class="px-1"><i class="fa fa-download btn btn-outline-info"></i></a>
-                        </td>
+                        <th>Submission date</th>
+                        <th>Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var exam in Model.ExamSubmissions)
+                    {
+                        <tr>
+                            <td>@exam.SubmissionDate.ToLocalTime()</td>
+                            <td>
+                                <a asp-controller="@WebConstants.ExamsController"
+                                   asp-action="@nameof(ExamsController.Download)"
+                                   asp-route-id="@exam.Id" class="px-1">
+                                    <i class="fa fa-download btn btn-@FormActionEnum.Download.ToStyle()"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <h5>No exam submission</h5>
+        }
     </article>
 </section>

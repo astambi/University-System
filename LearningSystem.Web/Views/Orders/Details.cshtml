@@ -5,11 +5,7 @@
 
 <h1 class="d-flex justify-content-between align-items-center">
     Order details
-    <a asp-controller="@WebConstants.OrdersController"
-       asp-action="@nameof(OrdersController.Delete)"
-       asp-route-id="@Model.Id" class="btn btn-outline-danger">
-        <i class="fa fa-trash"></i>
-    </a>
+    <partial name="_OrderDeleteButtonPartial" for="Id" />
 </h1>
 
-<partial name="_OrderPartial" model="Model" />
+<partial name="_OrderDetailsPartial" model="Model" />

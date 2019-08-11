@@ -19,15 +19,16 @@
         <tbody>
             @foreach (var item in Model)
             {
+                var courseModel = new CourseBasicViewModel { Id = item.Id, Name = item.Name };
                 <tr>
                     <td>@item.Name - @item.StartDate.ToDateString()</td>
                     <td class="text-right">@item.Price.ToCurrency()</td>
                     <td class="d-flex justify-content-around">
-                        <a asp-controller="@WebConstants.CoursesController"
-                           asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Details)"
-                           asp-route-id="@item.Id" class="btn btn-outline-info"><i class="fa fa-info"></i></a>
+                        <partial name="_CourseDetailsButtonPartial" model="@courseModel" />
                         <a asp-action="@nameof(ShoppingCartController.Remove)"
-                           asp-route-id="@item.Id" class="btn btn-outline-danger"><i class="fa fa-trash"></i></a>
+                           asp-route-id="@item.Id" class="btn btn-outline-danger">
+                            <i class="fa fa-times"></i>
+                        </a>
                     </td>
                 </tr>
             }
@@ -36,7 +37,14 @@
             <tr class="font-weight-bold">
                 <td>Total: </td>
                 <td class="text-right">@totalPrice.ToCurrency()</td>
-                <td></td>
+                <td class="d-flex justify-content-around">
+                    <a asp-action="@nameof(ShoppingCartController.Index)" class="btn btn-outline-info">
+                        <i class="fa fa-sync-alt"></i>
+                    </a>
+                    <a asp-action="@nameof(ShoppingCartController.Clear)" class="btn btn-outline-danger">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </td>
             </tr>
         </tfoot>
     </table>

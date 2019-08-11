@@ -16,26 +16,36 @@
                 <h5><i class="fa fa-clock"></i> @Model.Duration.ToDays()</h5>
             </div>
         </div>
-
         @if (Model.CanEnroll)
         {
-            <div class="card-body card-subtitle d-flex flex-wrap justify-content-between align-items-center bg-success text-white">
-                <h5 class="col-8">@enrollmentMsg</h5>
+            <div class="card-body card-subtitle d-flex flex-wrap justify-content-around align-items-center table-info">
+                <h5>@enrollmentMsg</h5>
 
                 @if (Model.IsUserEnrolled)
-                {<partial name="_CourseCancelFormPartial" for="Id" /> }
+                {
+                    if (Model.Price == 0)
+                    {<partial name="_CourseCancelFormPartial" for="Id" />
+                    }
+                }
                 else
-                { <partial name="_CourseEnrollFormPartial" for="Id" />}
-
-                <a asp-controller="@WebConstants.ShoppingCartController"
-                   asp-action="@nameof(ShoppingCartController.Add)"
-                   asp-route-id="@Model.Id" class="btn btn-light">Add to cart</a>
+                {
+                    if (Model.Price == 0)
+                    { <partial name="_CourseEnrollFormPartial" for="Id" />
+                    }
+                    else
+                    { <partial name="_CourseAddToCartButtonPartial" for="Id" />
+                    }
+                }
             </div>
         }
-
         <ul class="list-group list-group-flush">
             @if (Model.IsUserEnrolled)
             {
+                <partial name="_TableHeaderPartial" model="@(" Status")" />
+                <li class="list-group-item d-flex justify-content-between list-group-item-info">
+                    Enrolled
+                </li>
+
                 <partial name="_TableHeaderPartial" model="@(" Exam submissions")" />
                 <li class="list-group-item d-flex justify-content-between">
                     <a asp-controller="@WebConstants.ExamsController"
@@ -92,6 +102,9 @@
 
             <partial name="_TableHeaderPartial" model="@(" Enrollment")" />
             <li class="list-group-item">@enrollmentMsg</li>
+
+            <partial name="_TableHeaderPartial" model="@(" Price")" />
+            <li class="list-group-item">@Model.Price.ToCurrency()</li>
         </ul>
     </article>
 

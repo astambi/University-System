@@ -4,7 +4,7 @@
 {
     <header class="d-flex justify-content-between flex-wrap">
         <h2>Id #@Model.Id</h2>
-        <h2>@Model.OrderDate</h2>
+        <h2>@Model.OrderDate.ToLocalTime()</h2>
         <h2><span class="badge badge-info">@Model.Status</span></h2>
     </header>
     <table class="table">
@@ -17,12 +17,11 @@
         <tbody>
             @foreach (var item in Model.OrderItems)
             {
+                var courseModel = new CourseBasicViewModel { Id = item.CourseId, Name = item.CourseName };
                 <tr>
                     <td>
                         @item.CourseName
-                        <a asp-controller="@WebConstants.CoursesController"
-                           asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Details)"
-                           asp-route-id="@item.CourseId" class="btn btn-outline-info"><i class="fa fa-info"></i></a>
+                        <partial name="_CourseDetailsButtonPartial" model="courseModel" />
                     </td>
                     <td class="text-right">@item.Price.ToCurrency()</td>
                 </tr>

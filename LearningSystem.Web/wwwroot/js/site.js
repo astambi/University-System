@@ -29,9 +29,7 @@ $(() => $('[data-toggle="tooltip"]').tooltip());
 $("#form-submit").click(() => $("#upload-form").submit());
 
 // Notifications fade out
-const notificationFadeOut = (selector, timeout = 3000) => selector
-    .fadeTo(timeout, 0.7)
-    .fadeOut(timeout / 2);
+const notificationFadeOut = (selector, timeout = 5000) => selector.fadeTo(timeout, 0.7);
 
 notificationFadeOut($(".alert.alert-info"));
 notificationFadeOut($(".alert.alert-success"));

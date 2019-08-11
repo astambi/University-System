@@ -21,15 +21,21 @@
             </ul>
         }
         <div class="card-footer bg-transparent d-flex flex-wrap justify-content-around align-items-center">
-            <a class="btn btn-outline-info"
-               asp-controller="@WebConstants.CoursesController"
-               asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Details)"
-               asp-route-id="@Model.Id"
-               asp-route-name="@Model.Name.ToFriendlyUrl()">Details</a>
+            @{
+                var courseModel = new CourseBasicViewModel { Id = Model.Id, Name = Model.Name };
+            }
+            <partial name="_CourseDetailsButtonPartial" model="@courseModel" />
 
             @if (Model.CanEnroll)
             {
-                <partial name="_CourseEnrollFormPartial" for="Id" />
+                if (Model.Price == 0)
+                {
+                    <partial name="_CourseEnrollFormPartial" for="Id" />
+                }
+                else
+                {
+                    <partial name="_CourseAddToCartButtonPartial" for="Id" />
+                }
             }
 
             @if (User.IsInRole(WebConstants.TrainerRole))

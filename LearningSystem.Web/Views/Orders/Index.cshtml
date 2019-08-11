@@ -22,7 +22,7 @@
             {
                 var orderSelector = $"order-{order.Id}";
                 <tr>
-                    <td>@order.OrderDate</td>
+                    <td>@order.OrderDate.ToLocalTime()</td>
                     <td>@order.TotalPrice.ToCurrency()</td>
                     <td>@order.PaymentMethod.ToFriendlyName()</td>
                     <td>@order.Status </td>
@@ -30,26 +30,17 @@
                         <button id=@orderSelector class="btn btn-outline-info order-details-toggler">
                             Items @order.OrderItems.Count()
                         </button>
-                        <a asp-controller="@WebConstants.OrdersController"
-                           asp-action="@nameof(OrdersController.Delete)"
-                           asp-route-id="@order.Id" class="btn btn-outline-danger">
-                            <i class="fa fa-trash"></i>
-                        </a>
+                        <partial name="_OrderDeleteButtonPartial" model="order.Id" />
                     </td>
                 </tr>
                 @foreach (var item in order.OrderItems)
                 {
+                    var courseModel = new CourseBasicViewModel { Id = item.CourseId, Name = item.CourseName };
                     <tr class="order-item @orderSelector table-light shadow">
                         <td></td>
                         <td>@item.Price.ToCurrency()</td>
                         <td colspan="2">@item.CourseName</td>
-                        <td>
-                            <a asp-controller="@WebConstants.CoursesController"
-                               asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Details)"
-                               asp-route-id="@item.CourseId" class="btn btn-outline-info">
-                                <i class="fa fa-info"></i>
-                            </a>
-                        </td>
+                        <td><partial name="_CourseDetailsButtonPartial" model="courseModel" /></td>
                     </tr>
                 }
             }

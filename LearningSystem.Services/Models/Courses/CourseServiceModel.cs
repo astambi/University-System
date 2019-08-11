@@ -17,6 +17,8 @@
         [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
 
+        public decimal Price { get; set; }
+
         public string TrainerId { get; set; }
 
         public string TrainerName { get; set; }

@@ -20,10 +20,13 @@
             }
         </div>
         <div class="card-footer bg-transparent d-flex flex-wrap justify-content-around align-items-center">
+            @{
+                var courseModel = new CourseBasicViewModel { Id = Model.CourseId, Name = Model.CourseName };
+            }
+            <partial name="_CourseDetailsButtonPartial" model="@courseModel" />
+
             @if (Model.CertificateId != null)
             {
-                @*<a asp-action="@nameof(LearningSystem.Web.Controllers.UsersController.Certificate)"
-                    asp-route-id="@Model.CertificateId" class="btn btn-info border-white">View Certificate</a>*@
                 <form asp-area=""
                       asp-controller="@WebConstants.UsersController"
                       asp-action="@nameof(LearningSystem.Web.Controllers.UsersController.DownloadCertificate)"
@@ -31,12 +34,6 @@
                     <partial name="_FormSubmitPartial" model="FormActionEnum.Certificate" />
                 </form>
             }
-            <a asp-controller="@WebConstants.CoursesController"
-               asp-action="@nameof(LearningSystem.Web.Controllers.CoursesController.Details)"
-               asp-route-id="@Model.CourseId"
-               asp-route-name="@Model.CourseName.ToFriendlyUrl()" class="btn btn-outline-info">
-                <i class="fa fa-info"></i>
-            </a>
         </div>
     </div>
 </article>
