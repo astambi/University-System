@@ -14,15 +14,18 @@
     {
         private readonly ICourseService courseService;
         private readonly IOrderService orderService;
+        private readonly IPdfService pdfService;
         private readonly UserManager<User> userManager;
 
         public OrdersController(
             ICourseService courseService,
             IOrderService orderService,
+            IPdfService pdfService,
             UserManager<User> userManager)
         {
             this.courseService = courseService;
             this.orderService = orderService;
+            this.pdfService = pdfService;
             this.userManager = userManager;
         }
 
@@ -32,7 +35,7 @@
             if (userId == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RerirectToCourses();
+                return this.RedirectToCourses();
             }
 
             var userOrders = await this.orderService.AllByUserAsync(userId);
@@ -46,7 +49,7 @@
             if (userId == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RerirectToCourses();
+                return this.RedirectToCourses();
             }
 
             var order = await this.orderService.GetByIdForUserAsync(id, userId);
@@ -65,7 +68,7 @@
             if (userId == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RerirectToCourses();
+                return this.RedirectToCourses();
             }
 
             var canDeleteOrder = await this.orderService.CanBeDeletedAsync(id, userId);
@@ -92,7 +95,7 @@
             if (userId == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RerirectToCourses();
+                return this.RedirectToCourses();
             }
 
             var canDeleteOrder = await this.orderService.CanBeDeletedAsync(id, userId);
@@ -129,7 +132,38 @@
             return this.RedirectToAction(nameof(Index));
         }
 
-        private IActionResult RerirectToCourses()
+        [AllowAnonymous]
+        [Route(nameof(OrdersController.Invoice) + "/" + WebConstants.WithId)]
+        public async Task<IActionResult> Invoice(string id)
+        {
+            var invoice = await this.orderService.GetInvoiceAsync(id);
+            if (invoice == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.InvoiceNotFoundMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            return this.View(invoice);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route(nameof(OrdersController.Invoice) + "/" + WebConstants.WithId)]
+        public IActionResult DownloadInvoice(string id)
+        {
+            var downloadUrl = this.HttpContext.Request.GetRequestUrl();
+
+            var pdf = this.pdfService.ConvertToPdf(downloadUrl);
+            if (pdf == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.InvoiceNotFoundMsg);
+                return this.RedirectToAction(nameof(OrdersController.Index));
+            }
+
+            return this.File(pdf, WebConstants.ApplicationPdf, $"Invoice {id.ToUpper()}.pdf");
+        }
+
+        private IActionResult RedirectToCourses()
             => this.RedirectToAction(nameof(CoursesController.Index));
     }
 }

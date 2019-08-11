@@ -2,6 +2,8 @@
 
 <a asp-controller="@WebConstants.OrdersController"
    asp-action="@nameof(OrdersController.Delete)"
-   asp-route-id="@Model" class="btn btn-@FormActionEnum.Delete.ToStyle()">
+   asp-route-id="@Model"
+   data-toggle="tooltip" title="Cancel order"
+   class="btn btn-@FormActionEnum.Delete.ToStyle()">
     <i class="fa fa-trash"></i>
 </a>

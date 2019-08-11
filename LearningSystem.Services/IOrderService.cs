@@ -18,6 +18,8 @@
 
         Task<OrderListingServiceModel> GetByIdForUserAsync(int id, string userId);
 
+        Task<OrderListingServiceModel> GetInvoiceAsync(string invoiceId);
+
         Task<bool> RemoveAsync(int id, string userId);
     }
 }

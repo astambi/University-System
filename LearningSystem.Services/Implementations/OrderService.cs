@@ -145,5 +145,13 @@
                 .Where(o => o.Id == id)
                 .Where(o => o.UserId == userId))
             .FirstOrDefaultAsync();
+
+        public async Task<OrderListingServiceModel> GetInvoiceAsync(string invoiceId)
+            => await this.mapper
+            .ProjectTo<OrderListingServiceModel>(
+                this.db
+                .Orders
+                .Where(o => o.InvoiceId == invoiceId))
+            .FirstOrDefaultAsync();
     }
 }

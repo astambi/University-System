@@ -1,0 +1,14 @@
+﻿@model OrderListingServiceModel
+
+@{
+    ViewData["Title"] = "Invoice";
+    Layout = "_LayoutCertificate"; // no header & footer
+}
+
+<section class="p-5 m-auto">
+    <h1>Invoice #@Model.InvoiceId.ToUpper()</h1>
+    <p>Created on @Model.OrderDate.ToDate()</p>
+
+    <h3 class="pt-5">Order details</h3>
+    <partial name="_OrderDetailsPartial" model="Model" />
+</section>

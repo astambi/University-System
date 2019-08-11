@@ -1,0 +1,14 @@
+﻿@model string
+
+@if (Model != null)
+{
+    <form asp-controller="@WebConstants.OrdersController"
+          asp-action="@nameof(OrdersController.Invoice)"
+          asp-route-id="@Model" method="post">
+        <button type="submit"
+                data-toggle="tooltip" title="Download invoice"
+                class="btn btn-@FormActionEnum.Download.ToStyle()">
+            <i class="fa fa-receipt"></i>
+        </button>
+    </form>
+}

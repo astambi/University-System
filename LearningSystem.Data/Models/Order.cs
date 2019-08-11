@@ -20,6 +20,11 @@
         public Status Status { get; set; }
 
         [Required]
+        [MaxLength(DataConstants.InvoiceIdMaxLength,
+            ErrorMessage = DataConstants.StringMaxLength)]
+        public string InvoiceId { get; set; } = Guid.NewGuid().ToString().Replace("-", string.Empty);
+
+        [Required]
         public string UserId { get; set; }
 
         public User User { get; set; }

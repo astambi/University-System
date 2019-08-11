@@ -5,7 +5,11 @@
 
 <h1 class="d-flex justify-content-between align-items-center">
     Order details
-    <partial name="_OrderDeleteButtonPartial" for="Id" />
+    <partial name="_InvoiceDownloadFormPartial" for="InvoiceId" />
 </h1>
 
 <partial name="_OrderDetailsPartial" model="Model" />
+
+<div class="text-right">
+    <partial name="_OrderDeleteButtonPartial" for="Id" />
+</div>

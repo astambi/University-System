@@ -26,6 +26,8 @@
         public const int FileMaxLengthInBytes = FileMaxLengthInMb * BytesInMb;
         public const string FileType = "zip";
 
+        public const int InvoiceIdMaxLength = 50;
+
         public const int ResourceFileMaxLengthInMb = 7;
         public const int ResourceMaxLengthInBytes = ResourceFileMaxLengthInMb * BytesInMb;
         public const int ResourceNameMinLength = 10;

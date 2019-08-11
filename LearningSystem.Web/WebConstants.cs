@@ -123,6 +123,8 @@
         public const string InvalidIdentityOrRoleMsg = "Invalid identity or role.";
         public const string InvalidUserMsg = "Invalid user.";
 
+        public const string InvoiceNotFoundMsg = "Invoice not found.";
+
         public const string OrderCoursesEnrollmentCancellationSuccessMsg = "Enrollment in all order courses cancelled successfully.";
         public const string OrderCreatedSuccessMsg = "Payment success.";
         public const string OrderDeletedSuccessMsg = "Order deleted successfully.";

@@ -2,6 +2,8 @@
 
 @if (Model != null)
 {
+    var orderGrossPrice = Model.TotalPrice / 1.2m;
+    var orderVatAmount = Model.TotalPrice - orderGrossPrice;
     <header class="d-flex justify-content-between flex-wrap">
         <h2>Id #@Model.Id</h2>
         <h2>@Model.OrderDate.ToLocalTime()</h2>
@@ -11,18 +13,24 @@
         <thead>
             <tr>
                 <th>Course</th>
-                <th>Price</th>
+                <th class="text-right">Price, excl. VAT</th>
+                <th class="text-right">VAT</th>
+                <th class="text-right">Total</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model.OrderItems)
             {
                 var courseModel = new CourseBasicViewModel { Id = item.CourseId, Name = item.CourseName };
+                var itemGrossPrice = item.Price / 1.2m;
+                var itemVatAmount = item.Price - itemGrossPrice;
                 <tr>
                     <td>
                         @item.CourseName
                         <partial name="_CourseDetailsButtonPartial" model="courseModel" />
                     </td>
+                    <td class="text-right">@itemGrossPrice.ToCurrency()</td>
+                    <td class="text-right">@itemVatAmount.ToCurrency()</td>
                     <td class="text-right">@item.Price.ToCurrency()</td>
                 </tr>
             }
@@ -30,11 +38,13 @@
         <tfoot class="text-uppercase">
             <tr>
                 <th>Total payment</th>
+                <th class="text-right">@orderGrossPrice.ToCurrency()</th>
+                <th class="text-right">@orderVatAmount.ToCurrency()</th>
                 <th class="text-right">@Model.TotalPrice.ToCurrency()</th>
             </tr>
             <tr>
                 <th>Payment method</th>
-                <th class="text-right">@Model.PaymentMethod.ToFriendlyName()</th>
+                <th colspan="3" class="text-right">@Model.PaymentMethod.ToFriendlyName()</th>
             </tr>
         </tfoot>
     </table>

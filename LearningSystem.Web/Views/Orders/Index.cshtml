@@ -11,10 +11,11 @@
         <thead>
             <tr>
                 <th>Order date</th>
-                <th>Payment total</th>
+                <th class="text-right">Payment total</th>
                 <th>Payment method</th>
                 <th>Status</th>
-                <th>Details</th>
+                <th>Items</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -23,13 +24,23 @@
                 var orderSelector = $"order-{order.Id}";
                 <tr>
                     <td>@order.OrderDate.ToLocalTime()</td>
-                    <td>@order.TotalPrice.ToCurrency()</td>
+                    <td class="text-right">@order.TotalPrice.ToCurrency()</td>
                     <td>@order.PaymentMethod.ToFriendlyName()</td>
                     <td>@order.Status </td>
                     <td>
-                        <button id=@orderSelector class="btn btn-outline-info order-details-toggler">
-                            Items @order.OrderItems.Count()
+                        <button id=@orderSelector data-toggle="tooltip" title="View order items"
+                                class="btn btn-outline-info order-details-toggler">
+                            @order.OrderItems.Count()
                         </button>
+                    </td>
+                    <td class="d-flex justify-content-around">
+                        <partial name="_InvoiceDownloadFormPartial" model="@order.InvoiceId" />
+                        <a asp-controller="@WebConstants.OrdersController"
+                           asp-action="@nameof(OrdersController.Details)"
+                           asp-route-id="@order.Id"
+                           data-toggle="tooltip" title="Details" class="btn btn-outline-info">
+                            <i class="fa fa-info"></i>
+                        </a>
                         <partial name="_OrderDeleteButtonPartial" model="order.Id" />
                     </td>
                 </tr>
@@ -38,9 +49,12 @@
                     var courseModel = new CourseBasicViewModel { Id = item.CourseId, Name = item.CourseName };
                     <tr class="order-item @orderSelector table-light shadow">
                         <td></td>
-                        <td>@item.Price.ToCurrency()</td>
+                        <td class="text-right">@item.Price.ToCurrency()</td>
                         <td colspan="2">@item.CourseName</td>
-                        <td><partial name="_CourseDetailsButtonPartial" model="courseModel" /></td>
+                        <td>
+                            <partial name="_CourseDetailsButtonPartial" model="courseModel" />
+                        </td>
+                        <td></td>
                     </tr>
                 }
             }
