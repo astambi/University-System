@@ -36,6 +36,7 @@
 
         public async Task<bool> CanBeDeletedAsync(int id, string userId)
         {
+            // UserOrder not found
             var exists = await this.ExistsAsync(id, userId);
             if (!exists)
             {
@@ -55,11 +56,13 @@
                 .Select(c => c.StartDate)
                 .ToListAsync();
 
+            // Order contains an item referencing a non-existing course => cannot unsubscribe 
             if (orderCourseIds.Count != courseStartDates.Count)
             {
                 return false;
             }
 
+            // Order contains an item referencing a course that has already begun => cannot unsubscribe after start date
             var canUnsubscribeFromAllCourses = !courseStartDates.Any(d => d.HasEnded());
 
             return canUnsubscribeFromAllCourses;
@@ -74,16 +77,18 @@
             var invalidOrderId = int.MinValue;
 
             var userExists = this.db.Users.Any(u => u.Id == userId);
-            if (!userExists)
+            if (!userExists
+                || !cartItems.Any())
             {
                 return invalidOrderId;
             }
 
             var itemIds = cartItems.Select(i => i.Id);
-            var orderItems = this.db
+            var validOrderItems = this.db
                 .Courses
-                .Where(c => itemIds.Contains(c.Id))
+                .Where(c => itemIds.Contains(c.Id)) // existing course
                 .Where(c => !c.StartDate.HasEnded()) // course has not started
+                .Where(c => !c.Students.Any(sc => sc.StudentId == userId)) // user is not enrolled in course
                 .Select(c => new OrderItem
                 {
                     CourseId = c.Id,
@@ -92,7 +97,11 @@
                 })
                 .ToList();
 
-            if (orderItems.Sum(oi => oi.Price) != totalPrice)
+            var hasValidCartCourses = validOrderItems.Count == itemIds.Count();
+            var hasValidCartTotalPrice = validOrderItems.Sum(oi => oi.Price) == totalPrice;
+
+            if (!hasValidCartCourses
+                || !hasValidCartTotalPrice)
             {
                 return invalidOrderId;
             }
@@ -101,7 +110,7 @@
             {
                 UserId = userId,
                 TotalPrice = totalPrice,
-                OrderItems = orderItems,
+                OrderItems = validOrderItems,
                 PaymentMethod = paymentMethod,
                 OrderDate = DateTime.UtcNow,
                 Status = Status.Pending
@@ -111,26 +120,6 @@
             await this.db.SaveChangesAsync();
 
             return order.Id;
-        }
-
-        public async Task<bool> RemoveAsync(int id, string userId)
-        {
-            var order = await this.db.Orders.FindAsync(id);
-            if (order == null)
-            {
-                return false;
-            }
-
-            var canBeDeleted = await this.CanBeDeletedAsync(id, userId);
-            if (!canBeDeleted)
-            {
-                return false;
-            }
-
-            this.db.Orders.Remove(order);
-            var result = await this.db.SaveChangesAsync();
-
-            return result > 0;
         }
 
         public async Task<bool> ExistsAsync(int id, string userId)
@@ -153,5 +142,25 @@
                 .Orders
                 .Where(o => o.InvoiceId == invoiceId))
             .FirstOrDefaultAsync();
+
+        public async Task<bool> RemoveAsync(int id, string userId)
+        {
+            var order = await this.db.Orders.FindAsync(id);
+            if (order == null)
+            {
+                return false;
+            }
+
+            var canBeDeleted = await this.CanBeDeletedAsync(id, userId);
+            if (!canBeDeleted)
+            {
+                return false;
+            }
+
+            this.db.Orders.Remove(order);
+            var result = await this.db.SaveChangesAsync();
+
+            return result > 0;
+        }
     }
 }

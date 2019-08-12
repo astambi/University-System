@@ -10,6 +10,7 @@
     using LearningSystem.Services.Admin.Models;
     using LearningSystem.Services.Models.Courses;
     using LearningSystem.Services.Models.Exams;
+    using LearningSystem.Services.Models.Orders;
     using LearningSystem.Services.Models.Resources;
     using LearningSystem.Services.Models.Users;
     using LearningSystem.Web;
@@ -32,12 +33,15 @@
             var config = new MapperConfiguration(cfg =>
             {
                 //cfg.AddProfile<AutoMapperProfile>();
+
                 cfg.CreateMap<AdminCourseServiceModel, CourseFormModel>();
                 cfg.CreateMap<Course, CourseDetailsServiceModel>();
                 cfg.CreateMap<Course, CourseServiceModel>();
                 cfg.CreateMap<Course, CourseWithDescriptionServiceModel>();
                 cfg.CreateMap<ExamSubmission, ExamDownloadServiceModel>();
                 cfg.CreateMap<ExamSubmission, ExamSubmissionServiceModel>();
+                cfg.CreateMap<Order, OrderListingServiceModel>();
+                cfg.CreateMap<OrderItem, OrderItemServiceModel>();
                 cfg.CreateMap<Resource, CourseResourceServiceModel>();
                 cfg.CreateMap<Resource, ResourceDownloadServiceModel>();
                 cfg.CreateMap<User, UserBasicServiceModel>();
