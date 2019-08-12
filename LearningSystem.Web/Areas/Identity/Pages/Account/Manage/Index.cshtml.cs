@@ -162,7 +162,7 @@
             if (user.Name != this.Input.Name
                 || user.Birthdate != this.Input.Birthdate)
             {
-                await this.userService.UpdateUserProfileAsync(user.Id, this.Input.Name, this.Input.Birthdate);
+                var success = await this.userService.UpdateUserProfileAsync(user.Id, this.Input.Name, this.Input.Birthdate);
             }
 
             this.StatusMessage = "Your profile has been updated";

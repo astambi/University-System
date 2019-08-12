@@ -16,8 +16,8 @@
 
         Task<IEnumerable<CourseProfileServiceModel>> GetUserProfileCoursesAsync(string id);
 
-        Task<CertificateServiceModel> GetCertificateDataAsync(string id);
+        Task<CertificateServiceModel> GetCertificateDataAsync(string certificateId);
 
-        Task UpdateUserProfileAsync(string id, string name, DateTime birthdate);
+        Task<bool> UpdateUserProfileAsync(string id, string name, DateTime birthdate);
     }
 }

@@ -33,8 +33,8 @@
             var config = new MapperConfiguration(cfg =>
             {
                 //cfg.AddProfile<AutoMapperProfile>();
-
                 cfg.CreateMap<AdminCourseServiceModel, CourseFormModel>();
+                cfg.CreateMap<Certificate, CertificateServiceModel>();
                 cfg.CreateMap<Course, CourseDetailsServiceModel>();
                 cfg.CreateMap<Course, CourseServiceModel>();
                 cfg.CreateMap<Course, CourseWithDescriptionServiceModel>();
@@ -44,8 +44,19 @@
                 cfg.CreateMap<OrderItem, OrderItemServiceModel>();
                 cfg.CreateMap<Resource, CourseResourceServiceModel>();
                 cfg.CreateMap<Resource, ResourceDownloadServiceModel>();
+                cfg.CreateMap<StudentCourse, CourseProfileServiceModel>()
+                    .ForMember(dest => dest.CertificateId,
+                    opt => opt.MapFrom(src => src
+                        .Course
+                        .Certificates
+                        .Where(c => c.StudentId == src.StudentId)
+                        .OrderBy(c => c.Grade)
+                        .Select(c => c.Id)
+                        .FirstOrDefault()));
                 cfg.CreateMap<User, UserBasicServiceModel>();
+                cfg.CreateMap<User, UserEditServiceModel>();
                 cfg.CreateMap<User, UserServiceModel>();
+                cfg.CreateMap<User, UserWithBirthdateServiceModel>();
             });
 
             Mapper = config.CreateMapper();

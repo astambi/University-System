@@ -28,10 +28,10 @@
             => !await this.db.Courses.AnyAsync(c => c.TrainerId == id)
             && !await this.db.Articles.AnyAsync(a => a.AuthorId == id);
 
-        public async Task<CertificateServiceModel> GetCertificateDataAsync(string id)
+        public async Task<CertificateServiceModel> GetCertificateDataAsync(string certificateId)
             => await this.mapper
             .ProjectTo<CertificateServiceModel>(this.db.Certificates)
-            .Where(c => c.Id == id)
+            .Where(c => c.Id == certificateId)
             .FirstOrDefaultAsync();
 
         public async Task<UserEditServiceModel> GetProfileToEditAsync(string id)
@@ -53,18 +53,21 @@
             .ThenByDescending(c => c.CourseEndDate)
             .ToListAsync();
 
-        public async Task UpdateUserProfileAsync(string id, string name, DateTime birthdate)
+        public async Task<bool> UpdateUserProfileAsync(string id, string name, DateTime birthdate)
         {
             var user = await this.db.Users.FindAsync(id);
             if (user == null)
             {
-                return;
+                return false;
             }
 
-            user.Name = name;
+            user.Name = name.Trim();
             user.Birthdate = birthdate;
 
-            await this.db.SaveChangesAsync();
+            var result = await this.db.SaveChangesAsync();
+            var success = result > 0;
+
+            return success;
         }
 
         private IQueryable<User> GetUserQueryable(string id)
