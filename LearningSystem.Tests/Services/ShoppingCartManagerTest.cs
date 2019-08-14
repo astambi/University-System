@@ -20,6 +20,7 @@
 
         private const string ShoppingCartId = "ShoppingCartId";
 
+        // Interfaces
         [Fact]
         public void Interfaces_ShouldContainISingletonService()
         {
@@ -46,18 +47,20 @@
             Assert.Contains(typeof(IShoppingCartManager), interfaces);
         }
 
+        // Fields
         [Fact]
-        public void Fields_ShouldContainPrivateConcurrentDictionaryOfStringToShoppingCart()
+        public void Fields_ShouldContainPrivateCarts_OfTypeConcurrentDictionaryOfStringToShoppingCart()
         {
             // Arrange
 
             // Act
-            var cartsDictionaryInfo = GetCartsDictionaryWithReflexion();
+            var cartsFieldInfo = GetCartsDictionaryWithReflexion();
 
             // Assert
-            Assert.NotNull(cartsDictionaryInfo);
+            Assert.NotNull(cartsFieldInfo);
         }
 
+        // Constructors
         [Fact]
         public void Constructors_ShouldContainPublicEmptyConstructor()
         {
@@ -73,7 +76,7 @@
         }
 
         [Fact]
-        public void Constructor_ShouldInitializePrivateFieldCartsDictionaryAsEmptyConcurrentDictionaryOfStringToShoppingCart()
+        public void Constructor_ShouldInitializePrivateFieldCarts_AsEmptyConcurrentDictionaryOfStringToShoppingCart()
         {
             // Arrange
             var shoppingCartManager = this.InitializeShoppingCartManager();
@@ -83,28 +86,13 @@
                 .GetValue(shoppingCartManager);
 
             // Assert
-            var cartsDictionary = Assert.IsType<ConcurrentDictionary<string, ShoppingCart>>(cartsObj);
-            Assert.Empty(cartsDictionary);
+            var carts = Assert.IsType<ConcurrentDictionary<string, ShoppingCart>>(cartsObj);
+            Assert.Empty(carts);
         }
 
+        // Private Methods
         [Fact]
-        public void Methods_ShouldContainCorrectPublicMethods()
-        {
-            // Arrange
-
-            // Act
-            var methodsInfo = typeof(ShoppingCartManager)
-                .GetMethods(FlagPublic);
-
-            // Assert
-            Assert.NotNull(methodsInfo.Where(m => m.Name == nameof(ShoppingCartManager.AddItemToCart)));
-            Assert.NotNull(methodsInfo.Where(m => m.Name == nameof(ShoppingCartManager.EmptyCart)));
-            Assert.NotNull(methodsInfo.Where(m => m.Name == nameof(ShoppingCartManager.GetCartItems)));
-            Assert.NotNull(methodsInfo.Where(m => m.Name == nameof(ShoppingCartManager.RemoveItemFromCart)));
-        }
-
-        [Fact]
-        public void GetOrAddShoppingCart_ShouldBePrivate_WithReturnTypeShoppingCart_WithParamStringCartId()
+        public void GetOrAddShoppingCart_ShouldBePrivateMethod_WithReturnTypeShoppingCart_WithParamStringCartId()
         {
             // Arrange
 
@@ -126,21 +114,22 @@
                 .Invoke(shoppingCartManager, new object[] { ShoppingCartId });
 
             // Assert
+            var carts = GetCartsDictionaryWithReflexion()
+                .GetValue(shoppingCartManager) as ConcurrentDictionary<string, ShoppingCart>;
+
+            // ShoppingCartId added to Carts dictionary
+            Assert.Contains(ShoppingCartId, carts.Keys);
+
+            // Returned Cart corresponds to ShoppingCartId in carts dictionary
             var resultCart = Assert.IsType<ShoppingCart>(result);
+            var cartFromDictionary = carts[ShoppingCartId];
 
-            // ShoppingCartId added to carts dictionary keys
-            var cartsDictObj = GetCartsDictionaryWithReflexion().GetValue(shoppingCartManager);
-            var cartsDict = Assert.IsType<ConcurrentDictionary<string, ShoppingCart>>(cartsDictObj);
-            Assert.Contains(ShoppingCartId, cartsDict.Keys);
+            Assert.Equal(cartFromDictionary, resultCart);
+            Assert.Same(cartFromDictionary, resultCart);
 
-            // Empty new cart added for ShoppingCartId in carts dictionary
-            var dictValue = cartsDict[ShoppingCartId];
-            Assert.Equal(dictValue, resultCart);
-
-            // Cart items
-            var cartItemsObj = GetCartItemsWithReflexion().GetValue(resultCart);
-            var cartItems = Assert.IsAssignableFrom<IList<CartItem>>(cartItemsObj);
-            Assert.Empty(cartItems);
+            // Returned Cart is empty
+            Assert.Empty(cartFromDictionary.Items);
+            Assert.Empty(resultCart.Items);
         }
 
         [Fact]
@@ -150,7 +139,6 @@
             var shoppingCartManager = this.InitializeShoppingCartManager();
 
             var items = this.GetItems();
-
             this.PrepareShoppingCartWithItems(shoppingCartManager, items);
 
             // Act
@@ -158,21 +146,39 @@
                 .Invoke(shoppingCartManager, new object[] { ShoppingCartId });
 
             // Assert
+            var carts = GetCartsDictionaryWithReflexion()
+                .GetValue(shoppingCartManager) as ConcurrentDictionary<string, ShoppingCart>;
+
+            // ShoppingCartId added to Carts dictionary
+            Assert.Contains(ShoppingCartId, carts.Keys);
+
+            // Returned Cart corresponds to ShoppingCartId in carts dictionary
             var resultCart = Assert.IsType<ShoppingCart>(result);
+            var cartFromDictionary = carts[ShoppingCartId];
 
-            // ShoppingCartId added to carts dictionary keys
-            var cartsDictObj = GetCartsDictionaryWithReflexion().GetValue(shoppingCartManager);
-            var cartsDict = Assert.IsType<ConcurrentDictionary<string, ShoppingCart>>(cartsDictObj);
-            Assert.Contains(ShoppingCartId, cartsDict.Keys);
-
-            // Empty new cart added for ShoppingCartId in carts dictionary
-            var dictValue = cartsDict[ShoppingCartId];
-            Assert.Equal(dictValue, resultCart);
+            Assert.Equal(cartFromDictionary, resultCart);
+            Assert.Same(cartFromDictionary, resultCart);
 
             // Cart items
-            var cartItemsObj = GetCartItemsWithReflexion().GetValue(resultCart);
-            var cartItems = Assert.IsAssignableFrom<IList<CartItem>>(cartItemsObj);
-            Assert.Equal(items, cartItems);
+            Assert.Equal(items, resultCart.Items);
+            Assert.Equal(items, cartFromDictionary.Items);
+        }
+
+        // Public Methods
+        [Fact]
+        public void Methods_ShouldContainCorrectPublicMethods()
+        {
+            // Arrange
+
+            // Act
+            var methodsInfo = typeof(ShoppingCartManager)
+                .GetMethods(FlagPublic);
+
+            // Assert
+            Assert.NotNull(methodsInfo.Where(m => m.Name == nameof(ShoppingCartManager.AddItemToCart)));
+            Assert.NotNull(methodsInfo.Where(m => m.Name == nameof(ShoppingCartManager.EmptyCart)));
+            Assert.NotNull(methodsInfo.Where(m => m.Name == nameof(ShoppingCartManager.GetCartItems)));
+            Assert.NotNull(methodsInfo.Where(m => m.Name == nameof(ShoppingCartManager.RemoveItemFromCart)));
         }
 
         [Fact]
@@ -212,7 +218,6 @@
             var shoppingCartManager = this.InitializeShoppingCartManager();
 
             var items = this.GetItems();
-
             this.PrepareShoppingCartWithItems(shoppingCartManager, items);
 
             // Act
@@ -230,18 +235,13 @@
             var shoppingCartManager = this.InitializeShoppingCartManager();
 
             var items = this.GetItems();
-
             this.PrepareShoppingCartWithItems(shoppingCartManager, items);
-
-            var resultPreliminary = shoppingCartManager.GetCartItems(ShoppingCartId);
-            resultPreliminary = new List<CartItem>();
 
             // Act
             var result = shoppingCartManager.GetCartItems(ShoppingCartId);
 
             // Assert
-            Assert.NotEmpty(result);
-            Assert.Equal(items, result);
+            Assert.NotSame(items, result);
         }
 
         [Fact]
@@ -251,22 +251,19 @@
             var shoppingCartManager = this.InitializeShoppingCartManager();
 
             var items = this.GetItems();
-
             this.PrepareShoppingCartWithItems(shoppingCartManager, items);
 
             // Act
             shoppingCartManager.AddItemToCart(ShoppingCartId, CourseIdExisting);
 
             // Assert
-            // ShoppingCartId added to carts dictionary keys
-            var cartsDict = GetCartsDictionaryWithReflexion()
+            var carts = GetCartsDictionaryWithReflexion()
                 .GetValue(shoppingCartManager) as ConcurrentDictionary<string, ShoppingCart>;
-            Assert.Contains(ShoppingCartId, cartsDict.Keys);
 
-            // Cart items
-            var cart = cartsDict[ShoppingCartId];
-            var cartItems = GetCartItemsWithReflexion().GetValue(cart) as IList<CartItem>;
-            Assert.Equal(items, cartItems);
+            Assert.Contains(ShoppingCartId, carts.Keys);
+            var cart = carts[ShoppingCartId];
+
+            Assert.Equal(items, cart.Items);
         }
 
         [Fact]
@@ -276,22 +273,21 @@
             var shoppingCartManager = this.InitializeShoppingCartManager();
 
             var items = this.GetItems();
-            var itemsCountBefore = items.Count;
-
             this.PrepareShoppingCartWithItems(shoppingCartManager, items);
+
+            var itemsCountBefore = items.Count;
 
             // Act
             shoppingCartManager.AddItemToCart(ShoppingCartId, CourseIdNotFound);
 
             // Assert
-            var cartsDict = GetCartsDictionaryWithReflexion()
+            var carts = GetCartsDictionaryWithReflexion()
                 .GetValue(shoppingCartManager) as ConcurrentDictionary<string, ShoppingCart>;
-            Assert.Contains(ShoppingCartId, cartsDict.Keys);
 
-            // Cart items
-            var cart = cartsDict[ShoppingCartId];
-            var cartItems = GetCartItemsWithReflexion().GetValue(cart) as IList<CartItem>;
-            Assert.Contains(CourseIdNotFound, cartItems.Select(i => i.CourseId));
+            Assert.Contains(ShoppingCartId, carts.Keys);
+            var cart = carts[ShoppingCartId];
+
+            Assert.Contains(CourseIdNotFound, cart.Items.Select(i => i.CourseId));
 
             var itemsCountAfter = items.Count;
             Assert.Equal(1, itemsCountAfter - itemsCountBefore);
@@ -304,21 +300,19 @@
             var shoppingCartManager = this.InitializeShoppingCartManager();
 
             var items = this.GetItems();
-
             this.PrepareShoppingCartWithItems(shoppingCartManager, items);
 
             // Act
             shoppingCartManager.EmptyCart(ShoppingCartId);
 
             // Assert
-            var cartsDict = GetCartsDictionaryWithReflexion()
+            var carts = GetCartsDictionaryWithReflexion()
                 .GetValue(shoppingCartManager) as ConcurrentDictionary<string, ShoppingCart>;
-            Assert.Contains(ShoppingCartId, cartsDict.Keys);
 
-            // Cart items
-            var cart = cartsDict[ShoppingCartId];
-            var cartItems = GetCartItemsWithReflexion().GetValue(cart) as IList<CartItem>;
-            Assert.Empty(cartItems);
+            Assert.Contains(ShoppingCartId, carts.Keys);
+            var cart = carts[ShoppingCartId];
+
+            Assert.Empty(cart.Items);
         }
 
         [Fact]
@@ -328,21 +322,19 @@
             var shoppingCartManager = this.InitializeShoppingCartManager();
 
             var items = this.GetItems();
-
             this.PrepareShoppingCartWithItems(shoppingCartManager, items);
 
             // Act
             shoppingCartManager.RemoveItemFromCart(ShoppingCartId, CourseIdNotFound);
 
             // Assert
-            var cartsDict = GetCartsDictionaryWithReflexion()
+            var carts = GetCartsDictionaryWithReflexion()
                 .GetValue(shoppingCartManager) as ConcurrentDictionary<string, ShoppingCart>;
-            Assert.Contains(ShoppingCartId, cartsDict.Keys);
 
-            // Cart items
-            var cart = cartsDict[ShoppingCartId];
-            var cartItems = GetCartItemsWithReflexion().GetValue(cart) as IList<CartItem>;
-            Assert.Equal(items, cartItems);
+            Assert.Contains(ShoppingCartId, carts.Keys);
+            var cart = carts[ShoppingCartId];
+
+            Assert.Equal(items, cart.Items);
         }
 
         [Fact]
@@ -352,24 +344,23 @@
             var shoppingCartManager = this.InitializeShoppingCartManager();
 
             var items = this.GetItems();
-            var itemsCountBefore = items.Count;
-
             this.PrepareShoppingCartWithItems(shoppingCartManager, items);
+
+            var itemsCountBefore = items.Count;
 
             // Act
             shoppingCartManager.RemoveItemFromCart(ShoppingCartId, CourseIdExisting);
 
             // Assert
-            var cartsDict = GetCartsDictionaryWithReflexion()
+            var carts = GetCartsDictionaryWithReflexion()
                 .GetValue(shoppingCartManager) as ConcurrentDictionary<string, ShoppingCart>;
-            Assert.Contains(ShoppingCartId, cartsDict.Keys);
 
-            // Cart items
-            var cart = cartsDict[ShoppingCartId];
-            var cartItems = GetCartItemsWithReflexion().GetValue(cart) as IList<CartItem>;
-            Assert.DoesNotContain(CourseIdExisting, cartItems.Select(i => i.CourseId));
+            Assert.Contains(ShoppingCartId, carts.Keys);
+            var cart = carts[ShoppingCartId];
 
-            var itemsCountAfter = cartItems.Count;
+            Assert.DoesNotContain(CourseIdExisting, cart.Items.Select(i => i.CourseId));
+
+            var itemsCountAfter = cart.Items.Count();
             Assert.Equal(-1, itemsCountAfter - itemsCountBefore);
         }
 
@@ -392,9 +383,6 @@
             .Where(f => typeof(IEnumerable<CartItem>).IsAssignableFrom(f.FieldType))
             .FirstOrDefault();
 
-        private IShoppingCartManager InitializeShoppingCartManager()
-            => new ShoppingCartManager();
-
         private List<CartItem> GetItems()
            => new List<CartItem> { new CartItem { CourseId = CourseIdExisting }, new CartItem { CourseId = 2 } };
 
@@ -406,5 +394,8 @@
             GetCartItemsWithReflexion()
                 .SetValue(shoppingCart, items);
         }
+
+        private IShoppingCartManager InitializeShoppingCartManager()
+            => new ShoppingCartManager();
     }
 }
