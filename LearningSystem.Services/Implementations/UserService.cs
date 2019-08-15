@@ -30,18 +30,18 @@
 
         public async Task<UserEditServiceModel> GetProfileToEditAsync(string id)
             => await this.mapper
-            .ProjectTo<UserEditServiceModel>(this.GetUserQueryable(id))
+            .ProjectTo<UserEditServiceModel>(this.GetUserById(id))
             .FirstOrDefaultAsync();
 
         public async Task<UserWithBirthdateServiceModel> GetUserProfileDataAsync(string id)
             => await this.mapper
-            .ProjectTo<UserWithBirthdateServiceModel>(this.GetUserQueryable(id))
+            .ProjectTo<UserWithBirthdateServiceModel>(this.GetUserById(id))
             .FirstOrDefaultAsync();
 
         public async Task<IEnumerable<CourseProfileServiceModel>> GetUserProfileCoursesAsync(string id)
             => await this.mapper
             .ProjectTo<CourseProfileServiceModel>(
-                this.GetUserQueryable(id)
+                this.GetUserById(id)
                 .SelectMany(u => u.Courses))
             .OrderByDescending(c => c.CourseStartDate)
             .ThenByDescending(c => c.CourseEndDate)
@@ -64,9 +64,7 @@
             return success;
         }
 
-        private IQueryable<User> GetUserQueryable(string id)
-            => this.db
-            .Users
-            .Where(u => u.Id == id);
+        private IQueryable<User> GetUserById(string id)
+            => this.db.Users.Where(u => u.Id == id);
     }
 }

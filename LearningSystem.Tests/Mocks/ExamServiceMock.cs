@@ -10,10 +10,10 @@
         public static Mock<IExamService> GetMock
             => new Mock<IExamService>();
 
-        public static Mock<IExamService> AssessAsync(this Mock<IExamService> mock, bool result)
+        public static Mock<IExamService> EvaluateAsync(this Mock<IExamService> mock, bool result)
         {
             mock
-                .Setup(s => s.AssessAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<Grade>()))
+                .Setup(s => s.EvaluateAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<Grade>()))
                 .ReturnsAsync(result)
                 .Verifiable();
 

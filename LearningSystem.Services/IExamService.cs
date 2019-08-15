@@ -9,8 +9,6 @@
     {
         Task<IEnumerable<ExamSubmissionServiceModel>> AllByStudentCourseAsync(int courseId, string userId);
 
-        Task<bool> AssessAsync(string trainerId, int courseId, string studentId, Grade grade);
-
         Task<bool> CreateAsync(int courseId, string userId, byte[] examFileBytes);
 
         Task<ExamDownloadServiceModel> DownloadForStudentAsync(int id, string userId);
@@ -18,5 +16,7 @@
         Task<ExamDownloadServiceModel> DownloadForTrainerAsync(string trainerId, int courseId, string studentId);
 
         Task<bool> ExistsForStudentAsync(int id, string userId);
+
+        Task<bool> EvaluateAsync(string trainerId, int courseId, string studentId, Grade grade);
     }
 }

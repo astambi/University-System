@@ -170,7 +170,7 @@
             }
 
             var gradeValue = model.Grade.Value;
-            var assessmentSuccess = await this.examService.AssessAsync(userId, id, model.StudentId, gradeValue);
+            var assessmentSuccess = await this.examService.EvaluateAsync(userId, id, model.StudentId, gradeValue);
             if (!assessmentSuccess)
             {
                 this.TempData.AddErrorMessage(WebConstants.ExamAssessmentErrorMsg);

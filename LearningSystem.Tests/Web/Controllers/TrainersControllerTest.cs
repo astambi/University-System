@@ -487,7 +487,7 @@
                 .CourseHasEndedAsync(true);
 
             var examService = ExamServiceMock.GetMock;
-            examService.AssessAsync(false);
+            examService.EvaluateAsync(false);
 
             var controller = new TrainersController(
                 userManager.Object,
@@ -534,7 +534,7 @@
                 .CourseHasEndedAsync(true);
 
             var examService = ExamServiceMock.GetMock;
-            examService.AssessAsync(true);
+            examService.EvaluateAsync(true);
 
             var certificateService = CertificateServiceMock.GetMock;
             certificateService
@@ -586,7 +586,7 @@
                 .CourseHasEndedAsync(true);
 
             var examService = ExamServiceMock.GetMock;
-            examService.AssessAsync(true);
+            examService.EvaluateAsync(true);
 
             var certificateService = CertificateServiceMock.GetMock;
             certificateService

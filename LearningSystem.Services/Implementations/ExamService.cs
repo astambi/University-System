@@ -34,45 +34,15 @@
             .OrderByDescending(e => e.SubmissionDate)
             .ToListAsync();
 
-        public async Task<bool> AssessAsync(string trainerId, int courseId, string studentId, Grade grade)
-        {
-            var isTrainer = await this.db
-                .Courses
-                .Where(c => c.Id == courseId)
-                .Where(c => c.TrainerId == trainerId)
-                .AnyAsync();
-
-            var courseHasEnded = await this.db
-                .Courses
-                .Where(c => c.Id == courseId)
-                .Where(c => c.EndDate.HasEnded())
-                .AnyAsync();
-
-            if (!(isTrainer && courseHasEnded))
-            {
-                return false;
-            }
-
-            var studentCourse = await this.db.FindAsync<StudentCourse>(studentId, courseId);
-            if (studentCourse == null)
-            {
-                return false;
-            }
-
-            if (studentCourse.Grade == grade)
-            {
-                return true;
-            }
-
-            studentCourse.Grade = grade;
-            var result = await this.db.SaveChangesAsync();
-
-            return result > 0;
-        }
-
         public async Task<bool> CreateAsync(int courseId, string userId, byte[] examFileBytes)
         {
-            if (!this.db.Courses.Any(c => c.Id == courseId && c.Students.Any(sc => sc.StudentId == userId))
+            var studentCourseFound = await this.db
+                .Courses
+                .Where(c => c.Id == courseId)
+                .Where(c => c.Students.Any(sc => sc.StudentId == userId))
+                .AnyAsync();
+
+            if (!studentCourseFound
                 || examFileBytes == null
                 || examFileBytes.Length == 0
                 || examFileBytes.Length > DataConstants.FileMaxLengthInBytes)
@@ -97,11 +67,7 @@
 
         public async Task<ExamDownloadServiceModel> DownloadForStudentAsync(int id, string userId)
             => await this.mapper
-            .ProjectTo<ExamDownloadServiceModel>(
-                this.db
-                .ExamSubmissions
-                .Where(e => e.Id == id)
-                .Where(e => e.StudentId == userId))
+            .ProjectTo<ExamDownloadServiceModel>(this.GetForStudentById(id, userId))
             .FirstOrDefaultAsync();
 
         public async Task<ExamDownloadServiceModel> DownloadForTrainerAsync(string trainerId, int courseId, string studentId)
@@ -111,16 +77,59 @@
                 .ExamSubmissions
                 .Where(e => e.CourseId == courseId)
                 .Where(e => e.StudentId == studentId)
-                .Where(e => e.Course.TrainerId == trainerId) // by course trainer only
-                .Where(e => e.Course.EndDate.HasEnded())) // after course end only
+                .Where(e => e.Course.TrainerId == trainerId)
+                .Where(e => e.Course.EndDate.HasEnded()))
             .OrderByDescending(e => e.SubmissionDate) // latest submission
             .FirstOrDefaultAsync();
 
         public async Task<bool> ExistsForStudentAsync(int id, string userId)
-            => await this.db
+            => await this.GetForStudentById(id, userId)
+            .AnyAsync();
+
+        public async Task<bool> EvaluateAsync(string trainerId, int courseId, string studentId, Grade grade)
+        {
+            var isCourseTrainer = await this.db
+                .Courses
+                .Where(c => c.Id == courseId)
+                .Where(c => c.TrainerId == trainerId)
+                .AnyAsync();
+
+            var courseHasEnded = await this.db
+                .Courses
+                .Where(c => c.Id == courseId)
+                .Where(c => c.EndDate.HasEnded())
+                .AnyAsync();
+
+            var studentCourse = await this.db.FindAsync<StudentCourse>(studentId, courseId);
+
+            var examsFound = await this.db
+                .ExamSubmissions
+                .Where(e => e.CourseId == courseId)
+                .Where(e => e.StudentId == studentId)
+                .AnyAsync();
+
+            if (!(isCourseTrainer && courseHasEnded)
+                || studentCourse == null
+                || !examsFound)
+            {
+                return false;
+            }
+
+            if (studentCourse.Grade.Value == grade)
+            {
+                return true;
+            }
+
+            studentCourse.Grade = grade;
+            var result = await this.db.SaveChangesAsync();
+
+            return result > 0;
+        }
+
+        private IQueryable<ExamSubmission> GetForStudentById(int id, string userId)
+            => this.db
             .ExamSubmissions
-            .AnyAsync(e =>
-                e.Id == id
-                && e.StudentId == userId);
+            .Where(e => e.Id == id)
+            .Where(e => e.StudentId == userId);
     }
 }
