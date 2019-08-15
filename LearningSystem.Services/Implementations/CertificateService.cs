@@ -26,7 +26,9 @@
         {
             var isCourseTrainer = await this.db
                 .Courses
-                .AnyAsync(c => c.Id == courseId && c.TrainerId == trainerId);
+                .Where(c => c.Id == courseId)
+                .Where(c => c.TrainerId == trainerId)
+                .AnyAsync();
 
             var isUserEnrolledInCourse = await this.db
                 .Courses
@@ -79,8 +81,7 @@
             .FirstOrDefaultAsync();
 
         public bool IsGradeEligibleForCertificate(Grade? grade)
-            => grade == Grade.A
-            || grade == Grade.B
-            || grade == Grade.C;
+            => grade != null
+            && Grade.A <= grade && grade <= Grade.C;
     }
 }
