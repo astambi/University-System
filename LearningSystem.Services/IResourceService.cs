@@ -7,7 +7,7 @@
 
     public interface IResourceService
     {
-        Task<IEnumerable<CourseResourceServiceModel>> AllByCourseAsync(int courseId);
+        Task<IEnumerable<ResourceServiceModel>> AllByCourseAsync(int courseId);
 
         Task<bool> CanBeDownloadedByUserAsync(int id, string userId);
 

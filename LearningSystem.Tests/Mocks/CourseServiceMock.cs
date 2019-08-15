@@ -41,16 +41,6 @@
             return mock;
         }
 
-        public static Mock<ICourseService> IsGradeEligibleForCertificate(this Mock<ICourseService> mock, bool result)
-        {
-            mock
-                .Setup(s => s.IsGradeEligibleForCertificate(It.IsAny<Grade?>()))
-                .Returns(result)
-                .Verifiable();
-
-            return mock;
-        }
-
         public static Mock<ICourseService> IsUserEnrolledInCourseAsync(this Mock<ICourseService> mock, bool result)
         {
             mock.Setup(s => s.IsUserEnrolledInCourseAsync(It.IsAny<int>(), It.IsAny<string>()))

@@ -42,7 +42,7 @@
             var result = await resourseService.AllByCourseAsync(CourseInvalid);
 
             // Assert
-            Assert.IsAssignableFrom<IEnumerable<CourseResourceServiceModel>>(result);
+            Assert.IsAssignableFrom<IEnumerable<ResourceServiceModel>>(result);
             Assert.Empty(result);
         }
 
@@ -59,7 +59,7 @@
             var result = await resourseService.AllByCourseAsync(CourseValid);
 
             // Assert
-            Assert.IsAssignableFrom<IEnumerable<CourseResourceServiceModel>>(result);
+            Assert.IsAssignableFrom<IEnumerable<ResourceServiceModel>>(result);
 
             this.AssertResourcesCollection(resourcesOrdered, result);
         }
@@ -265,7 +265,7 @@
 
         private void AssertResourcesCollection(
             IEnumerable<Resource> expectedCollection,
-            IEnumerable<CourseResourceServiceModel> resultCollection)
+            IEnumerable<ResourceServiceModel> resultCollection)
         {
             var expectedList = expectedCollection.ToList();
             var resultList = resultCollection.ToList();

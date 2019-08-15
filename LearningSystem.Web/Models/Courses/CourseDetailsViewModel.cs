@@ -6,6 +6,7 @@
     using AutoMapper;
     using LearningSystem.Common.Mapping;
     using LearningSystem.Services.Models.Courses;
+    using LearningSystem.Services.Models.Resources;
 
     public class CourseDetailsViewModel : IMapFrom<CourseDetailsServiceModel>
     {
@@ -44,6 +45,6 @@
         public bool IsUserEnrolled { get; set; }
 
         [IgnoreMap]
-        public IEnumerable<CourseResourceServiceModel> Resources = new List<CourseResourceServiceModel>();
+        public IEnumerable<ResourceServiceModel> Resources = new List<ResourceServiceModel>();
     }
 }

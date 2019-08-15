@@ -11,17 +11,20 @@
     using LearningSystem.Services.Implementations;
     using LearningSystem.Services.Models.Exams;
     using LearningSystem.Services.Models.Users;
-    using LearningSystem.Tests.Mocks;
     using Moq;
     using Xunit;
 
     public class ExamServiceTest
     {
-        private const int CourseInvalid = -100;
         private const int CourseValid = 1;
-        private const int ExamInvalid = -100;
+        private const int CourseInvalid = 100;
+
+        private const int ExamValid = 5;
+        private const int ExamInvalid = 55;
+
         private const string StudentEnrolled = "Enrolled";
         private const string StudentNotEnrolled = "NotEnrolled";
+
         private const int Precision = 150; // ms
 
         [Fact]
@@ -29,11 +32,7 @@
         {
             // Arrange
             var db = await this.PrepareStudentInCourse();
-
-            var courseService = CourseServiceMock.GetMock;
-            courseService.IsUserEnrolledInCourseAsync(false);
-
-            var examService = this.InitializeExamService(db, courseService.Object);
+            var examService = this.InitializeExamService(db);
 
             // Act
             // Invalid student
@@ -50,8 +49,6 @@
 
             Assert.Equal(0, countInvalidCourse);
             Assert.Equal(0, countInvalidStudent);
-
-            courseService.Verify();
         }
 
         [Theory]
@@ -61,11 +58,7 @@
         {
             // Arrange
             var db = await this.PrepareStudentInCourse();
-
-            var courseService = CourseServiceMock.GetMock;
-            courseService.IsUserEnrolledInCourseAsync(true);
-
-            var examService = this.InitializeExamService(db, courseService.Object);
+            var examService = this.InitializeExamService(db);
 
             // Act
             // Invalid student
@@ -75,8 +68,6 @@
             // Assert
             Assert.False(resultInvalidExamFile);
             Assert.Equal(0, countExams);
-
-            courseService.Verify();
         }
 
         [Fact]
@@ -84,11 +75,7 @@
         {
             // Arrange
             var db = await this.PrepareStudentInCourse();
-
-            var courseService = CourseServiceMock.GetMock;
-            courseService.IsUserEnrolledInCourseAsync(true);
-
-            var examService = this.InitializeExamService(db, courseService.Object);
+            var examService = this.InitializeExamService(db);
 
             var exam = new byte[] { 1, 1, 1 };
 
@@ -109,8 +96,6 @@
             Assert.Same(exam, examSaved.FileSubmission);
 
             examSaved.SubmissionDate.Should().BeCloseTo(DateTime.UtcNow, Precision);
-
-            courseService.Verify();
         }
 
         [Fact]
@@ -118,7 +103,7 @@
         {
             // Arrange
             var db = await this.PrepareStudentInCourseExamSubmissions();
-            var examService = this.InitializeExamService(db, courseService: null);
+            var examService = this.InitializeExamService(db);
 
             var examsSortedByDateDesc = db
                 .ExamSubmissions
@@ -145,17 +130,19 @@
         }
 
         [Fact]
-        public async Task DownloadAsync_ShouldReturnNull_GivenInvalidExam()
+        public async Task DownloadAsync_ShouldReturnNull_GivenInvalidExamOrInvalidStudent()
         {
             // Arrange
             var db = await this.PrepareStudentInCourseExamSubmissions();
-            var examService = this.InitializeExamService(db, courseService: null);
+            var examService = this.InitializeExamService(db);
 
             // Act
-            var result = await examService.DownloadAsync(ExamInvalid);
+            var resultInvalidExam = await examService.DownloadForStudentAsync(ExamInvalid, StudentEnrolled);
+            var resultInvalidStudent = await examService.DownloadForStudentAsync(ExamValid, StudentNotEnrolled);
 
             // Assert
-            Assert.Null(result);
+            Assert.Null(resultInvalidExam);
+            Assert.Null(resultInvalidStudent);
         }
 
         [Fact]
@@ -163,14 +150,14 @@
         {
             // Arrange
             var db = await this.PrepareStudentInCourseExamSubmissions();
-            var examService = this.InitializeExamService(db, courseService: null);
+            var examService = this.InitializeExamService(db);
 
-            var exam = db.ExamSubmissions.FirstOrDefault();
+            var exam = db.ExamSubmissions.FirstOrDefault(e => e.Id == ExamValid);
             var student = db.Users.FirstOrDefault(u => u.Id == StudentEnrolled);
             var course = db.Courses.FirstOrDefault(c => c.Id == CourseValid);
 
             // Act
-            var result = await examService.DownloadAsync(exam.Id);
+            var result = await examService.DownloadForStudentAsync(ExamValid, StudentEnrolled);
 
             // Assert
             Assert.IsType<ExamDownloadServiceModel>(result);
@@ -184,44 +171,30 @@
         }
 
         [Fact]
-        public async Task ExistsForStudentAsync_ShouldReturnFalse_GivenInvalidUser()
+        public async Task ExistsForStudentAsync_ShouldReturnFalse_GivenInvalidExamOrStudent()
         {
             // Arrange
             var db = await this.PrepareStudentInCourseExamSubmissions();
-            var examService = this.InitializeExamService(db, courseService: null);
+            var examService = this.InitializeExamService(db);
 
             // Act
-            var resultInvalidUser = await examService.ExistsForStudentAsync(It.IsAny<int>(), StudentNotEnrolled);
-
-            // Assert
-            Assert.False(resultInvalidUser);
-        }
-
-        [Fact]
-        public async Task ExistsForStudentAsync_ShouldReturnFalse_GivenInvalidExam()
-        {
-            // Arrange
-            var db = await this.PrepareStudentInCourseExamSubmissions();
-            var examService = this.InitializeExamService(db, courseService: null);
-
-            // Act
+            var resultInvalidUser = await examService.ExistsForStudentAsync(ExamValid, StudentNotEnrolled);
             var resultInvalidExam = await examService.ExistsForStudentAsync(ExamInvalid, StudentEnrolled);
 
             // Assert
+            Assert.False(resultInvalidUser);
             Assert.False(resultInvalidExam);
         }
 
         [Fact]
-        public async Task ExistsForStudentAsync_ShouldReturnTrue_GivenValidUserAndExam()
+        public async Task ExistsForStudentAsync_ShouldReturnTrue_GivenValidExamAndStudent()
         {
             // Arrange
             var db = await this.PrepareStudentInCourseExamSubmissions();
-            var examService = this.InitializeExamService(db, courseService: null);
-
-            var examId = db.ExamSubmissions.Select(e => e.Id).FirstOrDefault();
+            var examService = this.InitializeExamService(db);
 
             // Act
-            var resultValid = await examService.ExistsForStudentAsync(examId, StudentEnrolled);
+            var resultValid = await examService.ExistsForStudentAsync(ExamValid, StudentEnrolled);
 
             // Assert
             Assert.True(resultValid);
@@ -253,7 +226,7 @@
 
             var exam1 = new ExamSubmission
             {
-                Id = 1,
+                Id = ExamValid,
                 SubmissionDate = new DateTime(2019, 7, 1, 14, 15, 00),
                 CourseId = CourseValid,
                 StudentId = StudentEnrolled,
@@ -277,7 +250,7 @@
             return db;
         }
 
-        private IExamService InitializeExamService(LearningSystemDbContext db, ICourseService courseService)
-            => new ExamService(db, courseService, Tests.Mapper);
+        private IExamService InitializeExamService(LearningSystemDbContext db)
+            => new ExamService(db, Tests.Mapper);
     }
 }

@@ -23,9 +23,9 @@
             this.mapper = mapper;
         }
 
-        public async Task<IEnumerable<CourseResourceServiceModel>> AllByCourseAsync(int courseId)
+        public async Task<IEnumerable<ResourceServiceModel>> AllByCourseAsync(int courseId)
             => await this.mapper
-            .ProjectTo<CourseResourceServiceModel>(
+            .ProjectTo<ResourceServiceModel>(
                 this.db
                 .Resources
                 .Where(r => r.CourseId == courseId))

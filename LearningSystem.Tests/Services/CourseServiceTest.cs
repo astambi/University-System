@@ -11,13 +11,13 @@
     using LearningSystem.Services;
     using LearningSystem.Services.Implementations;
     using LearningSystem.Services.Models.Courses;
-    using LearningSystem.Services.Models.Users;
     using Xunit;
 
     public class CourseServiceTest
     {
         private const int CourseInvalid = -100;
         private const int CourseValid = 1;
+
         private const string StudentEnrolled = "Enrolled";
         private const string StudentInvalid = "Invalid";
         private const string StudentNotEnrolled = "NotEnrolled";

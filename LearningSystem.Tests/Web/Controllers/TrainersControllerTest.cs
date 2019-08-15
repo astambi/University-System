@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using LearningSystem.Data.Models;
     using LearningSystem.Services;
+    using LearningSystem.Services.Models.Exams;
     using LearningSystem.Services.Models.Users;
     using LearningSystem.Tests.Mocks;
     using LearningSystem.Web;
@@ -50,7 +51,10 @@
 
             var controller = new TrainersController(
                 userManager.Object,
-                courseService: null, trainerService: null)
+                certificateService: null,
+                courseService: null,
+                examService: null,
+                trainerService: null)
             {
                 TempData = TempDataMock.GetMock
             };
@@ -87,7 +91,9 @@
 
             var controller = new TrainersController(
                 userManager.Object,
+                certificateService: null,
                 courseService: null,
+                examService: null,
                 trainerService.Object);
 
             // Act
@@ -112,7 +118,9 @@
 
             var controller = new TrainersController(
                 userManager: null,
+                certificateService: null,
                 courseService.Object,
+                examService: null,
                 trainerService: null)
             {
                 TempData = TempDataMock.GetMock
@@ -141,7 +149,9 @@
 
             var controller = new TrainersController(
                 userManager.Object,
+                certificateService: null,
                 courseService.Object,
+                examService: null,
                 trainerService: null)
             {
                 TempData = TempDataMock.GetMock
@@ -174,7 +184,9 @@
 
             var controller = new TrainersController(
                 userManager.Object,
+                certificateService: null,
                 courseService.Object,
+                examService: null,
                 trainerService.Object)
             {
                 TempData = TempDataMock.GetMock
@@ -213,7 +225,9 @@
 
             var controller = new TrainersController(
                 userManager.Object,
+                certificateService: null,
                 courseService.Object,
+                examService: null,
                 trainerService.Object);
 
             // Act
@@ -254,7 +268,9 @@
 
             var controller = new TrainersController(
                 userManager: null,
+                certificateService: null,
                 courseService.Object,
+                examService: null,
                 trainerService: null)
             {
                 TempData = TempDataMock.GetMock
@@ -280,7 +296,9 @@
 
             var controller = new TrainersController(
                 userManager: null,
+                certificateService: null,
                 courseService.Object,
+                examService: null,
                 trainerService: null)
             {
                 TempData = TempDataMock.GetMock
@@ -311,7 +329,9 @@
 
             var controller = new TrainersController(
                 userManager.Object,
+                certificateService: null,
                 courseService.Object,
+                examService: null,
                 trainerService: null)
             {
                 TempData = TempDataMock.GetMock
@@ -345,7 +365,9 @@
 
             var controller = new TrainersController(
                 userManager.Object,
+                certificateService: null,
                 courseService.Object,
+                examService: null,
                 trainerService.Object)
             {
                 TempData = TempDataMock.GetMock
@@ -381,7 +403,9 @@
 
             var controller = new TrainersController(
                 userManager.Object,
+                certificateService: null,
                 courseService.Object,
+                examService: null,
                 trainerService.Object)
             {
                 TempData = TempDataMock.GetMock
@@ -421,7 +445,9 @@
 
             var controller = new TrainersController(
                 userManager.Object,
+                certificateService: null,
                 courseService.Object,
+                examService: null,
                 trainerService.Object)
             {
                 TempData = TempDataMock.GetMock
@@ -458,12 +484,16 @@
             var trainerService = TrainerServiceMock.GetMock;
             trainerService
                 .IsTrainerForCourseAsync(true)
-                .CourseHasEndedAsync(true)
-                .AssessStudentCoursePerformanceAsync(false);
+                .CourseHasEndedAsync(true);
+
+            var examService = ExamServiceMock.GetMock;
+            examService.AssessAsync(false);
 
             var controller = new TrainersController(
                 userManager.Object,
+                certificateService: null,
                 courseService.Object,
+                examService.Object,
                 trainerService.Object)
             {
                 TempData = TempDataMock.GetMock
@@ -479,6 +509,7 @@
             this.AssertRouteWithId(result);
 
             courseService.Verify();
+            examService.Verify();
             trainerService.Verify();
             userManager.Verify();
         }
@@ -492,8 +523,7 @@
             var courseService = CourseServiceMock.GetMock;
             courseService
                 .Exists(true)
-                .IsUserEnrolledInCourseAsync(true)
-                .IsGradeEligibleForCertificate(false);
+                .IsUserEnrolledInCourseAsync(true);
 
             var userManager = UserManagerMock.GetMock;
             userManager.GetUserId(TestUserId);
@@ -501,12 +531,20 @@
             var trainerService = TrainerServiceMock.GetMock;
             trainerService
                 .IsTrainerForCourseAsync(true)
-                .CourseHasEndedAsync(true)
-                .AssessStudentCoursePerformanceAsync(true);
+                .CourseHasEndedAsync(true);
+
+            var examService = ExamServiceMock.GetMock;
+            examService.AssessAsync(true);
+
+            var certificateService = CertificateServiceMock.GetMock;
+            certificateService
+                .IsGradeEligibleForCertificate(false);
 
             var controller = new TrainersController(
                 userManager.Object,
+                certificateService.Object,
                 courseService.Object,
+                examService.Object,
                 trainerService.Object)
             {
                 TempData = TempDataMock.GetMock
@@ -521,7 +559,9 @@
             this.AssertRedirectToTrainersControllerStudents(result);
             this.AssertRouteWithId(result);
 
+            certificateService.Verify();
             courseService.Verify();
+            examService.Verify();
             trainerService.Verify();
             userManager.Verify();
         }
@@ -535,8 +575,7 @@
             var courseService = CourseServiceMock.GetMock;
             courseService
                 .Exists(true)
-                .IsUserEnrolledInCourseAsync(true)
-                .IsGradeEligibleForCertificate(true);
+                .IsUserEnrolledInCourseAsync(true);
 
             var userManager = UserManagerMock.GetMock;
             userManager.GetUserId(TestUserId);
@@ -544,13 +583,21 @@
             var trainerService = TrainerServiceMock.GetMock;
             trainerService
                 .IsTrainerForCourseAsync(true)
-                .CourseHasEndedAsync(true)
-                .AssessStudentCoursePerformanceAsync(true)
-                .AddCertificateAsync(true);
+                .CourseHasEndedAsync(true);
+
+            var examService = ExamServiceMock.GetMock;
+            examService.AssessAsync(true);
+
+            var certificateService = CertificateServiceMock.GetMock;
+            certificateService
+                .IsGradeEligibleForCertificate(true)
+                .CreateAsync(true);
 
             var controller = new TrainersController(
                 userManager.Object,
+                certificateService.Object,
                 courseService.Object,
+                examService.Object,
                 trainerService.Object)
             {
                 TempData = TempDataMock.GetMock
@@ -568,7 +615,9 @@
             this.AssertRedirectToTrainersControllerStudents(result);
             this.AssertRouteWithId(result);
 
+            certificateService.Verify();
             courseService.Verify();
+            examService.Verify();
             trainerService.Verify();
             userManager.Verify();
         }
@@ -582,7 +631,9 @@
 
             var controller = new TrainersController(
                 userManager: null,
+                certificateService: null,
                 courseService.Object,
+                examService: null,
                 trainerService: null)
             {
                 TempData = TempDataMock.GetMock
@@ -611,7 +662,9 @@
 
             var controller = new TrainersController(
                 userManager.Object,
+                certificateService: null,
                 courseService.Object,
+                examService: null,
                 trainerService: null)
             {
                 TempData = TempDataMock.GetMock
@@ -644,7 +697,9 @@
 
             var controller = new TrainersController(
                 userManager.Object,
+                certificateService: null,
                 courseService.Object,
+                examService: null,
                 trainerService.Object)
             {
                 TempData = TempDataMock.GetMock
@@ -680,7 +735,9 @@
 
             var controller = new TrainersController(
                 userManager.Object,
+                certificateService: null,
                 courseService.Object,
+                examService: null,
                 trainerService.Object)
             {
                 TempData = TempDataMock.GetMock
@@ -712,12 +769,16 @@
             var trainerService = TrainerServiceMock.GetMock;
             trainerService
                 .IsTrainerForCourseAsync(true)
-                .CourseHasEndedAsync(true)
-                .DownloadExam(null);
+                .CourseHasEndedAsync(true);
+
+            var examService = ExamServiceMock.GetMock;
+            examService.DownloadForTrainerAsync(null);
 
             var controller = new TrainersController(
                 userManager.Object,
+                certificateService: null,
                 courseService.Object,
+                examService.Object,
                 trainerService.Object)
             {
                 TempData = TempDataMock.GetMock
@@ -732,6 +793,7 @@
             this.AssertRedirectToTrainersControllerStudents(result);
 
             courseService.Verify();
+            examService.Verify();
             trainerService.Verify();
             userManager.Verify();
         }
@@ -749,12 +811,16 @@
             var trainerService = TrainerServiceMock.GetMock;
             trainerService
                 .IsTrainerForCourseAsync(true)
-                .CourseHasEndedAsync(true)
-                .DownloadExam(this.GetExamDownload());
+                .CourseHasEndedAsync(true);
+
+            var examService = ExamServiceMock.GetMock;
+            examService.DownloadForTrainerAsync(this.GetExamDownload());
 
             var controller = new TrainersController(
                 userManager.Object,
+                certificateService: null,
                 courseService.Object,
+                examService.Object,
                 trainerService.Object);
 
             // Act

@@ -8,23 +8,19 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Routing;
 
     [Authorize]
     public class UsersController : Controller
     {
         private readonly UserManager<User> userManager;
         private readonly IUserService userService;
-        private readonly IPdfService pdfService;
 
         public UsersController(
             UserManager<User> userManager,
-            IUserService userService,
-            IPdfService pdfService)
+            IUserService userService)
         {
             this.userManager = userManager;
             this.userService = userService;
-            this.pdfService = pdfService;
         }
 
         public async Task<IActionResult> Profile()
@@ -48,39 +44,6 @@
             };
 
             return this.View(model);
-        }
-
-        [AllowAnonymous]
-        [Route(nameof(Certificate) + "/" + WebConstants.WithId)]
-        public async Task<IActionResult> Certificate(string id) // read by pdfConverter
-        {
-            var certificate = await this.userService.GetCertificateDataAsync(id);
-            if (certificate == null)
-            {
-                this.TempData.AddErrorMessage(WebConstants.CertificateNotFoundMsg);
-                return this.RedirectToAction(nameof(HomeController.Index));
-            }
-
-            certificate.DownloadUrl = this.HttpContext.Request.GetRequestUrl();
-
-            return this.View(certificate);
-        }
-
-        [AllowAnonymous]
-        [HttpPost]
-        [Route(nameof(Certificate) + "/" + WebConstants.WithId)]
-        public IActionResult DownloadCertificate(string id)
-        {
-            var downloadUrl = this.HttpContext.Request.GetRequestUrl();
-
-            var pdf = this.pdfService.ConvertToPdf(downloadUrl);
-            if (pdf == null)
-            {
-                this.TempData.AddErrorMessage(WebConstants.CertificateNotFoundMsg);
-                return this.RedirectToAction(nameof(HomeController.Index));
-            }
-
-            return this.File(pdf, WebConstants.ApplicationPdf, WebConstants.CertificateFileName);
         }
     }
 }

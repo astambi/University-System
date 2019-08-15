@@ -28,8 +28,8 @@
             @if (Model.CertificateId != null)
             {
                 <form asp-area=""
-                      asp-controller="@WebConstants.UsersController"
-                      asp-action="@nameof(LearningSystem.Web.Controllers.UsersController.DownloadCertificate)"
+                      asp-controller="@WebConstants.CertificatesController"
+                      asp-action="@nameof(CertificatesController.Download)"
                       asp-route-id="@Model.CertificateId" method="post">
                     <partial name="_FormSubmitPartial" model="FormActionEnum.Certificate" />
                 </form>

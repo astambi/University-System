@@ -5,25 +5,22 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
+    using LearningSystem.Common.Infrastructure.Extensions;
     using LearningSystem.Data;
     using LearningSystem.Data.Models;
     using LearningSystem.Services.Models.Exams;
-    using LearningSystem.Services.Models.Users;
     using Microsoft.EntityFrameworkCore;
 
     public class ExamService : IExamService
     {
         private readonly LearningSystemDbContext db;
-        private readonly ICourseService courseService;
         private readonly IMapper mapper;
 
         public ExamService(
             LearningSystemDbContext db,
-            ICourseService courseService,
             IMapper mapper)
         {
             this.db = db;
-            this.courseService = courseService;
             this.mapper = mapper;
         }
 
@@ -37,9 +34,45 @@
             .OrderByDescending(e => e.SubmissionDate)
             .ToListAsync();
 
+        public async Task<bool> AssessAsync(string trainerId, int courseId, string studentId, Grade grade)
+        {
+            var isTrainer = await this.db
+                .Courses
+                .Where(c => c.Id == courseId)
+                .Where(c => c.TrainerId == trainerId)
+                .AnyAsync();
+
+            var courseHasEnded = await this.db
+                .Courses
+                .Where(c => c.Id == courseId)
+                .Where(c => c.EndDate.HasEnded())
+                .AnyAsync();
+
+            if (!(isTrainer && courseHasEnded))
+            {
+                return false;
+            }
+
+            var studentCourse = await this.db.FindAsync<StudentCourse>(studentId, courseId);
+            if (studentCourse == null)
+            {
+                return false;
+            }
+
+            if (studentCourse.Grade == grade)
+            {
+                return true;
+            }
+
+            studentCourse.Grade = grade;
+            var result = await this.db.SaveChangesAsync();
+
+            return result > 0;
+        }
+
         public async Task<bool> CreateAsync(int courseId, string userId, byte[] examFileBytes)
         {
-            if (!await this.courseService.IsUserEnrolledInCourseAsync(courseId, userId)
+            if (!this.db.Courses.Any(c => c.Id == courseId && c.Students.Any(sc => sc.StudentId == userId))
                 || examFileBytes == null
                 || examFileBytes.Length == 0
                 || examFileBytes.Length > DataConstants.FileMaxLengthInBytes)
@@ -62,18 +95,32 @@
             return success;
         }
 
-        public async Task<ExamDownloadServiceModel> DownloadAsync(int id)
+        public async Task<ExamDownloadServiceModel> DownloadForStudentAsync(int id, string userId)
             => await this.mapper
             .ProjectTo<ExamDownloadServiceModel>(
                 this.db
                 .ExamSubmissions
-                .Where(e => e.Id == id))
+                .Where(e => e.Id == id)
+                .Where(e => e.StudentId == userId))
+            .FirstOrDefaultAsync();
+
+        public async Task<ExamDownloadServiceModel> DownloadForTrainerAsync(string trainerId, int courseId, string studentId)
+            => await this.mapper
+            .ProjectTo<ExamDownloadServiceModel>(
+                this.db
+                .ExamSubmissions
+                .Where(e => e.CourseId == courseId)
+                .Where(e => e.StudentId == studentId)
+                .Where(e => e.Course.TrainerId == trainerId) // by course trainer only
+                .Where(e => e.Course.EndDate.HasEnded())) // after course end only
+            .OrderByDescending(e => e.SubmissionDate) // latest submission
             .FirstOrDefaultAsync();
 
         public async Task<bool> ExistsForStudentAsync(int id, string userId)
             => await this.db
             .ExamSubmissions
-            .AnyAsync(e => e.Id == id
+            .AnyAsync(e =>
+                e.Id == id
                 && e.StudentId == userId);
     }
 }

@@ -12,26 +12,6 @@
         public static Mock<ITrainerService> GetMock
             => new Mock<ITrainerService>();
 
-        public static Mock<ITrainerService> AddCertificateAsync(this Mock<ITrainerService> mock, bool result)
-        {
-            mock
-                .Setup(s => s.AddCertificateAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<Grade>()))
-                .ReturnsAsync(result)
-                .Verifiable();
-
-            return mock;
-        }
-
-        public static Mock<ITrainerService> AssessStudentCoursePerformanceAsync(this Mock<ITrainerService> mock, bool result)
-        {
-            mock
-                .Setup(s => s.AssessExamAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<Grade>()))
-                .ReturnsAsync(result)
-                .Verifiable();
-
-            return mock;
-        }
-
         public static Mock<ITrainerService> CourseByIdAsync(this Mock<ITrainerService> mock, CourseServiceModel course)
         {
             mock.Setup(s => s.CourseByIdAsync(It.IsAny<string>(), It.IsAny<int>()))
@@ -56,16 +36,6 @@
             mock
                 .Setup(s => s.CoursesAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(courses)
-                .Verifiable();
-
-            return mock;
-        }
-
-        public static Mock<ITrainerService> DownloadExam(this Mock<ITrainerService> mock, ExamDownloadServiceModel exam)
-        {
-            mock
-                .Setup(s => s.DownloadExamAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>()))
-                .ReturnsAsync(exam)
                 .Verifiable();
 
             return mock;

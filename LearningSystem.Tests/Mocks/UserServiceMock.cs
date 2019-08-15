@@ -11,14 +11,6 @@
         public static Mock<IUserService> GetMock
             => new Mock<IUserService>();
 
-        public static Mock<IUserService> GetCertificateDataAsync(this Mock<IUserService> mock, CertificateServiceModel certificate)
-        {
-            mock.Setup(u => u.GetCertificateDataAsync(It.IsAny<string>()))
-                .ReturnsAsync(certificate)
-                .Verifiable();
-            return mock;
-        }
-
         public static Mock<IUserService> GetUserProfileCoursesAsync(this Mock<IUserService> mock, IEnumerable<CourseProfileServiceModel> courses)
         {
             mock.Setup(u => u.GetUserProfileCoursesAsync(It.IsAny<string>()))

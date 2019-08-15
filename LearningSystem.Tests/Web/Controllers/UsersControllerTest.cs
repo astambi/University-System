@@ -19,11 +19,6 @@
     {
         private const string TestId = "MockId";
 
-        private const string TestScheme = "https";
-        private const string TestHost = "mysite.com";
-        private const string TestPath = "/certificate/" + TestId;
-        private const string CertificateDloadUrl = TestScheme + "://" + TestHost + TestPath;
-
         [Fact]
         public void UsersController_ShouldBeForAuthorizedUsersOnly()
         {
@@ -35,142 +30,6 @@
         }
 
         [Fact]
-        public void Certificate_ShouldAllowAnonymousUsers()
-            => this.AssertAttributeAllowAnonymous(nameof(UsersController.Certificate));
-
-        [Fact]
-        public void Certificate_ShouldHaveRouteAttribute()
-            => this.AssertAttributeRouteWithId(nameof(UsersController.Certificate));
-
-        [Fact]
-        public async Task Certificate_ShouldReturnRedirectToActionResult_GivenInvalidInput()
-        {
-            // Arrange
-            var userService = UserServiceMock.GetMock;
-            userService.GetCertificateDataAsync(null);
-
-            var controller = new UsersController(
-                userManager: null,
-                userService.Object,
-                pdfService: null)
-            {
-                TempData = TempDataMock.GetMock
-            };
-
-            // Act
-            var result = await controller.Certificate(TestId);
-
-            // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.CertificateNotFoundMsg);
-
-            this.AssertRedirectToHomeControllerIndex(result);
-
-            userService.Verify();
-        }
-
-        [Fact]
-        public async Task Certificate_ShouldReturnViewResultWithCorrectModel_GivenValidInput()
-        {
-            // Arrange
-            var userService = UserServiceMock.GetMock;
-            userService.GetCertificateDataAsync(this.GetCertificate());
-
-            var controller = new UsersController(
-                userManager: null,
-                userService.Object,
-                pdfService: null)
-            {
-                ControllerContext = ControllerContextMock.GetMock // HttpRequest Mock
-            };
-            controller.ControllerContext.HttpRequest(TestScheme, TestHost, TestPath); // HttpRequest Mock
-
-            // Act
-            var result = await controller.Certificate(TestId);
-
-            // Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            var model = Assert.IsAssignableFrom<CertificateServiceModel>(viewResult.Model);
-
-            this.AsserCertificate(model);
-
-            userService.Verify();
-        }
-
-        [Fact]
-        public void DownloadCertificate_ShouldAllowAnonymousUsers()
-            => this.AssertAttributeAllowAnonymous(nameof(UsersController.DownloadCertificate));
-
-        [Fact]
-        public void DownloadCertificate_ShouldHaveRouteAttribute()
-            => this.AssertAttributeRouteWithId(nameof(UsersController.DownloadCertificate));
-
-        [Fact]
-        public void DownloadCertificate_ShouldHaveHttpPostAttribute()
-        {
-            // Arrange
-            var method = typeof(UsersController).GetMethod(nameof(UsersController.DownloadCertificate));
-
-            // Act
-            var attributes = method.GetCustomAttributes(true);
-
-            // Assert
-            Assert.Contains(attributes, a => a.GetType() == typeof(HttpPostAttribute));
-        }
-
-        [Fact]
-        public void DownloadCertificate_ShouldReturnRedirectToActionResult_GivenInvalidPath()
-        {
-            // Arrange
-            var pdfService = PdfServiceMock.GetMock;
-            pdfService.ConvertToPdf(null);
-
-            var controller = new UsersController(
-                userManager: null, userService: null,
-                pdfService.Object)
-            {
-                TempData = TempDataMock.GetMock,
-                ControllerContext = ControllerContextMock.GetMock // HttpRequest Mock
-            };
-            controller.ControllerContext.HttpRequest(TestScheme, TestHost, TestPath); // HttpRequest Mock
-
-            // Act
-            var result = controller.DownloadCertificate(TestId);
-
-            // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.CertificateNotFoundMsg);
-
-            this.AssertRedirectToHomeControllerIndex(result);
-
-            pdfService.Verify();
-        }
-
-        [Fact]
-        public void DownloadCertificate_ShouldReturnFileContentResultWithCorrectContent_GivenServiceSuccess()
-        {
-            // Arrange
-            var pdfService = PdfServiceMock.GetMock;
-            pdfService.ConvertToPdf(this.GetCertificateFileBytes());
-
-            var controller = new UsersController(
-                userManager: null, userService: null,
-                pdfService.Object)
-            {
-                ControllerContext = ControllerContextMock.GetMock // HttpRequest Mock
-            };
-            controller.ControllerContext.HttpRequest(TestScheme, TestHost, TestPath); // HttpRequest Mock
-
-            // Act
-            var result = controller.DownloadCertificate(TestId);
-
-            // Assert
-            var fileContentResult = Assert.IsType<FileContentResult>(result);
-
-            this.AssertCertificateFileContent(fileContentResult);
-
-            pdfService.Verify();
-        }
-
-        [Fact]
         public async Task Profile_ShouldReturnRedirectToActionResult_GivenInvalidUser()
         {
             // Arrange
@@ -179,7 +38,7 @@
 
             var controller = new UsersController(
                 userManager.Object,
-                userService: null, pdfService: null)
+                userService: null)
             {
                 TempData = TempDataMock.GetMock
             };
@@ -213,8 +72,7 @@
 
             var controller = new UsersController(
                 userManager.Object,
-                userService.Object,
-                pdfService: null);
+                userService.Object);
 
             // Act
             var result = await controller.Profile();
@@ -227,57 +85,6 @@
 
             userManager.Verify();
             userService.Verify();
-        }
-
-        private void AssertAttributeAllowAnonymous(string methodName)
-        {
-            // Arrange
-            var method = typeof(UsersController).GetMethod(methodName);
-
-            // Act
-            var attributes = method.GetCustomAttributes(true);
-
-            // Assert
-            Assert.Contains(attributes, a => a.GetType() == typeof(AllowAnonymousAttribute));
-        }
-
-        private void AssertAttributeRouteWithId(string methodName)
-        {
-            // Arrange
-            var method = typeof(UsersController).GetMethod(methodName);
-
-            // Act
-            var routeAttribute = method
-                .GetCustomAttributes(true)
-                .FirstOrDefault(a => a.GetType() == typeof(RouteAttribute)) as RouteAttribute;
-
-            // Assert
-            Assert.NotNull(routeAttribute);
-            Assert.Equal(nameof(Certificate) + "/" + WebConstants.WithId, routeAttribute.Template);
-        }
-
-        private void AsserCertificate(CertificateServiceModel certificate)
-        {
-            var expectedCertificate = this.GetCertificate();
-
-            Assert.NotNull(certificate);
-
-            Assert.Equal(expectedCertificate.Id, certificate.Id);
-            Assert.Equal(expectedCertificate.StudentName, certificate.StudentName);
-            Assert.Equal(expectedCertificate.CourseName, certificate.CourseName);
-            Assert.Equal(expectedCertificate.CourseStartDate, certificate.CourseStartDate);
-            Assert.Equal(expectedCertificate.CourseEndDate, certificate.CourseEndDate);
-            Assert.Equal(expectedCertificate.CourseTrainerName, certificate.CourseTrainerName);
-            Assert.Equal(expectedCertificate.Grade, certificate.Grade);
-            Assert.Equal(expectedCertificate.IssueDate, certificate.IssueDate);
-            Assert.Equal(expectedCertificate.DownloadUrl, certificate.DownloadUrl);
-        }
-
-        private void AssertCertificateFileContent(FileContentResult fileContentResult)
-        {
-            Assert.Equal(this.GetCertificateFileBytes(), fileContentResult.FileContents);
-            Assert.Equal(WebConstants.ApplicationPdf, fileContentResult.ContentType);
-            Assert.Equal(WebConstants.CertificateFileName, fileContentResult.FileDownloadName);
         }
 
         private void AssertProfile(UserProfileViewModel model)
@@ -343,23 +150,6 @@
             var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal(nameof(HomeController.Index), redirectToActionResult.ActionName);
         }
-
-        private CertificateServiceModel GetCertificate()
-            => new CertificateServiceModel
-            {
-                Id = TestId,
-                StudentName = "Student",
-                CourseName = "Course",
-                CourseStartDate = new DateTime(2019, 1, 1),
-                CourseEndDate = new DateTime(2019, 5, 15),
-                Grade = Grade.A,
-                CourseTrainerName = "TrainerId",
-                IssueDate = new DateTime(2019, 7, 10),
-                DownloadUrl = CertificateDloadUrl
-            };
-
-        private byte[] GetCertificateFileBytes()
-            => new byte[] { 101, 1, 27, 8, 11, 17, 57 };
 
         private IList<CourseProfileServiceModel> GetProfileCourses()
             => new List<CourseProfileServiceModel>()

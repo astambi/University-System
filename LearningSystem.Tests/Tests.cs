@@ -8,6 +8,7 @@
     using LearningSystem.Data;
     using LearningSystem.Data.Models;
     using LearningSystem.Services.Admin.Models;
+    using LearningSystem.Services.Models.Certificates;
     using LearningSystem.Services.Models.Courses;
     using LearningSystem.Services.Models.Exams;
     using LearningSystem.Services.Models.Orders;
@@ -42,7 +43,7 @@
                 cfg.CreateMap<ExamSubmission, ExamSubmissionServiceModel>();
                 cfg.CreateMap<Order, OrderListingServiceModel>();
                 cfg.CreateMap<OrderItem, OrderItemServiceModel>();
-                cfg.CreateMap<Resource, CourseResourceServiceModel>();
+                cfg.CreateMap<Resource, ResourceServiceModel>();
                 cfg.CreateMap<Resource, ResourceDownloadServiceModel>();
                 cfg.CreateMap<StudentCourse, CourseProfileServiceModel>()
                     .ForMember(dest => dest.CertificateId,

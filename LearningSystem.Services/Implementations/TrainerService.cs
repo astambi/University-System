@@ -1,6 +1,5 @@
 ﻿namespace LearningSystem.Services.Implementations
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -15,100 +14,32 @@
     public class TrainerService : ITrainerService
     {
         private readonly LearningSystemDbContext db;
-        private readonly ICourseService courseService;
         private readonly IMapper mapper;
 
         public TrainerService(
             LearningSystemDbContext db,
-            ICourseService courseService,
             IMapper mapper)
         {
             this.db = db;
-            this.courseService = courseService;
             this.mapper = mapper;
-        }
-
-        public async Task<bool> AddCertificateAsync(string trainerId, int courseId, string studentId, Grade grade)
-        {
-            if (!await this.IsTrainerForCourseAsync(trainerId, courseId)
-                || !await this.courseService.IsUserEnrolledInCourseAsync(courseId, studentId)
-                || !this.courseService.IsGradeEligibleForCertificate(grade))
-            {
-                return false;
-            }
-
-            var prevBestCertificate = await this.db
-                .Certificates
-                .Where(c => c.CourseId == courseId)
-                .Where(c => c.StudentId == studentId)
-                .OrderBy(c => c.Grade)
-                .FirstOrDefaultAsync();
-
-            var canUpgradeCertificate =
-                prevBestCertificate == null // no prev certificate
-                || grade < prevBestCertificate.Grade; // Enum Grade value smaller is better (A = 0, B = 1, etc.)
-
-            if (!canUpgradeCertificate)
-            {
-                return false;
-            }
-
-            var certificate = new Certificate
-            {
-                Id = Guid.NewGuid().ToString().Replace("-", string.Empty),
-                StudentId = studentId,
-                CourseId = courseId,
-                Grade = grade,
-                IssueDate = DateTime.UtcNow
-            };
-
-            await this.db.Certificates.AddAsync(certificate);
-            await this.db.SaveChangesAsync();
-
-            return true;
-        }
-
-        public async Task<bool> AssessExamAsync(string trainerId, int courseId, string studentId, Grade grade)
-        {
-            if (!await this.IsTrainerForCourseAsync(trainerId, courseId)
-                || !await this.CourseHasEndedAsync(courseId))
-            {
-                return false;
-            }
-
-            var studentCourse = await this.db.FindAsync<StudentCourse>(studentId, courseId);
-            if (studentCourse == null)
-            {
-                return false;
-            }
-
-            if (studentCourse.Grade == grade)
-            {
-                return true;
-            }
-
-            studentCourse.Grade = grade;
-            var result = await this.db.SaveChangesAsync();
-
-            return result > 0;
         }
 
         public async Task<CourseServiceModel> CourseByIdAsync(string trainerId, int courseId)
             => await this.mapper
-            .ProjectTo<CourseServiceModel>(this.GetTrainerCourseQueryable(trainerId, courseId))
+            .ProjectTo<CourseServiceModel>(this.GetTrainerCourse(trainerId, courseId))
             .FirstOrDefaultAsync();
 
         public async Task<CourseWithResourcesServiceModel> CourseWithResourcesByIdAsync(string trainerId, int courseId)
             => await this.mapper
-            .ProjectTo<CourseWithResourcesServiceModel>(this.GetTrainerCourseQueryable(trainerId, courseId))
+            .ProjectTo<CourseWithResourcesServiceModel>(this.GetTrainerCourse(trainerId, courseId))
             .FirstOrDefaultAsync();
 
         public async Task<bool> CourseHasEndedAsync(int id)
             => await this.db
             .Courses
-            .AnyAsync(c =>
-                c.Id == id
-                && c.EndDate < DateTime.UtcNow);
+            .Where(c => c.Id == id)
+            .Where(c => c.EndDate.HasEnded())
+            .AnyAsync();
 
         public async Task<IEnumerable<CourseServiceModel>> CoursesAsync(
             string trainerId,
@@ -116,30 +47,16 @@
             int page = 1,
             int pageSize = ServicesConstants.PageSize)
             => await this.mapper
-            .ProjectTo<CourseServiceModel>(this.courseService.GetQueryableBySearch(search))
-            .Where(c => c.TrainerId == trainerId)
-            .OrderByDescending(c => c.StartDate)
-            .ThenByDescending(c => c.EndDate)
+            .ProjectTo<CourseServiceModel>(
+                this.GetTrainerCoursesBySearch(trainerId, search)
+                .OrderByDescending(c => c.StartDate)
+                .ThenByDescending(c => c.EndDate))
             .GetPageItems(page, pageSize)
             .ToListAsync();
 
-        public async Task<ExamDownloadServiceModel> DownloadExamAsync(string trainerId, int courseId, string studentId)
-            => await this.IsTrainerForCourseAsync(trainerId, courseId)
-            && await this.CourseHasEndedAsync(courseId)
-            ? await this.mapper
-                .ProjectTo<ExamDownloadServiceModel>(
-                    this.db
-                    .ExamSubmissions
-                    .Where(e => e.CourseId == courseId)
-                    .Where(e => e.StudentId == studentId))
-                .OrderByDescending(e => e.SubmissionDate)
-                .FirstOrDefaultAsync()
-            : null;
-
         public async Task<bool> IsTrainerForCourseAsync(string userId, int courseId)
-            => await this.db
-            .Courses
-            .AnyAsync(c => c.Id == courseId && c.TrainerId == userId);
+            => await this.GetTrainerCourse(userId, courseId)
+            .AnyAsync();
 
         public async Task<IEnumerable<StudentInCourseServiceModel>> StudentsInCourseAsync(int courseId)
             => await this.mapper
@@ -151,15 +68,24 @@
             .ToListAsync();
 
         public async Task<int> TotalCoursesAsync(string trainerId, string search = null)
-            => await this.courseService
-            .GetQueryableBySearch(search)
-            .Where(c => c.TrainerId == trainerId)
+            => await this.GetTrainerCoursesBySearch(trainerId, search)
             .CountAsync();
 
-        private IQueryable<Course> GetTrainerCourseQueryable(string trainerId, int courseId)
+        private IQueryable<Course> GetTrainerCourse(string trainerId, int courseId)
             => this.db
             .Courses
             .Where(c => c.Id == courseId)
             .Where(c => c.TrainerId == trainerId);
+
+        private IQueryable<Course> GetTrainerCourses(string trainerId)
+            => this.db
+            .Courses
+            .Where(c => c.TrainerId == trainerId);
+
+        private IQueryable<Course> GetTrainerCoursesBySearch(string trainerId, string search)
+            => string.IsNullOrWhiteSpace(search)
+            ? this.GetTrainerCourses(trainerId)
+            : this.GetTrainerCourses(trainerId)
+                .Where(c => c.Name.ToLower().Contains(search.Trim().ToLower()));
     }
 }

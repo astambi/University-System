@@ -8,10 +8,6 @@
 
     public interface ITrainerService
     {
-        Task<bool> AddCertificateAsync(string trainerId, int courseId, string studentId, Grade grade);
-
-        Task<bool> AssessExamAsync(string trainerId, int courseId, string studentId, Grade grade);
-
         Task<CourseServiceModel> CourseByIdAsync(string trainerId, int courseId);
 
         Task<CourseWithResourcesServiceModel> CourseWithResourcesByIdAsync(string trainerId, int courseId);
@@ -23,8 +19,6 @@
             string search = null,
             int page = 1,
             int pageSize = ServicesConstants.PageSize);
-
-        Task<ExamDownloadServiceModel> DownloadExamAsync(string trainerId, int courseId, string studentId);
 
         Task<bool> IsTrainerForCourseAsync(string userId, int courseId);
 

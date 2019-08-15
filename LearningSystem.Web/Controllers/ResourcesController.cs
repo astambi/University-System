@@ -13,7 +13,7 @@
     public class ResourcesController : Controller
     {
         private readonly UserManager<User> userManager;
-        private readonly ICourseService courseService;
+        private readonly ICourseService courseService; 
         private readonly IResourceService resourceService;
         private readonly ITrainerService trainerService;
 

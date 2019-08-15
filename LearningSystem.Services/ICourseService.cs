@@ -37,11 +37,9 @@
 
         Task<IEnumerable<CartItemDetailsServiceModel>> GetCartItemsDetailsForUserAsync(IEnumerable<CartItem> cartItems, string userId = null);
 
-        IQueryable<Course> GetQueryableBySearch(string search);
+        IQueryable<Course> GetBySearch(string search);
 
-        IQueryable<Course> GetQueryableByStatus(IQueryable<Course> coursesAsQuerable, bool? isActive = null); // all by default
-
-        bool IsGradeEligibleForCertificate(Grade? grade);
+        IQueryable<Course> GetByStatus(IQueryable<Course> coursesAsQuerable, bool? isActive = null); // all by default
 
         Task<bool> IsUserEnrolledInCourseAsync(int courseId, string userId);
 

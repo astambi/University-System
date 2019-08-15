@@ -1,4 +1,4 @@
-﻿namespace LearningSystem.Services.Models.Users
+﻿namespace LearningSystem.Services.Models.Certificates
 {
     using System;
     using LearningSystem.Common.Mapping;

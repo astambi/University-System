@@ -28,8 +28,8 @@
             <p>Issue date: @Model.IssueDate.ToLongDateString()</p>
             <p class="small">Check the validity of this certificate here:</p>
             <p class="small">
-                <a asp-controller="@WebConstants.UsersController"
-                   asp-action="@nameof(LearningSystem.Web.Controllers.UsersController.Certificate)"
+                <a asp-controller="@WebConstants.CertificatesController"
+                   asp-action="@nameof(CertificatesController.Details)"
                    asp-route-id="@Model.Id" class="certificate">@Model.DownloadUrl</a>
             </p>
         </div>

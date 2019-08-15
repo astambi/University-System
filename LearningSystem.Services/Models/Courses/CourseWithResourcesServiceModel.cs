@@ -5,10 +5,11 @@
     using AutoMapper;
     using LearningSystem.Common.Mapping;
     using LearningSystem.Data.Models;
+    using LearningSystem.Services.Models.Resources;
 
     public class CourseWithResourcesServiceModel : CourseServiceModel, IMapFrom<Course>, IHaveCustomMapping
     {
-        public IEnumerable<CourseResourceServiceModel> Resources { get; set; }
+        public IEnumerable<ResourceServiceModel> Resources { get; set; }
 
         public void ConfigureMapping(Profile mapper)
             => mapper
@@ -16,7 +17,7 @@
             .ForMember(dest => dest.Resources,
                 opt => opt.MapFrom(c => c.Resources
                 .OrderBy(r => r.FileName)
-                .Select(r => new CourseResourceServiceModel { Id = r.Id, FileName = r.FileName })
+                .Select(r => new ResourceServiceModel { Id = r.Id, FileName = r.FileName })
                 .ToList()));
     }
 }

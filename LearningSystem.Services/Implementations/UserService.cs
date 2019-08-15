@@ -28,12 +28,6 @@
             => !await this.db.Courses.AnyAsync(c => c.TrainerId == id)
             && !await this.db.Articles.AnyAsync(a => a.AuthorId == id);
 
-        public async Task<CertificateServiceModel> GetCertificateDataAsync(string certificateId)
-            => await this.mapper
-            .ProjectTo<CertificateServiceModel>(this.db.Certificates)
-            .Where(c => c.Id == certificateId)
-            .FirstOrDefaultAsync();
-
         public async Task<UserEditServiceModel> GetProfileToEditAsync(string id)
             => await this.mapper
             .ProjectTo<UserEditServiceModel>(this.GetUserQueryable(id))

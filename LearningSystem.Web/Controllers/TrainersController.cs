@@ -17,16 +17,22 @@
     public class TrainersController : Controller
     {
         private readonly UserManager<User> userManager;
+        private readonly ICertificateService certificateService;
         private readonly ICourseService courseService;
+        private readonly IExamService examService;
         private readonly ITrainerService trainerService;
 
         public TrainersController(
             UserManager<User> userManager,
+            ICertificateService certificateService,
             ICourseService courseService,
+            IExamService examService,
             ITrainerService trainerService)
         {
             this.userManager = userManager;
+            this.certificateService = certificateService;
             this.courseService = courseService;
+            this.examService = examService;
             this.trainerService = trainerService;
         }
 
@@ -164,7 +170,7 @@
             }
 
             var gradeValue = model.Grade.Value;
-            var assessmentSuccess = await this.trainerService.AssessExamAsync(userId, id, model.StudentId, gradeValue);
+            var assessmentSuccess = await this.examService.AssessAsync(userId, id, model.StudentId, gradeValue);
             if (!assessmentSuccess)
             {
                 this.TempData.AddErrorMessage(WebConstants.ExamAssessmentErrorMsg);
@@ -174,9 +180,9 @@
             this.TempData.AddSuccessMessage(WebConstants.ExamAssessedMsg);
 
             // Issue new certificate
-            if (this.courseService.IsGradeEligibleForCertificate(model.Grade))
+            if (this.certificateService.IsGradeEligibleForCertificate(model.Grade))
             {
-                var success = await this.trainerService.AddCertificateAsync(userId, id, model.StudentId, model.Grade.Value);
+                var success = await this.certificateService.CreateAsync(userId, id, model.StudentId, model.Grade.Value);
                 if (success)
                 {
                     this.TempData.AddSuccessMessage(
@@ -219,7 +225,7 @@
                 return this.RedirectToAction(nameof(Students), routeValues: new { id });
             }
 
-            var exam = await this.trainerService.DownloadExamAsync(userId, id, studentId);
+            var exam = await this.examService.DownloadForTrainerAsync(userId, id, studentId);
             if (exam == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.StudentHasNotSubmittedExamMsg);

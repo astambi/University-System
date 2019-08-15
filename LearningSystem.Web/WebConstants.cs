@@ -34,6 +34,7 @@
 
         // Controllers
         public const string ArticlesController = "Articles";
+        public const string CertificatesController = "Certificates";
         public const string CoursesController = "Courses";
         public const string ExamsController = "Exams";
         public const string HomeController = "Home";

@@ -45,7 +45,9 @@
                 return false;
             }
 
-            return DateTime.UtcNow < course.StartDate; // has not started
+            var hasStarted = course.StartDate.HasEnded();
+
+            return !hasStarted;
         }
 
         public async Task CancellUserEnrollmentInCourseAsync(int courseId, string userId)
@@ -105,7 +107,6 @@
             return result == courseIds.Count();
         }
 
-
         public async Task EnrollUserInCourseAsync(int courseId, string userId)
         {
             if (!await this.CanEnrollAsync(courseId)
@@ -162,49 +163,31 @@
         public async Task<CourseDetailsServiceModel> GetByIdAsync(int id)
             => await this.GetCourseByIdAsync<CourseDetailsServiceModel>(id);
 
-        public IQueryable<Course> GetQueryableBySearch(string search)
-        {
-            var coursesAsQueryable = this.db.Courses.AsQueryable();
+        public IQueryable<Course> GetBySearch(string search)
+            => string.IsNullOrWhiteSpace(search)
+            ? this.db.Courses
+            : this.db.Courses.Where(c => c.Name.ToLower().Contains(search.Trim().ToLower()));
 
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                coursesAsQueryable = coursesAsQueryable
-                    .Where(c => c.Name.ToLower().Contains(search.Trim().ToLower()))
-                    .AsQueryable();
-            }
-
-            return coursesAsQueryable;
-        }
-
-        public IQueryable<Course> GetQueryableByStatus(IQueryable<Course> coursesAsQueryable, bool? isActive)
+        public IQueryable<Course> GetByStatus(IQueryable<Course> coursesAsQueryable, bool? isActive)
             => isActive == null // all
             ? coursesAsQueryable
             : (bool)isActive
-                ? coursesAsQueryable
-                    .Where(c => DateTime.UtcNow <= c.EndDate) // active
-                    .AsQueryable()
-                : coursesAsQueryable
-                    .Where(c => c.EndDate < DateTime.UtcNow) // archive
-                    .AsQueryable();
-
-        public bool IsGradeEligibleForCertificate(Grade? grade)
-            => grade == Grade.A
-            || grade == Grade.B
-            || grade == Grade.C;
+                ? coursesAsQueryable.Where(c => !c.EndDate.HasEnded()) // active
+                : coursesAsQueryable.Where(c => c.EndDate.HasEnded()); // archive
 
         public async Task<bool> IsUserEnrolledInCourseAsync(int courseId, string userId)
             => await this.db
             .Courses
-            .AnyAsync(c =>
-                c.Id == courseId
-                && c.Students.Any(sc => sc.StudentId == userId));
+            .Where(c => c.Id == courseId)
+            .Where(c => c.Students.Any(sc => sc.StudentId == userId))
+            .AnyAsync();
 
         public async Task<int> TotalActiveAsync(string search = null)
-            => await this.GetQueryableByStatus(this.GetQueryableBySearch(search), true)
+            => await this.GetByStatus(this.GetBySearch(search), true)
             .CountAsync();
 
         public async Task<int> TotalArchivedAsync(string search = null)
-            => await this.GetQueryableByStatus(this.GetQueryableBySearch(search), false)
+            => await this.GetByStatus(this.GetBySearch(search), false)
             .CountAsync();
 
         private async Task<IEnumerable<CourseServiceModel>> AllWithTrainers(
@@ -221,13 +204,14 @@
                 pageSize = ServicesConstants.PageSize;
             }
 
-            var coursesSearchQueryable = this.GetQueryableBySearch(search);
-            var coursesStatusQueryable = this.GetQueryableByStatus(coursesSearchQueryable, isActive);
+            var coursesBySearch = this.GetBySearch(search);
+            var coursesByStatus = this.GetByStatus(coursesBySearch, isActive);
 
             return await this.mapper
-                .ProjectTo<CourseServiceModel>(coursesStatusQueryable)
-                .OrderByDescending(c => c.StartDate)
-                .ThenByDescending(c => c.EndDate)
+                .ProjectTo<CourseServiceModel>(
+                    coursesByStatus
+                    .OrderByDescending(c => c.StartDate)
+                    .ThenByDescending(c => c.EndDate))
                 .GetPageItems(page, pageSize)
                 .ToListAsync();
         }
@@ -246,16 +230,16 @@
             string userId = null)
         {
             var courseIds = cartItems.Select(i => i.CourseId);
-            var coursesQueryable = this.GetCoursesToEnroll(courseIds);
+            var coursesToEnroll = this.GetCoursesToEnroll(courseIds);
 
             if (userId != null)
             {
-                coursesQueryable = coursesQueryable
+                coursesToEnroll = coursesToEnroll
                     .Where(c => !c.Students.Any(sc => sc.StudentId == userId)); // user not enrolled in course
             }
 
             return await this.mapper
-                .ProjectTo<CartItemDetailsServiceModel>(coursesQueryable)
+                .ProjectTo<CartItemDetailsServiceModel>(coursesToEnroll)
                 .ToListAsync();
         }
 
@@ -263,7 +247,6 @@
             => this.db
             .Courses
             .Where(c => courseIds.Contains(c.Id))
-            .Where(c => !c.StartDate.HasEnded())
-            .AsQueryable();
+            .Where(c => !c.StartDate.HasEnded());
     }
 }

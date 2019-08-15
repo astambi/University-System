@@ -141,7 +141,7 @@
                 return this.RedirectToCoursesIndex();
             }
 
-            var exam = await this.examService.DownloadAsync(id);
+            var exam = await this.examService.DownloadForStudentAsync(id, userId);
             if (exam == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.StudentHasNotSubmittedExamMsg);
