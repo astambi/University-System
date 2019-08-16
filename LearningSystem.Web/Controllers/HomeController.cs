@@ -26,7 +26,7 @@
                 TotalItems = await this.courseService.TotalActiveAsync(search)
             };
 
-            var courses = await this.courseService.AllActiveWithTrainersAsync(search, pagination.CurrentPage, WebConstants.PageSize);
+            var courses = await this.courseService.AllActiveAsync(search, pagination.CurrentPage, WebConstants.PageSize);
 
             var model = new CoursePageListingViewModel
             {

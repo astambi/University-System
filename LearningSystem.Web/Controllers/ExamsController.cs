@@ -56,7 +56,7 @@
             }
 
             var exams = await this.examService.AllByStudentCourseAsync(id, userId);
-            var course = await this.courseService.GetBasicByIdAsync(id);
+            var course = await this.courseService.GetByIdBasicAsync(id);
 
             var model = new ExamSubmissionsListingViewModel
             {

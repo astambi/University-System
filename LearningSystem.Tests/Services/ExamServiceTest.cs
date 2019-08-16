@@ -165,7 +165,9 @@
             Assert.Equal(StudentEnrolled, examSaved.StudentId);
             Assert.Same(exam, examSaved.FileSubmission);
 
-            examSaved.SubmissionDate.Should().BeCloseTo(DateTime.UtcNow, Precision);
+            examSaved.SubmissionDate
+                .Should()
+                .BeCloseTo(DateTime.UtcNow, Precision);
         }
 
         [Fact]

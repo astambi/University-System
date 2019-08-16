@@ -2,6 +2,7 @@
 {
     using System;
     using System.ComponentModel.DataAnnotations;
+    using LearningSystem.Common.Infrastructure.Extensions;
     using LearningSystem.Common.Mapping;
     using LearningSystem.Data.Models;
 
@@ -24,12 +25,12 @@
         public string TrainerName { get; set; }
 
         public int Duration
-            => this.EndDate.AddDays(1).Subtract(this.StartDate).Days;
+            => this.StartDate.DaysTo(this.EndDate);
 
         public TimeSpan RemainingTimeTillStart // in local time
-            => this.StartDate.ToLocalTime().Subtract(DateTime.Now);
+            => this.StartDate.RemainingTimeTillStart();
 
         public bool CanEnroll
-            => this.RemainingTimeTillStart.Ticks > 0;
+            => !this.StartDate.HasEnded();
     }
 }

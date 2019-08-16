@@ -14,7 +14,7 @@
         public static Mock<ICourseService> AllActiveWithTrainersAsync(this Mock<ICourseService> mock, IEnumerable<CourseServiceModel> courses)
         {
             mock
-                .Setup(s => s.AllActiveWithTrainersAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Setup(s => s.AllActiveAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
                 .ReturnsAsync(courses)
                 .Verifiable();
 

@@ -13,6 +13,7 @@
     using LearningSystem.Services.Models.Exams;
     using LearningSystem.Services.Models.Orders;
     using LearningSystem.Services.Models.Resources;
+    using LearningSystem.Services.Models.ShoppingCart;
     using LearningSystem.Services.Models.Users;
     using LearningSystem.Web;
     using LearningSystem.Web.Areas.Admin.Models.Courses;
@@ -35,16 +36,23 @@
             {
                 //cfg.AddProfile<AutoMapperProfile>();
                 cfg.CreateMap<AdminCourseServiceModel, CourseFormModel>();
+
                 cfg.CreateMap<Certificate, CertificateServiceModel>();
+
+                cfg.CreateMap<Course, CartItemDetailsServiceModel>();
                 cfg.CreateMap<Course, CourseDetailsServiceModel>();
                 cfg.CreateMap<Course, CourseServiceModel>();
                 cfg.CreateMap<Course, CourseWithDescriptionServiceModel>();
+
                 cfg.CreateMap<ExamSubmission, ExamDownloadServiceModel>();
                 cfg.CreateMap<ExamSubmission, ExamSubmissionServiceModel>();
+
                 cfg.CreateMap<Order, OrderListingServiceModel>();
                 cfg.CreateMap<OrderItem, OrderItemServiceModel>();
+
                 cfg.CreateMap<Resource, ResourceServiceModel>();
                 cfg.CreateMap<Resource, ResourceDownloadServiceModel>();
+
                 cfg.CreateMap<StudentCourse, CourseProfileServiceModel>()
                     .ForMember(dest => dest.CertificateId,
                     opt => opt.MapFrom(src => src
@@ -54,6 +62,7 @@
                         .OrderBy(c => c.Grade)
                         .Select(c => c.Id)
                         .FirstOrDefault()));
+
                 cfg.CreateMap<User, UserBasicServiceModel>();
                 cfg.CreateMap<User, UserEditServiceModel>();
                 cfg.CreateMap<User, UserServiceModel>();

@@ -1,45 +1,39 @@
 ﻿namespace LearningSystem.Services
 {
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
-    using LearningSystem.Data.Models;
     using LearningSystem.Services.Models.Courses;
     using LearningSystem.Services.Models.ShoppingCart;
 
     public interface ICourseService
     {
-        Task<IEnumerable<CourseServiceModel>> AllActiveWithTrainersAsync(
+        Task<IEnumerable<CourseServiceModel>> AllActiveAsync(
             string search = null,
             int page = 1,
             int pageSize = ServicesConstants.PageSize);
 
-        Task<IEnumerable<CourseServiceModel>> AllArchivedWithTrainersAsync(
+        Task<IEnumerable<CourseServiceModel>> AllArchivedAsync(
             string search = null,
             int page = 1,
             int pageSize = ServicesConstants.PageSize);
 
-        Task CancellUserEnrollmentInCourseAsync(int courseId, string userId);
+        Task<bool> CancellUserEnrollmentInCourseAsync(int courseId, string userId);
 
         Task<bool> CancelUserEnrollmentInOrderCoursesAsync(int orderId, string userId);
 
         Task<bool> CanEnrollAsync(int id);
 
-        Task EnrollUserInCourseAsync(int courseId, string userId);
+        Task<bool> EnrollUserInCourseAsync(int courseId, string userId);
 
         Task<bool> EnrollUserInOrderCoursesAsync(int orderId, string userId);
 
         bool Exists(int id);
 
-        Task<CourseServiceModel> GetBasicByIdAsync(int id);
+        Task<CourseServiceModel> GetByIdBasicAsync(int id);
 
         Task<CourseDetailsServiceModel> GetByIdAsync(int id);
 
         Task<IEnumerable<CartItemDetailsServiceModel>> GetCartItemsDetailsForUserAsync(IEnumerable<CartItem> cartItems, string userId = null);
-
-        IQueryable<Course> GetBySearch(string search);
-
-        IQueryable<Course> GetByStatus(IQueryable<Course> coursesAsQuerable, bool? isActive = null); // all by default
 
         Task<bool> IsUserEnrolledInCourseAsync(int courseId, string userId);
 

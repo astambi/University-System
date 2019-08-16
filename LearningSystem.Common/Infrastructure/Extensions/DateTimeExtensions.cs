@@ -6,6 +6,15 @@
     {
         private const string DateMonthYearFormat = "MMMM yyyy";
 
+        public static int DaysTo(this DateTime startDateTime, DateTime endDateTime)
+            => endDateTime
+            .AddDays(1)
+            .Subtract(startDateTime)
+            .Days;
+
+        public static TimeSpan RemainingTimeTillStart(this DateTime dateTimeUtc)
+            => dateTimeUtc.Subtract(DateTime.UtcNow);
+
         public static bool HasEnded(this DateTime dateTimeUtc)
            => dateTimeUtc < DateTime.UtcNow;
 
