@@ -13,7 +13,9 @@
         private readonly LearningSystemDbContext db;
         private readonly IMapper mapper;
 
-        public AdminUserService(LearningSystemDbContext db, IMapper mapper)
+        public AdminUserService(
+            LearningSystemDbContext db, 
+            IMapper mapper)
         {
             this.db = db;
             this.mapper = mapper;

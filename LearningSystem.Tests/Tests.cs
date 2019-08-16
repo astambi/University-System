@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using AutoMapper;
-    using LearningSystem.Common.Mapping;
     using LearningSystem.Data;
     using LearningSystem.Data.Models;
     using LearningSystem.Services.Admin.Models;
@@ -35,14 +34,17 @@
             var config = new MapperConfiguration(cfg =>
             {
                 //cfg.AddProfile<AutoMapperProfile>();
+
                 cfg.CreateMap<AdminCourseServiceModel, CourseFormModel>();
 
                 cfg.CreateMap<Certificate, CertificateServiceModel>();
 
+                cfg.CreateMap<Course, AdminCourseServiceModel>();
                 cfg.CreateMap<Course, CartItemDetailsServiceModel>();
                 cfg.CreateMap<Course, CourseDetailsServiceModel>();
                 cfg.CreateMap<Course, CourseServiceModel>();
                 cfg.CreateMap<Course, CourseWithDescriptionServiceModel>();
+                cfg.CreateMap<Course, CourseWithResourcesServiceModel>();
 
                 cfg.CreateMap<ExamSubmission, ExamDownloadServiceModel>();
                 cfg.CreateMap<ExamSubmission, ExamSubmissionServiceModel>();
@@ -54,15 +56,20 @@
                 cfg.CreateMap<Resource, ResourceDownloadServiceModel>();
 
                 cfg.CreateMap<StudentCourse, CourseProfileServiceModel>()
-                    .ForMember(dest => dest.CertificateId,
-                    opt => opt.MapFrom(src => src
-                        .Course
-                        .Certificates
-                        .Where(c => c.StudentId == src.StudentId)
-                        .OrderBy(c => c.Grade)
-                        .Select(c => c.Id)
-                        .FirstOrDefault()));
+                    .ForMember(dest => dest.CertificateId, opt => opt.MapFrom(src
+                    => src
+                    .Course
+                    .Certificates
+                    .Where(c => c.StudentId == src.StudentId)
+                    .OrderBy(c => c.Grade)
+                    .Select(c => c.Id)
+                    .FirstOrDefault()));
 
+                cfg.CreateMap<StudentCourse, StudentInCourseServiceModel>()
+                    .ForMember(dest => dest.HasExamSubmission, opt => opt.MapFrom(src
+                    => src.Student.ExamSubmissions.Any(e => e.CourseId == src.CourseId)));
+
+                cfg.CreateMap<User, AdminUserListingServiceModel>();
                 cfg.CreateMap<User, UserBasicServiceModel>();
                 cfg.CreateMap<User, UserEditServiceModel>();
                 cfg.CreateMap<User, UserServiceModel>();

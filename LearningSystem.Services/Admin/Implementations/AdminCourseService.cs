@@ -12,10 +12,14 @@
 
     public class AdminCourseService : IAdminCourseService
     {
+        private const int ResultInvalidId = int.MinValue;
+
         private readonly LearningSystemDbContext db;
         private readonly IMapper mapper;
 
-        public AdminCourseService(LearningSystemDbContext db, IMapper mapper)
+        public AdminCourseService(
+            LearningSystemDbContext db,
+            IMapper mapper)
         {
             this.db = db;
             this.mapper = mapper;
@@ -32,9 +36,10 @@
             var trainerExists = this.db.Users.Any(u => u.Id == trainerId);
             if (!trainerExists
                 || string.IsNullOrWhiteSpace(name)
-                || string.IsNullOrWhiteSpace(description))
+                || string.IsNullOrWhiteSpace(description)
+                || price < 0)
             {
-                return int.MinValue;
+                return ResultInvalidId;
             }
 
             var course = new Course
@@ -59,16 +64,18 @@
             .Where(c => c.Id == id)
             .FirstOrDefaultAsync();
 
-        public async Task RemoveAsync(int id)
+        public async Task<bool> RemoveAsync(int id)
         {
             var course = await this.db.Courses.FindAsync(id);
             if (course == null)
             {
-                return;
+                return false;
             }
 
             this.db.Courses.Remove(course);
-            await this.db.SaveChangesAsync();
+            var result = await this.db.SaveChangesAsync();
+
+            return result > 0;
         }
 
         public async Task<bool> UpdateAsync(
@@ -87,13 +94,16 @@
             }
 
             var trainerExists = this.db.Users.Any(u => u.Id == trainerId);
-            if (!trainerExists)
+            if (!trainerExists
+                || string.IsNullOrWhiteSpace(name)
+                || string.IsNullOrWhiteSpace(description)
+                || price < 0)
             {
                 return false;
             }
 
-            course.Name = name;
-            course.Description = description;
+            course.Name = name.Trim();
+            course.Description = description.Trim();
             course.StartDate = startDate.ToStartDateUtc();
             course.EndDate = endDate.ToEndDateUtc();
             course.TrainerId = trainerId;

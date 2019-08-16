@@ -91,6 +91,7 @@
         public const string CourseCreateErrorMsg = "Course not created.";
         public const string CourseCreateSuccessMsg = "Course created successfully.";
         public const string CourseDeleteSuccessMsg = "Course deleted successfully.";
+        public const string CourseDeleteErrorMsg = "Could not delete course.";
         public const string CourseEnrollmentCancellationErrorMsg = "Course enrollment cannot be cancelled after start date.";
         public const string CourseEnrollmentCancellationSuccessMsg = "Course enrollment cancelled successfully.";
         public const string CourseEnrollmentClosedMsg = "Course is closed for enrollment after start date.";

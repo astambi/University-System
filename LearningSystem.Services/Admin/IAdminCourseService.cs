@@ -25,6 +25,6 @@
             decimal price,
             string trainerId);
 
-        Task RemoveAsync(int id);
+        Task<bool> RemoveAsync(int id);
     }
 }

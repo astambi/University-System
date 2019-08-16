@@ -163,7 +163,7 @@
         }
 
         [Fact]
-        public async Task TotalActiveAsync_ShouldReturnCorrectResult_BySearchFilterAndOrder()
+        public async Task TotalActiveAsync_ShouldReturnCorrectResult_BySearchFilter()
         {
             // Arrange
             var db = await this.PrepareCoursesToSearch();
@@ -172,8 +172,6 @@
             var expected = db.Courses
                 .Where(c => c.Name.ToLower().Contains("t"))
                 .Where(c => !c.EndDate.HasEnded())
-                .OrderByDescending(c => c.StartDate)
-                .OrderByDescending(c => c.EndDate)
                 .Count();
 
             // Act
@@ -184,7 +182,7 @@
         }
 
         [Fact]
-        public async Task TotalArchivedAsync_ShouldReturnCorrectResult_BySearchFilterAndOrder()
+        public async Task TotalArchivedAsync_ShouldReturnCorrectResult_BySearchFilter()
         {
             // Arrange
             var db = await this.PrepareCoursesToSearch();
@@ -193,8 +191,6 @@
             var expected = db.Courses
                 .Where(c => c.Name.ToLower().Contains("t"))
                 .Where(c => c.EndDate.HasEnded())
-                .OrderByDescending(c => c.StartDate)
-                .OrderByDescending(c => c.EndDate)
                 .Count();
 
             // Act
