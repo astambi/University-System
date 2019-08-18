@@ -23,6 +23,7 @@
         private const string UserUsername = "Username";
 
         private readonly DateTime UserBirthDate = new DateTime(1990, 3, 15);
+        private readonly DateTime UserBirthDateToEdit = new DateTime(1990, 3, 25);
 
         [Fact]
         public async Task CanBeDeletedAsync_ShouldReturnFalse_GivenUserHasArticles()
@@ -90,10 +91,7 @@
         public async Task GetProfileToEditAsync_ShouldReturnCorrectData_GivenValidUser()
         {
             // Arrange
-            var db = Tests.InitializeDatabase();
-            await db.Users.AddAsync(new User { Id = UserIdValid, Name = UserName, Birthdate = UserBirthDate });
-            await db.SaveChangesAsync();
-
+            var db = await this.PrepareUser();
             var userService = this.InitializeUserService(db);
 
             // Act
@@ -108,41 +106,32 @@
         }
 
         [Fact]
-        public async Task GetUserProfileDataAsync_ShouldReturCorrectData_GivenValidUser()
+        public async Task GetProfileAsync_ShouldReturCorrectData_GivenValidUser()
         {
             // Arrange
             var db = Tests.InitializeDatabase();
             var userService = this.InitializeUserService(db);
 
             // Act
-            var result = await userService.GetUserProfileDataAsync(UserIdInvalid);
+            var result = await userService.GetProfileAsync(UserIdInvalid);
 
             // Assert
             Assert.Null(result);
         }
 
         [Fact]
-        public async Task GetUserProfileDataAsync_ShouldReturnNull_GivenInvalidUser()
+        public async Task GetProfileAsync_ShouldReturnNull_GivenInvalidUser()
         {
             // Arrange
-            var db = Tests.InitializeDatabase();
-            await db.Users.AddAsync(new User
-            {
-                Id = UserIdValid,
-                UserName = UserUsername,
-                Email = UserEmail,
-                Name = UserName,
-                Birthdate = UserBirthDate
-            });
-            await db.SaveChangesAsync();
+            var db = await this.PrepareUser();
             var userService = this.InitializeUserService(db);
 
             // Act
-            var result = await userService.GetUserProfileDataAsync(UserIdValid);
+            var result = await userService.GetProfileAsync(UserIdValid);
 
             // Assert
             Assert.NotNull(result);
-            Assert.IsType<UserWithBirthdateServiceModel>(result);
+            Assert.IsType<UserProfileServiceModel>(result);
 
             Assert.Equal(UserIdValid, result.Id);
             Assert.Equal(UserEmail, result.Email);
@@ -152,45 +141,28 @@
         }
 
         [Fact]
-        public async Task GetUserProfileCoursesAsync_ShouldReturnEmptyCollection_GivenInvalidUser()
+        public async Task GetCoursesAsync_ShouldReturnEmptyCollection_GivenInvalidUser()
         {
             // Arrange
             var db = Tests.InitializeDatabase();
             var userService = this.InitializeUserService(db);
 
             // Act
-            var result = await userService.GetUserProfileCoursesAsync(UserIdInvalid);
+            var result = await userService.GetCoursesAsync(UserIdInvalid);
 
             // Assert
             Assert.Empty(result);
         }
 
         [Fact]
-        public async Task GetUserProfileCoursesAsync_ShouldReturnCorrectData_GivenValidUser()
+        public async Task GetCoursesAsync_ShouldReturnCorrectData_GivenValidUser()
         {
             // Arrange
-            var db = Tests.InitializeDatabase();
-            var course1 = new Course { Id = 1, Name = "Course 1", StartDate = new DateTime(2019, 1, 1), EndDate = new DateTime(2019, 3, 10) }; // third
-            var course2 = new Course { Id = 2, Name = "Course 1", StartDate = new DateTime(2019, 7, 10), EndDate = new DateTime(2019, 7, 20) }; // second
-            var course3 = new Course { Id = 3, Name = "Course 1", StartDate = new DateTime(2019, 7, 10), EndDate = new DateTime(2019, 8, 10) }; // first
-
-            var user = new User { Id = UserIdValid };
-            user.Courses.Add(new StudentCourse { CourseId = course1.Id, Grade = Grade.A });
-            user.Courses.Add(new StudentCourse { CourseId = course2.Id, Grade = Grade.B });
-            user.Courses.Add(new StudentCourse { CourseId = course3.Id, Grade = null });
-
-            var certificate1 = new Certificate { Id = "1", CourseId = course1.Id, StudentId = UserIdValid };
-            var certificate2 = new Certificate { Id = "2", CourseId = course2.Id, StudentId = UserIdValid };
-
-            await db.Courses.AddRangeAsync(course1, course2, course3);
-            await db.Users.AddAsync(user);
-            await db.Certificates.AddRangeAsync(certificate1, certificate2);
-            await db.SaveChangesAsync();
-
+            var db = await this.PrepareUserCourses();
             var userService = this.InitializeUserService(db);
 
             // Act
-            var result = await userService.GetUserProfileCoursesAsync(UserIdValid);
+            var result = await userService.GetCoursesAsync(UserIdValid);
 
             // Assert
             Assert.IsAssignableFrom<IEnumerable<CourseProfileServiceModel>>(result);
@@ -238,40 +210,84 @@
         }
 
         [Fact]
-        public async Task UpdateUserProfileAsync_ShouldNotUpdate_GivenInvalidUser()
+        public async Task UpdateProfileAsync_ShouldNotUpdate_GivenInvalidInput()
         {
             // Arrange
-            var db = Tests.InitializeDatabase();
+            var db = await this.PrepareUser();
             var userService = this.InitializeUserService(db);
 
             // Act
-            var result = await userService.UpdateUserProfileAsync(
+            var resultInvalidUser = await userService.UpdateProfileAsync(
                 UserIdInvalid,
                 It.IsAny<string>(),
                 DateTime.Now);
 
+            var resultInvalidName = await userService.UpdateProfileAsync(
+                UserIdValid,
+                name: "          ",
+                DateTime.Now);
+
             // Assert
-            Assert.False(result);
+            Assert.False(resultInvalidUser);
+            Assert.False(resultInvalidName);
         }
 
         [Fact]
-        public async Task UpdateUserProfileAsync_ShouldSaveCorrectData_GivenValidInput()
+        public async Task UpdateProfileAsync_ShouldSaveCorrectData_GivenValidInput()
         {
             // Arrange
-            var db = Tests.InitializeDatabase();
-            await db.Users.AddAsync(new User { Id = UserIdValid });
-            await db.SaveChangesAsync();
-
+            var db = await this.PrepareUser();
             var userService = this.InitializeUserService(db);
 
             // Act
-            var result = await userService.UpdateUserProfileAsync(UserIdValid, UserNameEdit, this.UserBirthDate);
+            var result = await userService.UpdateProfileAsync(
+                UserIdValid, UserNameEdit, this.UserBirthDateToEdit);
+
             var resultUser = await db.Users.FindAsync(UserIdValid);
 
             // Assert
             Assert.True(result);
-            Assert.Equal(resultUser.Name, UserNameEdit.Trim());
-            Assert.Equal(resultUser.Birthdate, this.UserBirthDate);
+            Assert.Equal(UserNameEdit.Trim(), resultUser.Name);
+            Assert.Equal(this.UserBirthDateToEdit, resultUser.Birthdate);
+        }
+
+        private async Task<LearningSystemDbContext> PrepareUser()
+        {
+            var db = Tests.InitializeDatabase();
+            await db.Users.AddAsync(new User
+            {
+                Id = UserIdValid,
+                UserName = UserUsername,
+                Email = UserEmail,
+                Name = UserName,
+                Birthdate = UserBirthDate
+            });
+            await db.SaveChangesAsync();
+
+            return db;
+        }
+
+        private async Task<LearningSystemDbContext> PrepareUserCourses()
+        {
+            var course1 = new Course { Id = 1, Name = "Course 1", StartDate = new DateTime(2019, 1, 1), EndDate = new DateTime(2019, 3, 10) }; // third
+            var course2 = new Course { Id = 2, Name = "Course 1", StartDate = new DateTime(2019, 7, 10), EndDate = new DateTime(2019, 7, 20) }; // second
+            var course3 = new Course { Id = 3, Name = "Course 1", StartDate = new DateTime(2019, 7, 10), EndDate = new DateTime(2019, 8, 10) }; // first
+
+            var user = new User { Id = UserIdValid };
+            user.Courses.Add(new StudentCourse { CourseId = course1.Id, Grade = Grade.A });
+            user.Courses.Add(new StudentCourse { CourseId = course2.Id, Grade = Grade.B });
+            user.Courses.Add(new StudentCourse { CourseId = course3.Id, Grade = null });
+
+            var certificate1 = new Certificate { Id = "1", CourseId = course1.Id, StudentId = UserIdValid };
+            var certificate2 = new Certificate { Id = "2", CourseId = course2.Id, StudentId = UserIdValid };
+
+            var db = Tests.InitializeDatabase();
+            await db.Courses.AddRangeAsync(course1, course2, course3);
+            await db.Users.AddAsync(user);
+            await db.Certificates.AddRangeAsync(certificate1, certificate2);
+            await db.SaveChangesAsync();
+
+            return db;
         }
 
         private IUserService InitializeUserService(LearningSystemDbContext db)

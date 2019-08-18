@@ -11,17 +11,17 @@
         public static Mock<IUserService> GetMock
             => new Mock<IUserService>();
 
-        public static Mock<IUserService> GetUserProfileCoursesAsync(this Mock<IUserService> mock, IEnumerable<CourseProfileServiceModel> courses)
+        public static Mock<IUserService> GetCoursesAsync(this Mock<IUserService> mock, IEnumerable<CourseProfileServiceModel> courses)
         {
-            mock.Setup(u => u.GetUserProfileCoursesAsync(It.IsAny<string>()))
+            mock.Setup(u => u.GetCoursesAsync(It.IsAny<string>()))
                 .ReturnsAsync(courses)
                 .Verifiable();
             return mock;
         }
 
-        public static Mock<IUserService> GetUserProfileDataAsync(this Mock<IUserService> mock, UserWithBirthdateServiceModel userData)
+        public static Mock<IUserService> GetProfileAsync(this Mock<IUserService> mock, UserProfileServiceModel userData)
         {
-            mock.Setup(u => u.GetUserProfileDataAsync(It.IsAny<string>()))
+            mock.Setup(u => u.GetProfileAsync(It.IsAny<string>()))
                 .ReturnsAsync(userData)
                 .Verifiable();
             return mock;

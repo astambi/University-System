@@ -24,12 +24,12 @@
                 <tbody>
                     @foreach (var resource in Model.Resources)
                     {
-                        var resourceDloadModel = new ResourceFormModel { Id = resource.Id, CourseId = Model.Id };
+                        var resourceModel = new ResourceFormModel { Id = resource.Id, CourseId = Model.Id };
                         <tr>
                             <td>@resource.FileName</td>
                             <td class="d-flex justify-content-around m-auto">
-                                <partial name="_ResourceDownloadFormPartial" model="@resourceDloadModel" />
-                                <partial name="_ResourceDeleteFormPartial" model="@resourceDloadModel" />
+                                <partial name="_ResourceDownloadButtonPartial" model="@resource.Id" />
+                                <partial name="_ResourceDeleteFormPartial" model="@resourceModel" />
                             </td>
                         </tr>
                     }

@@ -115,7 +115,7 @@
                 return false;
             }
 
-            if (studentCourse.Grade.Value == grade)
+            if (studentCourse.Grade == grade)
             {
                 return true;
             }

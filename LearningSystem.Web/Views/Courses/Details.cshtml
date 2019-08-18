@@ -48,9 +48,7 @@
 
                 <partial name="_TableHeaderPartial" model="@(" Exam submissions")" />
                 <li class="list-group-item d-flex justify-content-between">
-                    <a asp-controller="@WebConstants.ExamsController"
-                       asp-action="@nameof(ExamsController.All)"
-                       asp-route-id="@Model.Id" class="btn btn-outline-info">View exam submissions</a>
+                    <partial name="_StudentCourseExamsButtonPartial" for="Id" />
 
                     @if (Model.IsExamSubmissionDate)
                     {<partial name="_ExamUploadFormPartial" for="Id" />}
@@ -61,14 +59,16 @@
                 {
                     @foreach (var resource in Model.Resources)
                     {
-                        var resourceDloadModel = new ResourceFormModel { Id = resource.Id, CourseId = Model.Id };
+                        var resourceModel = new ResourceFormModel { Id = resource.Id, CourseId = Model.Id };
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             @resource.FileName
                             <div class="d-flex">
-                                <partial name="_ResourceDownloadFormPartial" model="@resourceDloadModel" />
+                                <partial name="_ResourceDownloadButtonPartial" model="@resource.Id" />
 
                                 @if (Model.IsTrainer)
-                                {<partial name="_ResourceDeleteFormPartial" model="@resourceDloadModel" />}
+                                {
+                                    <partial name="_ResourceDeleteFormPartial" model="@resourceModel" />
+                                }
                             </div>
                         </li>
                     }

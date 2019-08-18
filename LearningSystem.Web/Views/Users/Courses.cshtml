@@ -1,0 +1,21 @@
+﻿@model IEnumerable<CourseProfileServiceModel>
+
+@{
+    ViewData["Title"] = "My Courses";
+}
+
+<h1>My courses</h1>
+
+@if (Model.Any())
+{
+    <section class="card-deck d-flex justify-content-start">
+        @foreach (var course in Model)
+        {
+            <partial name="_ProfileCoursePartial" model="@course" />
+        }
+    </section>
+}
+else
+{
+    <h5>No courses</h5>
+}

@@ -72,6 +72,7 @@
                 cfg.CreateMap<User, AdminUserListingServiceModel>();
                 cfg.CreateMap<User, UserBasicServiceModel>();
                 cfg.CreateMap<User, UserEditServiceModel>();
+                cfg.CreateMap<User, UserProfileServiceModel>();
                 cfg.CreateMap<User, UserServiceModel>();
                 cfg.CreateMap<User, UserWithBirthdateServiceModel>();
             });

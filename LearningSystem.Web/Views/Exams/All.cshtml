@@ -31,11 +31,7 @@
                         <tr>
                             <td>@exam.SubmissionDate.ToLocalTime()</td>
                             <td>
-                                <a asp-controller="@WebConstants.ExamsController"
-                                   asp-action="@nameof(ExamsController.Download)"
-                                   asp-route-id="@exam.Id" class="px-1">
-                                    <i class="fa fa-download btn btn-@FormActionEnum.Download.ToStyle()"></i>
-                                </a>
+                                <partial name="_ExamDownloadButtonPartial" model="@exam.Id" />
                             </td>
                         </tr>
                     }

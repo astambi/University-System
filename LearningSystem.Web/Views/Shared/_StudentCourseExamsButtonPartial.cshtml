@@ -1,0 +1,7 @@
+﻿@model int
+
+<a asp-controller="@WebConstants.ExamsController"
+        asp-action="@nameof(ExamsController.All)"
+        asp-route-id="@Model" class="btn btn-outline-info" data-toggle="tooltip" title="Exam submissions">
+    <i class="fa fa-code"></i>
+</a>

@@ -7,7 +7,10 @@
     using AutoMapper;
     using LearningSystem.Data;
     using LearningSystem.Data.Models;
+    using LearningSystem.Services.Models.Certificates;
     using LearningSystem.Services.Models.Courses;
+    using LearningSystem.Services.Models.Exams;
+    using LearningSystem.Services.Models.Resources;
     using LearningSystem.Services.Models.Users;
     using Microsoft.EntityFrameworkCore;
 
@@ -33,12 +36,12 @@
             .ProjectTo<UserEditServiceModel>(this.GetUserById(id))
             .FirstOrDefaultAsync();
 
-        public async Task<UserWithBirthdateServiceModel> GetUserProfileDataAsync(string id)
+        public async Task<UserProfileServiceModel> GetProfileAsync(string id)
             => await this.mapper
-            .ProjectTo<UserWithBirthdateServiceModel>(this.GetUserById(id))
+            .ProjectTo<UserProfileServiceModel>(this.GetUserById(id))
             .FirstOrDefaultAsync();
 
-        public async Task<IEnumerable<CourseProfileServiceModel>> GetUserProfileCoursesAsync(string id)
+        public async Task<IEnumerable<CourseProfileServiceModel>> GetCoursesAsync(string id)
             => await this.mapper
             .ProjectTo<CourseProfileServiceModel>(
                 this.GetUserById(id)
@@ -47,10 +50,77 @@
             .ThenByDescending(c => c.CourseEndDate)
             .ToListAsync();
 
-        public async Task<bool> UpdateUserProfileAsync(string id, string name, DateTime birthdate)
+        public async Task<IEnumerable<CertificatesByCourseServiceModel>> GetCertificatesAsync(string id)
+        {
+            var certificatesQueryable = this.mapper
+                .ProjectTo<CertificateDetailsListingServiceModel>(
+                    this.GetUserById(id)
+                    .SelectMany(u => u.Courses)
+                    .SelectMany(sc => sc.Course.Certificates));
+
+            var certificatesByCourse = await certificatesQueryable
+                .GroupBy(c => c.CourseId, c => c)
+                .Select(g => new CertificatesByCourseServiceModel
+                {
+                    CourseId = g.Key,
+                    CourseName = g.Select(c => c.CourseName).First(),
+                    Certificates = g.OrderByDescending(c => c.IssueDate).ToList()
+                })
+                .OrderBy(c => c.CourseName)
+                .ToListAsync();
+
+            return certificatesByCourse;
+        }
+
+        public async Task<IEnumerable<ExamsByCourseServiceModel>> GetExamsAsync(string id)
+        {
+            var examsQueryable = this.mapper
+                .ProjectTo<ExamSubmissionDetailsServiceModel>(
+                    this.GetUserById(id)
+                    .SelectMany(u => u.Courses)
+                    .SelectMany(sc => sc.Course.ExamSubmissions));
+
+            var examsByCourse = await examsQueryable
+                .GroupBy(r => r.CourseId, r => r)
+                .Select(g => new ExamsByCourseServiceModel
+                {
+                    CourseId = g.Key,
+                    CourseName = g.Select(r => r.CourseName).First(),
+                    Exams = g.OrderByDescending(e => e.SubmissionDate).ToList()
+                })
+                .OrderBy(g => g.CourseName)
+                .ToListAsync();
+
+            return examsByCourse;
+        }
+
+        public async Task<IEnumerable<ResourcesByCourseServiceModel>> GetResourcesAsync(string id)
+        {
+            var resourcesQueryable = this.mapper
+                .ProjectTo<ResourceDetailsServiceModel>(
+                    this.GetUserById(id)
+                    .SelectMany(u => u.Courses)
+                    .SelectMany(sc => sc.Course.Resources));
+
+            var resourcesByCourse = await resourcesQueryable
+                .GroupBy(r => r.CourseId, r => r)
+                .Select(g => new ResourcesByCourseServiceModel
+                {
+                    CourseId = g.Key,
+                    CourseName = g.Select(r => r.CourseName).First(),
+                    Resources = g.OrderBy(r => r.FileName).ToList()
+                })
+                .OrderBy(g => g.CourseName)
+                .ToListAsync();
+
+            return resourcesByCourse;
+        }
+
+        public async Task<bool> UpdateProfileAsync(string id, string name, DateTime birthdate)
         {
             var user = await this.db.Users.FindAsync(id);
-            if (user == null)
+            if (user == null
+                || string.IsNullOrWhiteSpace(name))
             {
                 return false;
             }

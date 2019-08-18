@@ -67,8 +67,7 @@
 
             var userService = UserServiceMock.GetMock;
             userService
-                .GetUserProfileCoursesAsync(this.GetProfileCourses())
-                .GetUserProfileDataAsync(this.GetProfileUserData());
+                .GetProfileAsync(this.GetProfileUserData());
 
             var controller = new UsersController(
                 userManager.Object,
@@ -92,7 +91,6 @@
             Assert.NotNull(model);
 
             this.AsserProfileUser(model.User);
-            this.AsserProfileCourses(model.Courses);
             this.AsserProfileRoles(model.Roles);
         }
 
@@ -132,7 +130,7 @@
             }
         }
 
-        private void AsserProfileUser(UserWithBirthdateServiceModel profileUser)
+        private void AsserProfileUser(UserProfileServiceModel profileUser)
         {
             var expectedUser = this.GetProfileUserData();
 
@@ -158,8 +156,8 @@
                 new CourseProfileServiceModel { CourseId = 2, CourseName = "Name2", CourseStartDate = new DateTime(2019, 3, 10), CourseEndDate = new DateTime(2019, 5, 10), Grade = null, CertificateId = null },
             };
 
-        private UserWithBirthdateServiceModel GetProfileUserData()
-            => new UserWithBirthdateServiceModel
+        private UserProfileServiceModel GetProfileUserData()
+            => new UserProfileServiceModel
             {
                 Id = TestId,
                 Name = "Name",

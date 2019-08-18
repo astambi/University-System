@@ -24,7 +24,7 @@
             @{
                 var courseModel = new CourseBasicViewModel { Id = Model.Id, Name = Model.Name };
             }
-            <partial name="_CourseDetailsButtonPartial" model="@courseModel" />
+            <partial name="_CourseInfoButtonPartial" model="@courseModel" />
 
             @if (Model.CanEnroll)
             {

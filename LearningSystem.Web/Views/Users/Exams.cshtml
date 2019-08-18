@@ -1,0 +1,39 @@
+﻿@model IEnumerable<ExamsByCourseServiceModel>
+@{
+    ViewData["Title"] = "Exams";
+}
+
+<h1>My exams</h1>
+
+@if (Model.Any())
+{
+    <section class="card-deck d-flex justify-content-start">
+        @foreach (var group in Model)
+        {
+            var courseInfoModel = new CourseBasicViewModel { Id = group.CourseId, Name = group.CourseName };
+            <article class="card-group col-12 col-md-6 col-xl-4 my-2">
+                <div class="card shadow-lg">
+                    <div class="card-header text-white bg-info text-center">
+                        <h5 class="card-title">@group.CourseName</h5>
+                    </div>
+                    <div class="card-body">
+                        @foreach (var exam in group.Exams)
+                        {
+                            var resourceDloadModel = new ResourceFormModel { Id = exam.Id, CourseId = group.CourseId };
+                            <p class="card-text">
+                                <partial name="_ExamDownloadButtonPartial" model="@exam.Id" />
+                                @exam.SubmissionDate
+                            </p>
+                        }
+                    </div>
+                    <div class="card-footer bg-transparent text-center">
+                        <partial name="_CourseInfoButtonPartial" model="@courseInfoModel" />
+                    </div>
+                </div>
+            </article>
+        }
+    </section>
+}
+else
+{
+    <h5>No exams</h5>}

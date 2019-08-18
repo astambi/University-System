@@ -23,6 +23,62 @@
             this.userService = userService;
         }
 
+        public async Task<IActionResult> Courses()
+        {
+            var user = await this.userManager.GetUserAsync(this.User);
+            if (user == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
+                return this.RedirectToAction(nameof(HomeController.Index));
+            }
+
+            var courses = await this.userService.GetCoursesAsync(user.Id);
+
+            return this.View(courses);
+        }
+
+        public async Task<IActionResult> Certificates()
+        {
+            var user = await this.userManager.GetUserAsync(this.User);
+            if (user == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
+                return this.RedirectToAction(nameof(HomeController.Index));
+            }
+
+            var certificates = await this.userService.GetCertificatesAsync(user.Id);
+
+            return this.View(certificates);
+        }
+
+        public async Task<IActionResult> Exams()
+        {
+            var user = await this.userManager.GetUserAsync(this.User);
+            if (user == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
+                return this.RedirectToAction(nameof(HomeController.Index));
+            }
+
+            var exams = await this.userService.GetExamsAsync(user.Id);
+
+            return this.View(exams);
+        }
+
+        public async Task<IActionResult> Resources()
+        {
+            var user = await this.userManager.GetUserAsync(this.User);
+            if (user == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
+                return this.RedirectToAction(nameof(HomeController.Index));
+            }
+
+            var resources = await this.userService.GetResourcesAsync(user.Id);
+
+            return this.View(resources);
+        }
+
         public async Task<IActionResult> Profile()
         {
             var user = await this.userManager.GetUserAsync(this.User);
@@ -32,14 +88,12 @@
                 return this.RedirectToAction(nameof(HomeController.Index));
             }
 
-            var userData = await this.userService.GetUserProfileDataAsync(user.Id);
-            var courses = await this.userService.GetUserProfileCoursesAsync(user.Id);
+            var userProfile = await this.userService.GetProfileAsync(user.Id);
             var roles = await this.userManager.GetRolesAsync(user);
 
             var model = new UserProfileViewModel
             {
-                User = userData,
-                Courses = courses,
+                User = userProfile,
                 Roles = roles
             };
 

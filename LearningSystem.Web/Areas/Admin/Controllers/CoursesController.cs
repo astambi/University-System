@@ -9,7 +9,6 @@
     using LearningSystem.Services;
     using LearningSystem.Services.Admin;
     using LearningSystem.Web.Areas.Admin.Models.Courses;
-    using LearningSystem.Web.Controllers;
     using LearningSystem.Web.Infrastructure.Extensions;
     using LearningSystem.Web.Models;
     using Microsoft.AspNetCore.Identity;
@@ -147,10 +146,15 @@
                 this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
                 return this.RedirectToAction(nameof(Web.Controllers.CoursesController.Index), WebConstants.CoursesController);
             }
-
-            await this.adminCourseService.RemoveAsync(id);
+            var success = await this.adminCourseService.RemoveAsync(id);
+            if (!success)
+            {
+                this.TempData.AddErrorMessage(WebConstants.CourseDeleteErrorMsg);
+                return this.RedirectToAction(nameof(Delete), new { id });
+            }
 
             this.TempData.AddSuccessMessage(WebConstants.CourseDeleteSuccessMsg);
+
             return this.RedirectToAction(nameof(Web.Controllers.CoursesController.Index), WebConstants.CoursesController);
         }
 

@@ -18,18 +18,25 @@
     }
 </h3>
 
-<h3>
-    Courses:
-    @if (!Model.Courses.Any())
-    {<span>No courses</span>}
-</h3>
-
-@if (Model.Courses.Any())
-{
-    <section class=" card-deck d-flex justify-content-start">
-        @foreach (var course in Model.Courses)
-        {
-            <partial name="_ProfileCoursePartial" model="@course" />
-        }
-    </section>
-}
+<section class="d-flex flex-wrap justify-content-around">
+    <a asp-controller="@WebConstants.UsersController"
+       asp-action="@nameof(LearningSystem.Web.Controllers.UsersController.Courses)" class="btn btn-lg btn-outline-info my-1">
+        <h4>Courses <span class="badge badge-info">@Model.User.CoursesCount</span></h4>
+    </a>
+    <a asp-controller="@WebConstants.UsersController"
+       asp-action="@nameof(LearningSystem.Web.Controllers.UsersController.Resources)" class="btn btn-lg btn-outline-info my-1">
+        <h4>Resources <span class="badge badge-info">@Model.User.ResourcesCount</span></h4>
+    </a>
+    <a asp-controller="@WebConstants.UsersController"
+       asp-action="@nameof(LearningSystem.Web.Controllers.UsersController.Exams)" class="btn btn-lg btn-outline-info my-1">
+        <h4>Exams <span class="badge badge-info">@Model.User.ExamSubmissionsCount</span></h4>
+    </a>
+    <a asp-controller="@WebConstants.UsersController"
+       asp-action="@nameof(LearningSystem.Web.Controllers.UsersController.Certificates)" class="btn btn-lg btn-outline-info my-1">
+        <h4>Certificates <span class="badge badge-info">@Model.User.CertificatesCount</span></h4>
+    </a>
+    <a asp-controller="@WebConstants.OrdersController"
+       asp-action="@nameof(OrdersController.Index)" class="btn btn-lg btn-outline-info">
+        <h4>Payments <span class="badge badge-info">@Model.User.OrdersCount</span></h4>
+    </a>
+</section>

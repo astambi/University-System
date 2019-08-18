@@ -126,7 +126,7 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> AssessExam(int id, StudentCourseGradeFormModel model)
+        public async Task<IActionResult> EvaluateExam(int id, StudentCourseGradeFormModel model)
         {
             var courseExists = this.courseService.Exists(id);
             if (!courseExists)
