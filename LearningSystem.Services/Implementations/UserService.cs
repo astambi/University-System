@@ -54,9 +54,8 @@
         {
             var certificatesQueryable = this.mapper
                 .ProjectTo<CertificateDetailsListingServiceModel>(
-                    this.GetUserById(id)
-                    .SelectMany(u => u.Courses)
-                    .SelectMany(sc => sc.Course.Certificates));
+                   this.db.Certificates
+                   .Where(c => c.StudentId == id));
 
             var certificatesByCourse = await certificatesQueryable
                 .GroupBy(c => c.CourseId, c => c)
@@ -76,9 +75,8 @@
         {
             var examsQueryable = this.mapper
                 .ProjectTo<ExamSubmissionDetailsServiceModel>(
-                    this.GetUserById(id)
-                    .SelectMany(u => u.Courses)
-                    .SelectMany(sc => sc.Course.ExamSubmissions));
+                    this.db.ExamSubmissions
+                    .Where(e => e.StudentId == id));
 
             var examsByCourse = await examsQueryable
                 .GroupBy(r => r.CourseId, r => r)

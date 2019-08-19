@@ -37,6 +37,7 @@
 
                 cfg.CreateMap<AdminCourseServiceModel, CourseFormModel>();
 
+                cfg.CreateMap<Certificate, CertificateDetailsListingServiceModel>();
                 cfg.CreateMap<Certificate, CertificateServiceModel>();
 
                 cfg.CreateMap<Course, AdminCourseServiceModel>();
@@ -47,13 +48,15 @@
                 cfg.CreateMap<Course, CourseWithResourcesServiceModel>();
 
                 cfg.CreateMap<ExamSubmission, ExamDownloadServiceModel>();
+                cfg.CreateMap<ExamSubmission, ExamSubmissionDetailsServiceModel>();
                 cfg.CreateMap<ExamSubmission, ExamSubmissionServiceModel>();
 
                 cfg.CreateMap<Order, OrderListingServiceModel>();
                 cfg.CreateMap<OrderItem, OrderItemServiceModel>();
 
-                cfg.CreateMap<Resource, ResourceServiceModel>();
+                cfg.CreateMap<Resource, ResourceDetailsServiceModel>();
                 cfg.CreateMap<Resource, ResourceDownloadServiceModel>();
+                cfg.CreateMap<Resource, ResourceServiceModel>();
 
                 cfg.CreateMap<StudentCourse, CourseProfileServiceModel>()
                     .ForMember(dest => dest.CertificateId, opt => opt.MapFrom(src

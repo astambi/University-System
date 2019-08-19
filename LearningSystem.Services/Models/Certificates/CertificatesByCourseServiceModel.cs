@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LearningSystem.Services.Models.Certificates
+﻿namespace LearningSystem.Services.Models.Certificates
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+
     public class CertificatesByCourseServiceModel
     {
         public int CourseId { get; set; }
