@@ -28,8 +28,9 @@
         private const int TestTotalItems = 120;
         private const string TestUserId = "TestUserId";
 
+        // Attributes
         [Fact]
-        public void TrainersController_ShouldBeAuthorizedForTrainerRoleOnly()
+        public void TrainersController_ShouldHaveAuthorizeAttribute()
         {
             // Act
             var authorizeAttribute = typeof(TrainersController)
@@ -39,9 +40,42 @@
 
             // Assert
             Assert.NotNull(authorizeAttribute);
-            Assert.Equal(WebConstants.TrainerRole, authorizeAttribute.Roles);
         }
 
+        [Fact]
+        public void Index_ShouldHaveAuthorizeAttribute_ForTrainerRole()
+           => this.AssertAuthorizeAttributeForTrainerRole(nameof(TrainersController.Index));
+
+        [Fact]
+        public void DownloadExam_ShouldHaveAuthorizeAttribute_ForTrainerRole()
+            => this.AssertAuthorizeAttributeForTrainerRole(nameof(TrainersController.DownloadExam));
+
+        [Fact]
+        public void EvaluateExam_ShouldHaveAuthorizeAttribute_ForTrainerRole()
+           => this.AssertAuthorizeAttributeForTrainerRole(nameof(TrainersController.EvaluateExam));
+
+        [Fact]
+        public void EvaluateExam_ShouldHaveHttpPostAttribute()
+        {
+            // Arrange
+            var method = typeof(TrainersController).GetMethod(nameof(TrainersController.EvaluateExam));
+
+            // Act 
+            var attributes = method.GetCustomAttributes(true);
+
+            // Assert
+            Assert.Contains(attributes, a => a.GetType() == typeof(HttpPostAttribute));
+        }
+
+        [Fact]
+        public void Resources_ShouldHaveAuthorizeAttribute_ForTrainerRole()
+            => this.AssertAuthorizeAttributeForTrainerRole(nameof(TrainersController.Resources));
+
+        [Fact]
+        public void Students_ShouldHaveAuthorizeAttribute_ForTrainerRole()
+            => this.AssertAuthorizeAttributeForTrainerRole(nameof(TrainersController.Students));
+
+        // Methods
         [Fact]
         public async Task Index_ShouldReturnRedirectToAction_GivenInvalidUser()
         {
@@ -244,19 +278,6 @@
             courseService.Verify();
             trainerService.Verify();
             userManager.Verify();
-        }
-
-        [Fact]
-        public void EvaluateExam_ShouldHaveHttpPostAttribute()
-        {
-            // Arrange
-            var method = typeof(TrainersController).GetMethod(nameof(TrainersController.EvaluateExam));
-
-            // Act 
-            var attributes = method.GetCustomAttributes(true);
-
-            // Assert
-            Assert.Contains(attributes, a => a.GetType() == typeof(HttpPostAttribute));
         }
 
         [Fact]
@@ -834,6 +855,37 @@
             courseService.Verify();
             trainerService.Verify();
             userManager.Verify();
+        }
+
+        private void AssertAuthorizeAttribute(string methodName)
+        {
+            // Arrange
+            var method = typeof(TrainersController).GetMethod(methodName);
+
+            // Act 
+            var authorizeAttribute = method
+                .GetCustomAttributes(true)
+                .FirstOrDefault(a => a.GetType() == typeof(AuthorizeAttribute))
+                as AuthorizeAttribute;
+
+            // Assert
+            Assert.NotNull(authorizeAttribute);
+        }
+
+        private void AssertAuthorizeAttributeForTrainerRole(string methodName)
+        {
+            // Arrange
+            var method = typeof(TrainersController).GetMethod(methodName);
+
+            // Act 
+            var authorizeAttribute = method
+                .GetCustomAttributes(true)
+                .FirstOrDefault(a => a.GetType() == typeof(AuthorizeAttribute))
+                as AuthorizeAttribute;
+
+            // Assert
+            Assert.NotNull(authorizeAttribute);
+            Assert.Equal(WebConstants.TrainerRole, authorizeAttribute.Roles);
         }
 
         private void AssertExamDownloadFile(FileContentResult fileContentResult)

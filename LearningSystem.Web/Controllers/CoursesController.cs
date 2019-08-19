@@ -2,14 +2,12 @@
 {
     using System.Threading.Tasks;
     using AutoMapper;
-    using LearningSystem.Data;
     using LearningSystem.Data.Models;
     using LearningSystem.Services;
     using LearningSystem.Web.Infrastructure.Extensions;
     using LearningSystem.Web.Models;
     using LearningSystem.Web.Models.Courses;
     using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
 
@@ -76,15 +74,8 @@
             return this.View(model);
         }
 
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> Cancel(int id)
-            => await this.UpdateEnrollment(id, false);
-
         // SEO friendly URL
-        [Route(WebConstants.CoursesController
-            + "/" + WebConstants.WithId
-            + "/{name?}")]
+        [Route(WebConstants.CoursesController + "/" + WebConstants.WithId + "/{name?}")]
         public async Task<IActionResult> Details(int id)
         {
             var course = await this.courseService.GetByIdAsync(id);
@@ -110,6 +101,11 @@
 
             return this.View(model);
         }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Cancel(int id)
+            => await this.UpdateEnrollment(id, false);
 
         [Authorize]
         [HttpPost]

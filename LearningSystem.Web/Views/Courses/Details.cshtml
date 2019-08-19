@@ -96,7 +96,16 @@
             <li class="list-group-item">Course duration: @Model.Duration.ToDays()</li>
 
             <partial name="_TableHeaderPartial" model="@(" Trainer")" />
-            <li class="list-group-item">@Model.TrainerName</li>
+            <li class="list-group-item">
+                @Model.TrainerName
+                @* NB! Provide TrainerUsername as route id *@
+                <a asp-controller="@WebConstants.TrainersController"
+                   asp-action="@nameof(TrainersController.Details)"
+                   asp-route-id="@Model.TrainerUsername" data-toggle="tooltip" title="Details"
+                   class="btn btn-outline-info">
+                    <i class="fa fa-info"></i>
+                </a>
+            </li>
 
             <partial name="_TableHeaderPartial" model="@(" Students enrolled")" />
             <li class="list-group-item">@Model.StudentsCount</li>

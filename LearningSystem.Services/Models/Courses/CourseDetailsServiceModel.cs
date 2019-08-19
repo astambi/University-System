@@ -8,6 +8,8 @@
     {
         public string Description { get; set; }
 
+        public string TrainerUsername { get; set; }
+
         public int StudentsCount { get; set; }
 
         public bool IsExamSubmissionDate

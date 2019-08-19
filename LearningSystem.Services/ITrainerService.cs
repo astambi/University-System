@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using LearningSystem.Data.Models;
     using LearningSystem.Services.Models.Courses;
     using LearningSystem.Services.Models.Users;
 
@@ -19,6 +18,8 @@
             string search = null,
             int page = 1,
             int pageSize = ServicesConstants.PageSize);
+
+        Task<UserServiceModel> GetProfileAsync(string trainerId);
 
         Task<bool> IsTrainerForCourseAsync(string userId, int courseId);
 

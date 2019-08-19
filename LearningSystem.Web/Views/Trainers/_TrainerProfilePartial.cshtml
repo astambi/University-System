@@ -1,0 +1,16 @@
+﻿@model UserServiceModel
+
+@if (Model != null)
+{
+    <section class="d-flex justify-content-between align-items-center flex-wrap">
+        <h1>@Model.Name</h1>
+        <h5 class="text-info">
+            <i class="fa fa-user"></i>
+            @Model.Username
+        </h5>
+        <h5 class="text-info">
+            <i class="fa fa-envelope"></i>
+            <a href="mailto:@Model.Email" class="text-info">@Model.Email</a>
+        </h5>
+    </section>
+}

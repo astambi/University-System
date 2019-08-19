@@ -26,6 +26,8 @@
 
         public string TrainerName { get; set; }
 
+        public string TrainerUsername { get; set; }
+
         public int Duration { get; set; }
 
         public TimeSpan RemainingTimeTillStart { get; set; }

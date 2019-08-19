@@ -157,6 +157,7 @@
         public const string SearchByUserName = "Search by name";
 
         public const string NotTrainerForCourseMsg = "Not authorized as trainer for this course.";
+        public const string TrainerNotFoundMsg = "Trainer not found.";
         public const string TrainersAssessPerformanceAfterCourseEndsMsg = "Trainers can assess students' course performance only when the course is over.";
 
         public const string UserAddedToRoleMsg = "User {0} added to role {1}.";

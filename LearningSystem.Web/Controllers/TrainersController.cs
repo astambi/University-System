@@ -1,6 +1,7 @@
 ﻿namespace LearningSystem.Web.Controllers
 {
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
     using LearningSystem.Data.Models;
     using LearningSystem.Services;
@@ -13,7 +14,7 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
 
-    [Authorize(Roles = WebConstants.TrainerRole)]
+    [Authorize]
     public class TrainersController : Controller
     {
         private readonly UserManager<User> userManager;
@@ -36,35 +37,45 @@
             this.trainerService = trainerService;
         }
 
+        [Authorize(Roles = WebConstants.TrainerRole)]
         public async Task<IActionResult> Index(string search = null, int currentPage = 1)
         {
             var userId = this.userManager.GetUserId(this.User);
             if (userId == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RedirectToAction(nameof(CoursesController.Index));
+                return this.RedirectToAction(nameof(CoursesController.Index), WebConstants.CoursesController);
             }
 
-            var pagination = new PaginationViewModel
-            {
-                SearchTerm = search,
-                Action = nameof(Index),
-                RequestedPage = currentPage,
-                TotalItems = await this.trainerService.TotalCoursesAsync(userId, search)
-            };
-
-            var courses = await this.trainerService.CoursesAsync(userId, search, pagination.CurrentPage, WebConstants.PageSize);
-
-            var model = new CoursePageListingViewModel
-            {
-                Courses = courses,
-                Pagination = pagination,
-                Search = new SearchViewModel { SearchTerm = search, Placeholder = WebConstants.SearchByCourseName }
-            };
+            var model = await this.GetTrainerCoursesWithSearchAndPagination(userId, search, currentPage, nameof(Index));
 
             return this.View(model);
         }
 
+        /// <summary>
+        /// Trainer's courses with search & pagination for authorized users
+        /// </summary>
+        /// <param name="id"> NB! Provide trainer Username</param>
+        public async Task<IActionResult> Details(string id, string search = null, int currentPage = 1)
+        {
+            var trainerUsername = id;
+
+            var trainerId = await this.GetTrainerId(trainerUsername);
+            if (trainerId == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.TrainerNotFoundMsg);
+                return this.RedirectToAction(nameof(CoursesController.Index), WebConstants.CoursesController);
+            }
+
+            var courses = await this.GetTrainerCoursesWithSearchAndPagination(trainerId, search, currentPage, nameof(Details));
+            var profile = await this.trainerService.GetProfileAsync(trainerId);
+
+            var model = new TrainerDetailsViewModel { Courses = courses, Trainer = profile };
+
+            return this.View(model);
+        }
+
+        [Authorize(Roles = WebConstants.TrainerRole)]
         public async Task<IActionResult> Resources(int id)
         {
             var courseExists = this.courseService.Exists(id);
@@ -93,6 +104,7 @@
             return this.View(model);
         }
 
+        [Authorize(Roles = WebConstants.TrainerRole)]
         public async Task<IActionResult> Students(int id)
         {
             var courseExists = this.courseService.Exists(id);
@@ -125,6 +137,7 @@
             return this.View(model);
         }
 
+        [Authorize(Roles = WebConstants.TrainerRole)]
         [HttpPost]
         public async Task<IActionResult> EvaluateExam(int id, StudentCourseGradeFormModel model)
         {
@@ -138,7 +151,7 @@
             if (!this.ModelState.IsValid)
             {
                 this.TempData.AddErrorMessage(WebConstants.StudentAssessmentErrorMsg);
-                return this.RedirectToAction(nameof(Students), routeValues: new { id });
+                return this.RedirectToTrainerStudentsForCourse(id);
             }
 
             var userId = this.userManager.GetUserId(this.User);
@@ -159,42 +172,31 @@
             if (!courseHasEnded)
             {
                 this.TempData.AddErrorMessage(WebConstants.CourseHasNotEndedMsg);
-                return this.RedirectToAction(nameof(Students), routeValues: new { id });
+                return this.RedirectToTrainerStudentsForCourse(id);
             }
 
             var isStudentInCourse = await this.courseService.IsUserEnrolledInCourseAsync(model.CourseId, model.StudentId);
             if (!isStudentInCourse)
             {
                 this.TempData.AddErrorMessage(WebConstants.StudentNotEnrolledInCourseMsg);
-                return this.RedirectToAction(nameof(Students), routeValues: new { id });
+                return this.RedirectToTrainerStudentsForCourse(id);
             }
 
             var gradeValue = model.Grade.Value;
-            var assessmentSuccess = await this.examService.EvaluateAsync(userId, id, model.StudentId, gradeValue);
-            if (!assessmentSuccess)
+            var success = await this.examService.EvaluateAsync(userId, id, model.StudentId, gradeValue);
+            if (!success)
             {
                 this.TempData.AddErrorMessage(WebConstants.ExamAssessmentErrorMsg);
-                return this.RedirectToAction(nameof(Students), routeValues: new { id });
+                return this.RedirectToTrainerStudentsForCourse(id);
             }
 
             this.TempData.AddSuccessMessage(WebConstants.ExamAssessedMsg);
+            await this.CreateCertificate(id, userId, model);
 
-            // Issue new certificate
-            if (this.certificateService.IsGradeEligibleForCertificate(model.Grade))
-            {
-                var success = await this.certificateService.CreateAsync(userId, id, model.StudentId, model.Grade.Value);
-                if (success)
-                {
-                    this.TempData.AddSuccessMessage(
-                        WebConstants.ExamAssessedMsg
-                        + Environment.NewLine
-                        + WebConstants.CertificateIssuedMsg);
-                }
-            }
-
-            return this.RedirectToAction(nameof(Students), routeValues: new { id });
+            return this.RedirectToTrainerStudentsForCourse(id);
         }
 
+        [Authorize(Roles = WebConstants.TrainerRole)]
         public async Task<IActionResult> DownloadExam(int id, string studentId)
         {
             var courseExists = this.courseService.Exists(id);
@@ -222,19 +224,62 @@
             if (!courseHasEnded)
             {
                 this.TempData.AddErrorMessage(WebConstants.CourseHasNotEndedMsg);
-                return this.RedirectToAction(nameof(Students), routeValues: new { id });
+                return this.RedirectToTrainerStudentsForCourse(id);
             }
 
             var exam = await this.examService.DownloadForTrainerAsync(userId, id, studentId);
             if (exam == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.StudentHasNotSubmittedExamMsg);
-                return this.RedirectToAction(nameof(Students), routeValues: new { id });
+                return this.RedirectToTrainerStudentsForCourse(id);
             }
 
             var fileName = FileHelpers.ExamFileName(exam.CourseName, exam.StudentUserName, exam.SubmissionDate);
 
             return this.File(exam.FileSubmission, WebConstants.ApplicationZip, fileName);
         }
+
+        private async Task CreateCertificate(int courseId, string trainerId, StudentCourseGradeFormModel model)
+        {
+            if (this.certificateService.IsGradeEligibleForCertificate(model.Grade))
+            {
+                var success = await this.certificateService.CreateAsync(trainerId, courseId, model.StudentId, model.Grade.Value);
+                if (success)
+                {
+                    this.TempData.AddSuccessMessage(WebConstants.ExamAssessedMsg + Environment.NewLine + WebConstants.CertificateIssuedMsg);
+                }
+            }
+        }
+
+        private async Task<CoursePageListingViewModel> GetTrainerCoursesWithSearchAndPagination(string trainerId, string search, int currentPage, string action = nameof(Index))
+        {
+            var pagination = new PaginationViewModel
+            {
+                SearchTerm = search,
+                Action = action,
+                RequestedPage = currentPage,
+                TotalItems = await this.trainerService.TotalCoursesAsync(trainerId, search)
+            };
+
+            var courses = await this.trainerService.CoursesAsync(trainerId, search, pagination.CurrentPage, WebConstants.PageSize);
+
+            var model = new CoursePageListingViewModel
+            {
+                Courses = courses,
+                Pagination = pagination,
+                Search = new SearchViewModel { SearchTerm = search, Placeholder = WebConstants.SearchByCourseName }
+            };
+
+            return model;
+        }
+
+        private async Task<string> GetTrainerId(string trainerUsername)
+            => (await this.userManager.GetUsersInRoleAsync(WebConstants.TrainerRole))
+            .Where(u => u.UserName == trainerUsername)
+            .Select(u => u.Id)
+            .FirstOrDefault();
+
+        private IActionResult RedirectToTrainerStudentsForCourse(int courseId)
+            => this.RedirectToAction(nameof(Students), routeValues: new { id = courseId });
     }
 }

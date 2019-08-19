@@ -54,6 +54,11 @@
             .GetPageItems(page, pageSize)
             .ToListAsync();
 
+        public async Task<UserServiceModel> GetProfileAsync(string trainerId)
+            => await this.mapper
+            .ProjectTo<UserServiceModel>(this.db.Users.Where(u => u.Id == trainerId))
+            .FirstOrDefaultAsync();
+
         public async Task<bool> IsTrainerForCourseAsync(string userId, int courseId)
             => await this.GetTrainerCourse(userId, courseId)
             .AnyAsync();

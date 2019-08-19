@@ -1,7 +1,6 @@
 ﻿@model ArticleDetailsServiceModel
-
 @{
-    ViewData["Title"] = "Article Details";
+    ViewData["Title"] = @Model.Title;
 }
 
 <h1>@Model.Title</h1>
@@ -9,13 +8,15 @@
 <h6 class="text-muted">
     @Model.PublishDate.ToLocalTime() |
     <a asp-area=""
-       asp-controller="Users"
-       asp-action="Profile"
-       asp-route-id="@Model.AuthorId">@Model.AuthorName</a>
-    <i class="fa fa-envelope"></i> <a href="mailto:@Model.AuthorEmail">@Model.AuthorEmail</a> |
-    <i class="fa fa-users"></i> 0
+       asp-controller="@WebConstants.TrainersController"
+       asp-action="@nameof(TrainersController.Details)"
+       asp-route-id="@Model.AuthorUsername">@Model.AuthorName</a> |
+    <span>
+        <i class="fa fa-envelope"></i> <a href="mailto:@Model.AuthorEmail">@Model.AuthorEmail</a>
+    </span>
 </h6>
-<p class="shadow">@Html.Raw(Model.Content)</p>
+
+<article class="text-justify">@Html.Raw(Model.Content)</article>
 
 <div>
     <a asp-action="@nameof(ArticlesController.Index)">Back to Articles</a>

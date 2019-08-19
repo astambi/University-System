@@ -1,0 +1,20 @@
+﻿@model TrainerDetailsViewModel
+@{
+    ViewData["Title"] = "Trainer Details";
+}
+
+@if (Model != null)
+{
+    <partial name="_TrainerProfilePartial" for="Trainer" />
+
+    <header class="d-flex flex-wrap justify-content-between align-items-center">
+        <h2>Trainings</h2>
+        <partial name="_SearchPartial" for="Courses.Search" />
+    </header>
+
+    <partial name="_CoursesListPartial" for="Courses" />
+}
+else
+{
+    <h5>Trainer not found</h5>
+}

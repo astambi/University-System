@@ -26,6 +26,11 @@
         private const string TrainerValid = "TrainerValid";
         private const string TrainerInvalid = "TrainerInvalid";
 
+        private const string TrainerId = "TrainerId";
+        private const string TrainerName = "Trainer name";
+        private const string TrainerUsername = "TrainerUsername";
+        private const string TrainerEmail = "email@gmail.com";
+
         private const int Precision = 20;
 
         [Fact]
@@ -316,6 +321,38 @@
             Assert.Equal(new List<int> { 3 }, resultPageNegativeOfNegativeDefault.Select(c => c.Id).ToList());
         }
 
+        [Fact]
+        public async Task GetProfileAsync_ShouldReturnNull_GivenInvalidUser()
+        {
+            // Arrange
+            var db = Tests.InitializeDatabase();
+            var trainerService = this.InitializeTrainerService(db);
+
+            // Act
+            var result = await trainerService.GetProfileAsync(TrainerInvalid);
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task GetProfileAsync_ShouldReturnCorrectData_GivenValidUser()
+        {
+            // Arrange
+            var db = await this.PrepareTrainer();
+            var trainerService = this.InitializeTrainerService(db);
+
+            // Act
+            var result = await trainerService.GetProfileAsync(TrainerId);
+
+            // Assert
+            Assert.IsType<UserServiceModel>(result);
+            Assert.Equal(TrainerId, result.Id);
+            Assert.Equal(TrainerName, result.Name);
+            Assert.Equal(TrainerUsername, result.Username);
+            Assert.Equal(TrainerEmail, result.Email);
+        }
+
         private static void AssertCourseServiceModel(Course expected, CourseServiceModel result)
         {
             Assert.Equal(expected.Id, result.Id);
@@ -359,6 +396,27 @@
                 Assert.Equal(exprectedGrade, resultUser.Grade);
                 Assert.Equal(expectedHasExamSubmissions, resultUser.HasExamSubmission);
             }
+        }
+
+        private Course GetTrainerCourse(LearningSystemDbContext db, string trainerId, int courseId)
+            => db.Courses
+            .Where(c => c.Id == courseId)
+            .Where(c => c.TrainerId == trainerId)
+            .FirstOrDefault();
+
+        private async Task<LearningSystemDbContext> PrepareTrainer()
+        {
+            var db = Tests.InitializeDatabase();
+            await db.Users.AddRangeAsync(new User
+            {
+                Id = TrainerId,
+                Name = TrainerName,
+                UserName = TrainerUsername,
+                Email = TrainerEmail
+            });
+            await db.SaveChangesAsync();
+
+            return db;
         }
 
         private async Task<LearningSystemDbContext> PrepareTrainerCoursesToSearch()
@@ -417,12 +475,6 @@
 
             return db;
         }
-
-        private Course GetTrainerCourse(LearningSystemDbContext db, string trainerId, int courseId)
-            => db.Courses
-            .Where(c => c.Id == courseId)
-            .Where(c => c.TrainerId == trainerId)
-            .FirstOrDefault();
 
         private ITrainerService InitializeTrainerService(LearningSystemDbContext db)
             => new TrainerService(db, Tests.Mapper);
