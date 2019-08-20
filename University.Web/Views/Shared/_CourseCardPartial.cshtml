@@ -1,8 +1,8 @@
 ﻿@model CourseServiceModel
 
 <article class="card-group col-sm-6 col-lg-4 col-xl-3 my-2">
-    <div class="card border-info shadow-lg">
-        <div class="card-header bg-info text-light border-light small d-flex flex-wrap justify-content-between">
+    <div class="card course-card border-info">
+        <div class="card-header bg-info small d-flex flex-wrap justify-content-between">
             <div><i class="fa fa-clock"></i> @Model.StartDate.ToDate()</div>
             <div><i class="fa fa-hourglass"></i> @Model.Duration.ToDays()</div>
         </div>
@@ -20,7 +20,7 @@
                 <li class="list-group-item">Trainer: @Model.TrainerName</li>
             </ul>
         }
-        <div class="card-footer bg-transparent d-flex flex-wrap justify-content-around align-items-center">
+        <div class="card-footer d-flex flex-wrap justify-content-around align-items-center">
             @{
                 var courseModel = new CourseBasicViewModel { Id = Model.Id, Name = Model.Name };
             }

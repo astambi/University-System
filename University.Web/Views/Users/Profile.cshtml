@@ -2,41 +2,32 @@
 
 @{
     ViewData["Title"] = "Profile";
+    var roles = Model.Roles.Any() ? string.Join(", ", Model.Roles) : "No roles";
+    var style = "btn btn-lg btn-outline-info m-3";
 }
 
 <partial name="_ProfilePartial" for="User" />
 
 <h3>
-    Roles:
-    @if (Model.Roles.Any())
-    {
-        <span class="lead">@string.Join(", ", Model.Roles.Select(s => s.ToFriendlyName()))</span>
-    }
-    else
-    {
-        <span class="lead">No roles</span>
-    }
+    My roles:
+    <span class="lead">@roles</span>
 </h3>
 
+<h3>My data:</h3>
 <section class="d-flex flex-wrap justify-content-around">
-    <a asp-controller="@WebConstants.UsersController"
-       asp-action="@nameof(University.Web.Controllers.UsersController.Courses)" class="btn btn-lg btn-outline-info my-1">
-        <h4>Courses <span class="badge badge-info">@Model.User.CoursesCount</span></h4>
+    <a asp-controller="@WebConstants.UsersController" asp-action="@nameof(University.Web.Controllers.UsersController.Courses)" class="@style">
+        <h4>Courses @Model.User.CoursesCount</h4>
     </a>
-    <a asp-controller="@WebConstants.UsersController"
-       asp-action="@nameof(University.Web.Controllers.UsersController.Resources)" class="btn btn-lg btn-outline-info my-1">
-        <h4>Resources <span class="badge badge-info">@Model.User.ResourcesCount</span></h4>
+    <a asp-controller="@WebConstants.UsersController" asp-action="@nameof(University.Web.Controllers.UsersController.Resources)" class="@style">
+        <h4>Resources @Model.User.ResourcesCount</h4>
     </a>
-    <a asp-controller="@WebConstants.UsersController"
-       asp-action="@nameof(University.Web.Controllers.UsersController.Exams)" class="btn btn-lg btn-outline-info my-1">
-        <h4>Exams <span class="badge badge-info">@Model.User.ExamSubmissionsCount</span></h4>
+    <a asp-controller="@WebConstants.UsersController" asp-action="@nameof(University.Web.Controllers.UsersController.Exams)" class="@style">
+        <h4>Exams @Model.User.ExamSubmissionsCount</h4>
     </a>
-    <a asp-controller="@WebConstants.UsersController"
-       asp-action="@nameof(University.Web.Controllers.UsersController.Certificates)" class="btn btn-lg btn-outline-info my-1">
-        <h4>Certificates <span class="badge badge-info">@Model.User.CertificatesCount</span></h4>
+    <a asp-controller="@WebConstants.UsersController" asp-action="@nameof(University.Web.Controllers.UsersController.Certificates)" class="@style">
+        <h4>Certificates @Model.User.CertificatesCount</h4>
     </a>
-    <a asp-controller="@WebConstants.OrdersController"
-       asp-action="@nameof(OrdersController.Index)" class="btn btn-lg btn-outline-info">
-        <h4>Payments <span class="badge badge-info">@Model.User.OrdersCount</span></h4>
+    <a asp-controller="@WebConstants.OrdersController" asp-action="@nameof(OrdersController.Index)" class="@style">
+        <h4>Payments @Model.User.OrdersCount</h4>
     </a>
 </section>

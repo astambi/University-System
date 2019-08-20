@@ -1,16 +1,18 @@
 ﻿namespace University.Web.Areas.Admin.Controllers
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using University.Data.Models;
-    using University.Services.Admin;
-    using University.Web.Areas.Admin.Models.Users;
-    using University.Web.Infrastructure.Extensions;
-    using University.Web.Models;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.EntityFrameworkCore;
+    using University.Data.Models;
+    using University.Services.Admin;
+    using University.Services.Admin.Models;
+    using University.Web.Areas.Admin.Models.Users;
+    using University.Web.Infrastructure.Extensions;
+    using University.Web.Models;
 
     public class UsersController : BaseAdminController
     {
@@ -31,17 +33,14 @@
         public async Task<IActionResult> Index()
         {
             var users = await this.adminUserService.AllAsync();
-
-            var roles = await this.roleManager
-                .Roles
-                .OrderBy(r => r.Name)
-                .Select(r => new SelectListItem { Text = r.Name, Value = r.Name })
-                .ToListAsync();
+            var rolesSelectListItems = await this.GetRoles();
+            var rolesWithUsers = await this.GetUsersInRoleAsync(rolesSelectListItems.Select(r => r.Value));
 
             var model = new AdminUserListingViewModel
             {
+                RolesWithUsersInRole = rolesWithUsers,
                 Users = users,
-                RoleFormModel = new AdminUserRoleFormModel { Roles = roles }
+                RoleFormModel = new AdminUserRoleFormModel { Roles = rolesSelectListItems }
             };
 
             return this.View(model);
@@ -84,6 +83,37 @@
             {
                 this.TempData.AddInfoMessages(result);
             }
+        }
+
+        private async Task<List<SelectListItem>> GetRoles()
+            => await this.roleManager
+            .Roles
+            .OrderBy(r => r.Name)
+            .Select(r => new SelectListItem { Text = r.Name, Value = r.Name })
+            .ToListAsync();
+
+        private async Task<IEnumerable<RoleWithUsersViewModel>> GetUsersInRoleAsync(IEnumerable<string> roles)
+        {
+            var rolesWithUsers = new List<RoleWithUsersViewModel>();
+            foreach (var role in roles)
+            {
+                rolesWithUsers.Add(new RoleWithUsersViewModel
+                {
+                    Role = role,
+                    UsersInRole = (await this.userManager.GetUsersInRoleAsync(role))
+                        .Select(u => new AdminUserListingServiceModel
+                        {
+                            Id = u.Id,
+                            Name = u.Name,
+                            Email = u.Email,
+                            Username = u.UserName
+                        })
+                        .OrderBy(u => u.Name)
+                        .ToList()
+                });
+            }
+
+            return rolesWithUsers;
         }
 
         private async Task RemoveUserFromRole(User user, string role)

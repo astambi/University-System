@@ -1,0 +1,9 @@
+﻿@model AdminUserListingServiceModel
+
+@if (Model != null)
+{
+    <span>
+        <a href="mailto:@Model.Email"><i class="fa fa-envelope text-info"></i></a>
+        @Model.Name, @Model.Username
+    </span>
+}

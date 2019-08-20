@@ -7,24 +7,24 @@
 
 @if (Model.Any())
 {
-    <section class="card-deck d-flex justify-content-start">
+    <section class="card-columns">
         @foreach (var group in Model)
         {
             var courseInfoModel = new CourseBasicViewModel { Id = group.CourseId, Name = group.CourseName };
-            <article class="card-group col-sm-6 col-md-4 col-lg-3 my-2">
-                <div class="card border-info shadow">
-                    <div class="card-header text-white bg-info text-center">
+            <article class="card-group">
+                <div class="card course-card border-info">
+                    <div class="card-header bg-info">
                         <h5 class="card-title">@group.CourseName</h5>
                     </div>
                     @foreach (var certificate in group.Certificates)
                     {
-                        <div class="card-body text-center mx-auto">
+                        <div class="card-body">
                             <partial name="_CertificateDownloadFormPartial" model="@certificate.Id" />
                             <h5 class="card-text font-weight-bold">Grade @certificate.Grade</h5>
                             <p class="card-text text-muted">@certificate.IssueDate.ToDate()</p>
                         </div>
                     }
-                    <div class="card-footer bg-transparent text-center">
+                    <div class="card-footer">
                         <partial name="_CourseInfoButtonPartial" model="@courseInfoModel" />
                     </div>
                 </div>

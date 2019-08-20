@@ -42,17 +42,41 @@ a, a:hover {
     color: white;
 }
 
-/*Certificate*/
-.certificate {
-    background-color: #c47a23;
-    /*background-color: #234465;*/
-    color: white;
+.card.course-card {
+    box-shadow: 4px 4px 5px 0px rgba(0,0,0,0.2);
 }
 
-section.certificate {
-    width: 100%;
-    padding-top: 120px;
+    .card.course-card:hover {
+        box-shadow: 8px 8px 10px 0px rgba(0,0,0,0.4);
+    }
+
+    .card.course-card .card-header {
+        color: white;
+        text-align: center;
+    }
+
+    .card.course-card .card-body {
+        text-align: center;
+    }
+
+    .card.course-card .card-footer {
+        background-color: transparent;
+        text-align: center;
+    }
+
+/*Certificate*/
+.certificate-details {
+    color: #ffffff;
+    background-color: #c47a23;
 }
+
+button.certificate-dload:hover {
+    box-shadow: 8px 8px 10px 0px rgba(0,0,0,0.4);
+}
+
+    button.certificate-dload:hover i.fa {
+        color: #c47a23;
+    }
 
 /*Orders*/
 .order-item {

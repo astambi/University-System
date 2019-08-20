@@ -1,13 +1,15 @@
 ﻿namespace University.Web.Controllers
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
     using University.Data.Models;
     using University.Services;
     using University.Web.Infrastructure.Extensions;
     using University.Web.Models.Users;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
 
     [Authorize]
     public class UsersController : Controller
@@ -89,15 +91,16 @@
             }
 
             var userProfile = await this.userService.GetProfileAsync(user.Id);
-            var roles = await this.userManager.GetRolesAsync(user);
+            var roles = await this.GetRolesFriendlyNames(user);
 
-            var model = new UserProfileViewModel
-            {
-                User = userProfile,
-                Roles = roles
-            };
+            var model = new UserProfileViewModel { User = userProfile, Roles = roles };
 
             return this.View(model);
         }
+
+        private async Task<IEnumerable<string>> GetRolesFriendlyNames(User user)
+            => (await this.userManager.GetRolesAsync(user))
+            .Select(r => r.ToFriendlyName())
+            .OrderBy(r => r);
     }
 }

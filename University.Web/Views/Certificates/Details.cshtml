@@ -4,7 +4,7 @@
     Layout = "_LayoutCertificate"; // no header & footer
 }
 
-<section class="certificate">
+<section class="certificate-details">
     <header class="text-center p-5 m-auto">
         <h1 class="display-1 text-uppercase font-weight-bold py-5">Certificate</h1>
         <p>This certificate is issued by <strong>Software University</strong> to acknowledge that</p>
@@ -30,7 +30,7 @@
             <p class="small">
                 <a asp-controller="@WebConstants.CertificatesController"
                    asp-action="@nameof(CertificatesController.Details)"
-                   asp-route-id="@Model.Id" class="certificate">@Model.DownloadUrl</a>
+                   asp-route-id="@Model.Id" class="certificate-details">@Model.DownloadUrl</a>
             </p>
         </div>
         <div><p>Issuer: Software University</p></div>

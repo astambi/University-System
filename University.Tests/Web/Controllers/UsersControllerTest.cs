@@ -4,6 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
     using University.Data.Models;
     using University.Services.Models.Courses;
     using University.Services.Models.Users;
@@ -11,8 +13,6 @@
     using University.Web;
     using University.Web.Controllers;
     using University.Web.Models.Users;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
     using Xunit;
 
     public class UsersControllerTest
@@ -80,18 +80,12 @@
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<UserProfileViewModel>(viewResult.Model);
 
-            this.AssertProfile(model);
+            Assert.NotNull(model);
+            this.AsserProfileUser(model.User);
+            this.AsserProfileRolesInOrder(model.Roles);
 
             userManager.Verify();
             userService.Verify();
-        }
-
-        private void AssertProfile(UserProfileViewModel model)
-        {
-            Assert.NotNull(model);
-
-            this.AsserProfileUser(model.User);
-            this.AsserProfileRoles(model.Roles);
         }
 
         private void AsserProfileCourses(IEnumerable<CourseProfileServiceModel> courses)
@@ -114,19 +108,23 @@
             }
         }
 
-        private void AsserProfileRoles(IEnumerable<string> roles)
+        private void AsserProfileRolesInOrder(IEnumerable<string> roles)
         {
-            var expectedRoles = this.GetRoles();
-
             Assert.NotNull(roles);
-            Assert.Equal(expectedRoles.Count(), roles.Count());
+            var rolesList = roles.ToList();
 
-            foreach (var expectedRole in expectedRoles)
+            var expectedOrderedRoles = this.GetRoles()
+                .OrderBy(r => r)
+                .ToList();
+
+            Assert.Equal(expectedOrderedRoles.Count, rolesList.Count);
+
+            for (var i = 0; i < rolesList.Count; i++)
             {
-                var actualRole = roles.FirstOrDefault(r => r == expectedRole);
+                var expectedRole = expectedOrderedRoles[i];
+                var actualRoleWithoutSpaces = rolesList[i].Replace(" ", string.Empty);
 
-                Assert.NotNull(actualRole);
-                Assert.Equal(expectedRole, actualRole);
+                Assert.Equal(expectedRole, actualRoleWithoutSpaces);
             }
         }
 

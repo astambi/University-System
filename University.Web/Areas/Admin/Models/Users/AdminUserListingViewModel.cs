@@ -7,6 +7,8 @@
     {
         public IEnumerable<AdminUserListingServiceModel> Users { get; set; }
 
+        public IEnumerable<RoleWithUsersViewModel> RolesWithUsersInRole { get; set; }
+
         public AdminUserRoleFormModel RoleFormModel { get; set; }
     }
 }
