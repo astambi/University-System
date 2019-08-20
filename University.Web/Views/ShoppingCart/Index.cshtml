@@ -1,0 +1,86 @@
+﻿@model IEnumerable<CartItemDetailsServiceModel>
+@{
+    ViewData["Title"] = "Shopping Cart";
+    var totalPrice = Model.Sum(i => i.Price);
+}
+
+<h1>Shopping cart</h1>
+
+@if (Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Course</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                var courseModel = new CourseBasicViewModel { Id = item.Id, Name = item.Name };
+                <tr>
+                    <td>@item.Name - @item.StartDate.ToDateString()</td>
+                    <td class="text-right">@item.Price.ToCurrency()</td>
+                    <td class="d-flex justify-content-around">
+                        <partial name="_CourseInfoButtonPartial" model="@courseModel" />
+                        <a asp-action="@nameof(ShoppingCartController.Remove)"
+                           asp-route-id="@item.Id" class="btn btn-outline-danger">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr class="font-weight-bold">
+                <td>Total: </td>
+                <td class="text-right">@totalPrice.ToCurrency()</td>
+                <td class="d-flex justify-content-around">
+                    <a asp-action="@nameof(ShoppingCartController.Index)" class="btn btn-outline-info">
+                        <i class="fa fa-sync-alt"></i>
+                    </a>
+                    <a asp-action="@nameof(ShoppingCartController.Clear)" class="btn btn-outline-danger">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}
+else
+{
+    <h5>No items in cart</h5>
+}
+
+<div class="d-flex justify-content-between align-items-baseline">
+    <a asp-controller="@WebConstants.CoursesController"
+       asp-action="@nameof(University.Web.Controllers.CoursesController.Index)"
+       class="btn btn-outline-info">
+        <i class="fa fa-angle-double-left"></i>
+        Add more courses
+    </a>
+
+    @if (Model.Any())
+    {
+        @if (User.Identity.IsAuthenticated)
+        {
+            var checkoutModel = new CheckoutFormModel { TotalPrice = totalPrice };
+            <partial name="_CheckoutFormPartial" model="@checkoutModel" />
+        }
+        else
+        {
+            <a asp-area="Identity" asp-page="/Account/Login"
+               asp-route-returnUrl="@Url.Action(nameof(ShoppingCartController.Index), WebConstants.ShoppingCartController)"
+               class="btn btn-outline-info">
+                Login to finalize order
+                <i class="fa fa-angle-double-right"></i>
+            </a>
+        }
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

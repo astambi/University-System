@@ -1,0 +1,12 @@
+﻿@model int
+
+<form asp-controller="@WebConstants.CoursesController"
+      asp-action="@nameof(University.Web.Controllers.CoursesController.Cancel)"
+      asp-route-id="@Model" method="post">
+    <div class="form-group m-0">
+        <button type="submit" data-toggle="tooltip" title="@FormActionEnum.CancelEnrollment.ToFriendlyName()"
+                class="btn btn-@FormActionEnum.CancelEnrollment.ToStyle()">
+            <i class="fa fa-trash"></i>
+        </button>
+    </div>
+</form>

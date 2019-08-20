@@ -1,0 +1,12 @@
+﻿@model int
+
+<form asp-controller="@WebConstants.CoursesController"
+      asp-action="@nameof(University.Web.Controllers.CoursesController.Enroll)"
+      asp-route-id="@Model" method="post">
+    <div class="form-group m-0">
+        <button type="submit" data-toggle="tooltip" title="@FormActionEnum.Enroll.ToFriendlyName() free of charge"
+                class="btn btn-@FormActionEnum.Enroll.ToStyle()">
+            <i class="fa fa-gift"></i>
+        </button>
+    </div>
+</form>

@@ -1,0 +1,126 @@
+﻿@model CourseDetailsViewModel
+@{
+    ViewData["Title"] = "Course Details";
+    var enrollmentMsg = Model.CanEnroll
+        ? string.Format(WebConstants.CourseEnrollmentOpenMsg, Model.RemainingTimeTillStart.ToDaysOrHours())
+        : WebConstants.CourseEnrollmentClosedMsg;
+}
+
+<section class="col-lg-8 m-auto">
+    <article class="card mb-3 shadow">
+        <h3 class="bg-gradient card-header text-center p-5">@Model.Name</h3>
+        <div class="card-body">
+            <div class="card-title d-flex flex-wrap justify-content-between align-items-center px-1">
+                <h5><i class="fa fa-hourglass-start"></i> @Model.StartDate.ToDate()</h5>
+                <h5><i class="fa fa-hourglass-end"></i> @Model.EndDate.ToDate()</h5>
+                <h5><i class="fa fa-clock"></i> @Model.Duration.ToDays()</h5>
+            </div>
+        </div>
+        @if (Model.CanEnroll)
+        {
+            <div class="card-body card-subtitle d-flex flex-wrap justify-content-around align-items-center table-info">
+                <h5>@enrollmentMsg</h5>
+
+                @if (Model.IsUserEnrolled)
+                {
+                    if (Model.Price == 0)
+                    {<partial name="_CourseCancelFormPartial" for="Id" />
+                    }
+                }
+                else
+                {
+                    if (Model.Price == 0)
+                    { <partial name="_CourseEnrollFormPartial" for="Id" />
+                    }
+                    else
+                    { <partial name="_CourseAddToCartButtonPartial" for="Id" />
+                    }
+                }
+            </div>
+        }
+        <ul class="list-group list-group-flush">
+            @if (Model.IsUserEnrolled)
+            {
+                <partial name="_TableHeaderPartial" model="@(" Status")" />
+                <li class="list-group-item d-flex justify-content-between list-group-item-info">
+                    Enrolled
+                </li>
+
+                <partial name="_TableHeaderPartial" model="@(" Exam submissions")" />
+                <li class="list-group-item d-flex justify-content-between">
+                    <partial name="_StudentCourseExamsButtonPartial" for="Id" />
+
+                    @if (Model.IsExamSubmissionDate)
+                    {<partial name="_ExamUploadFormPartial" for="Id" />}
+                </li>
+
+                <partial name="_TableHeaderPartial" model="@(" Resources")" />
+                @if (Model.Resources.Any())
+                {
+                    @foreach (var resource in Model.Resources)
+                    {
+                        var resourceModel = new ResourceFormModel { Id = resource.Id, CourseId = Model.Id };
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @resource.FileName
+                            <div class="d-flex">
+                                <partial name="_ResourceDownloadButtonPartial" model="@resource.Id" />
+
+                                @if (Model.IsTrainer)
+                                {
+                                    <partial name="_ResourceDeleteFormPartial" model="@resourceModel" />
+                                }
+                            </div>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="list-group-item">No resources</li>
+                }
+
+                @if (Model.IsTrainer)
+                {
+                    var resourceCreateModel = new ResourceCreateFormModel { CourseId = Model.Id };
+                    <li class="list-group-item justify-content-end">
+                        <partial name="_ResourceUploadFormPartial" model="@resourceCreateModel" />
+                    </li>
+                }
+            }
+
+            <partial name="_TableHeaderPartial" model="@(" Description")" />
+            <li class="list-group-item">@Model.Description</li>
+
+            <partial name="_TableHeaderPartial" model="@(" Schedule")" />
+            <li class="list-group-item">Start date: @Model.StartDate.ToDate()</li>
+            <li class="list-group-item">End date: @Model.EndDate.ToDate()</li>
+            <li class="list-group-item">Course duration: @Model.Duration.ToDays()</li>
+
+            <partial name="_TableHeaderPartial" model="@(" Trainer")" />
+            <li class="list-group-item">
+                @Model.TrainerName
+                @* NB! Provide TrainerUsername as route id *@
+                <a asp-controller="@WebConstants.TrainersController"
+                   asp-action="@nameof(TrainersController.Details)"
+                   asp-route-id="@Model.TrainerUsername" data-toggle="tooltip" title="Details"
+                   class="btn btn-outline-info">
+                    <i class="fa fa-info"></i>
+                </a>
+            </li>
+
+            <partial name="_TableHeaderPartial" model="@(" Students enrolled")" />
+            <li class="list-group-item">@Model.StudentsCount</li>
+
+            <partial name="_TableHeaderPartial" model="@(" Enrollment")" />
+            <li class="list-group-item">@enrollmentMsg</li>
+
+            <partial name="_TableHeaderPartial" model="@(" Price")" />
+            <li class="list-group-item">@Model.Price.ToCurrency()</li>
+        </ul>
+    </article>
+
+    <partial name="_AdminCourseActionsPartial" for="Id" />
+</section>
+
+<div>
+    <a asp-action="@nameof(University.Web.Controllers.CoursesController.Index)">Back to Courses</a>
+</div>

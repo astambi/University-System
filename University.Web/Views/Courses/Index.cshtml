@@ -1,0 +1,14 @@
+﻿@model CoursePageListingViewModel
+
+@{
+    ViewData["Title"] = "Active Courses";
+}
+
+<header class="d-flex flex-wrap justify-content-between align-items-center">
+    <h1>Courses</h1>
+    <partial name="_SearchPartial" for="Search" />
+    <a asp-action="@nameof(University.Web.Controllers.CoursesController.Archive)"
+       asp-route-search="@Model.Search.SearchTerm" class="btn bnt-lg btn-outline-info">Archive</a>
+</header>
+
+<partial name="_CoursesListPartial" model="@Model" />
