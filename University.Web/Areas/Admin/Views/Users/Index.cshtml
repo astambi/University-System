@@ -4,11 +4,18 @@
 }
 
 <section class="d-flex flex-wrap justify-content-between">
-    <article class="col-md-4 col-lg-3 shadow p-3">
-        <h1>Roles</h1>
+    <article class="col-sm-6 col-md-6 col-lg-4 table-info shadow p-3">
+        <h1>
+            Roles
+            <partial name="_RoleButtonPartial" model="@new AdminRoleFormModel { Action = FormActionEnum.Create }" />
+        </h1>
         @foreach (var role in Model.RolesWithUsersInRole)
         {
-            <h3>@role.Role.ToFriendlyName()</h3>
+            var deleteForm = new AdminRoleFormModel { Action = FormActionEnum.Delete, Name = role.Role };
+            <h3>
+                @role.Role.ToFriendlyName()
+                <partial name="_RoleButtonPartial" model="@deleteForm" />
+            </h3>
             @if (role.UsersInRole.Any())
             {
                 <ul>
@@ -27,9 +34,9 @@
         }
     </article>
 
-    <article class="col-md-8 p-3">
+    <article class="col-sm-6 col-md-6 col-lg-8 p-3">
         <h1>User administration</h1>
-        <header class="row p-3">
+        <header class="d-flex flex-wrap py-3">
             <div class="col-md-4"><i class="fa fa-user"></i> User</div>
             <div class="col-md-8"><i class="fa fa-tag"></i> Roles</div>
         </header>
@@ -42,9 +49,13 @@
                     <partial name="_UserPartial" model="@user" />
                 </div>
                 <div class="col-md-8 d-flex justify-content-around flex-wrap">
-                    @{ model.Action = FormActionEnum.Add; }
+                    @{
+                        model.Action = FormActionEnum.Add;
+                    }
                     <partial name="_UserRoleFormPartial" model="model" />
-                    @{ model.Action = FormActionEnum.Remove; }
+                    @{
+                        model.Action = FormActionEnum.Remove;
+                    }
                     <partial name="_UserRoleFormPartial" model="model" />
                 </div>
             </article>

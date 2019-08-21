@@ -33,6 +33,8 @@
         public const int ResourceNameMinLength = 10;
         public const int ResourceNameMaxLength = 100;
 
+        public const int RoleNameMaxLength = 50;
+
         public const int UserNameMinLength = 2;
         public const int UserNameMaxLength = 100;
         public const int UserUsernameMaxLength = 50;

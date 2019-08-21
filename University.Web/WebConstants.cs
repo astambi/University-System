@@ -136,6 +136,14 @@
         public const string PaymentMethodInvalidMsg = "Invalid payment method.";
         public const string PaymentErrorMsg = "Payment error.";
 
+        public const string RoleCreateErrorMsg = "Role was not created.";
+        public const string RoleCreateSuccessMsg = "Role created successfully.";
+        public const string RoleDeleteErrorMsg = "Role was not deleted.";
+        public const string RoleDeleteSuccessMsg = "Role deleted successfully.";
+        public const string RoleExistsErrorMsg = "Role name already exists.";
+        public const string RoleNameInvalidErrorMsg = "Invalid role name.";
+        public const string RoleNotFoundErrorMsg = "Role not found.";
+
         public const string ShoppingCartItemsMismatchMsg = "Shopping cart items mismatch.";
         public const string ShoppingCartEmptyMsg = "Shopping cart is empty.";
         public const string ShoppingCartClearedMsg = "Shopping cart cleared successfully.";

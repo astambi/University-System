@@ -47,6 +47,60 @@
         }
 
         [HttpPost]
+        public async Task<IActionResult> Create(AdminRoleFormModel model)
+        {
+            if (!this.ModelState.IsValid)
+            {
+                this.TempData.AddErrorMessage(WebConstants.RoleNameInvalidErrorMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            var roleName = model.Name.Trim().Replace(" ", string.Empty);
+
+            var roleExists = await this.roleManager.RoleExistsAsync(roleName);
+            if (roleExists)
+            {
+                this.TempData.AddErrorMessage(WebConstants.RoleExistsErrorMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            var role = await this.roleManager.CreateAsync(new IdentityRole { Name = roleName });
+            if (role == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.RoleCreateErrorMsg);
+            }
+            else
+            {
+                this.TempData.AddSuccessMessage(WebConstants.RoleCreateSuccessMsg);
+            }
+
+            return this.RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(AdminRoleFormModel model)
+        {
+            var role = this.roleManager.Roles.FirstOrDefault(r => r.Name == model.Name);
+            if (role == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.RoleNotFoundErrorMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            var identityResult = await this.roleManager.DeleteAsync(role);
+            if (!identityResult.Succeeded)
+            {
+                this.TempData.AddErrorMessage(WebConstants.RoleDeleteErrorMsg);
+            }
+            else
+            {
+                this.TempData.AddSuccessMessage(WebConstants.RoleDeleteSuccessMsg);
+            }
+
+            return this.RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
         public async Task<IActionResult> RoleAddRemoveAsync(AdminUserRoleFormModel model)
         {
             var user = await this.userManager.FindByIdAsync(model.UserId);
