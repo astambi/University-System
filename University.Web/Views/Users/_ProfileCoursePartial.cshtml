@@ -13,10 +13,6 @@
             <div class="card-body d-flex justify-content-center align-items-center">
                 <h5 class="card-title">@Model.CourseName</h5>
             </div>
-            @if (Model.CourseEndDate.IsToday())
-            {
-                <partial name="_ExamUploadFormPartial" for="CourseId" />
-            }
             <div class="card-footer">
                 <partial name="_CertificateDownloadFormPartial" for="CertificateId" />
                 @if (Model.Grade != null)
@@ -28,6 +24,10 @@
                     <h5 class="card-subtitle font-weight-light">No grade</h5>
                 }
             </div>
+            @if (Model.CourseEndDate.IsToday())
+            {
+                <partial name="_ExamUploadFormPartial" for="CourseId" />
+            }
             <div class="card-footer d-flex flex-wrap justify-content-around align-items-center">
                 <partial name="_CourseInfoButtonPartial" model="@courseInfoModel" />
                 <partial name="_StudentCourseExamsButtonPartial" for="CourseId" />

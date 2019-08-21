@@ -50,22 +50,23 @@ a, a:hover {
         box-shadow: 8px 8px 10px 0px rgba(0,0,0,0.4);
     }
 
-    .card.course-card .card-header {
-        color: white;
+    .card.course-card .card-header,
+    .card.course-card .card-body,
+    .card.course-card .card-footer {
         text-align: center;
     }
 
-    .card.course-card .card-body {
-        text-align: center;
+    .card.course-card .card-header {
+        color: white;
     }
 
     .card.course-card .card-footer {
         background-color: transparent;
-        text-align: center;
     }
 
 /*Certificate*/
-.certificate-details {
+.certificate-details,
+.certificate-details:hover {
     color: #ffffff;
     background-color: #c47a23;
 }

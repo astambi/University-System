@@ -20,7 +20,13 @@
                     {
                         <div class="card-body">
                             <partial name="_CertificateDownloadFormPartial" model="@certificate.Id" />
-                            <h5 class="card-text font-weight-bold">Grade @certificate.Grade</h5>
+                            <h5 class="card-text font-weight-bold">
+                                <a asp-controller="@WebConstants.CertificatesController"
+                                   asp-action="@nameof(CertificatesController.Details)"
+                                   asp-route-id="@certificate.Id" class="text-info">
+                                    Grade @certificate.Grade
+                                </a>
+                            </h5>
                             <p class="card-text text-muted">@certificate.IssueDate.ToDate()</p>
                         </div>
                     }
