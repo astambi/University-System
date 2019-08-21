@@ -1,0 +1,20 @@
+﻿@model IEnumerable<CourseServiceModel>
+@{
+    var examsToEvaluate = Model.Where(c => c.CanBeEvaluated);
+}
+
+@if (examsToEvaluate.Any())
+{
+    <section class="jumbotron text-center alert-info rounded-lg shadow py-4">
+        <h3>
+            You've got some exams to evaluate!
+            <i class="fa fa-grin text-info"></i>
+        </h3>
+        <section class="card-deck d-flex justify-content-center">
+            @foreach (var course in examsToEvaluate)
+            {
+                <partial name="_CourseCardPartial" model="@course" />
+            }
+        </section>
+    </section>
+}

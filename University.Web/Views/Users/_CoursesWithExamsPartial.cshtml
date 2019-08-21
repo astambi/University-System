@@ -1,0 +1,20 @@
+﻿@model IEnumerable<CourseProfileServiceModel>
+
+@{
+    var todaysExams = Model.Where(c => c.CourseEndDate.IsToday());
+}
+
+@if (todaysExams.Any())
+{
+    <section class="jumbotron text-center alert-info rounded-lg shadow py-4">
+        <h3>
+            You've got some exams today! <i class="fa fa-grin text-info"></i>
+        </h3>
+        <section class="card-deck d-flex justify-content-center">
+            @foreach (var course in todaysExams)
+            {
+                <partial name="_ProfileCoursePartial" model="@course" />
+            }
+        </section>
+    </section>
+}

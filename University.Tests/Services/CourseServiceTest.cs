@@ -714,6 +714,8 @@
 
         private static void AssertSingleCourse(Course expectedItem, CourseServiceModel resultItem)
         {
+            var dateTimeUtcNow = DateTime.UtcNow;
+
             Assert.Equal(expectedItem.Id, resultItem.Id);
             Assert.Equal(expectedItem.Name, resultItem.Name);
             Assert.Equal(expectedItem.StartDate, resultItem.StartDate);
@@ -724,6 +726,10 @@
 
             Assert.Equal(!expectedItem.StartDate.HasEnded(), resultItem.CanEnroll);
             Assert.Equal(expectedItem.StartDate.DaysTo(expectedItem.EndDate), resultItem.Duration);
+            Assert.Equal(dateTimeUtcNow < expectedItem.StartDate, resultItem.IsUpcoming);
+            Assert.Equal(
+                expectedItem.StartDate <= dateTimeUtcNow && dateTimeUtcNow <= expectedItem.EndDate,
+                resultItem.IsActive);
 
             resultItem.RemainingTimeTillStart
                 .Should()
@@ -732,12 +738,12 @@
 
         private static void AssertSingleCourseDetails(Course expectedCourse, CourseDetailsServiceModel validCourse)
         {
-            Assert.Equal(expectedCourse.Name, validCourse.Name);
-            Assert.Equal(expectedCourse.StartDate, validCourse.StartDate);
-            Assert.Equal(expectedCourse.EndDate, validCourse.EndDate);
+            AssertSingleCourse(expectedCourse, validCourse);
+
+            Assert.Equal(expectedCourse.Description, validCourse.Description);
+            Assert.Equal(expectedCourse.Trainer.UserName, validCourse.TrainerUsername);
             Assert.Equal(expectedCourse.Students.Count(), validCourse.StudentsCount);
-            Assert.Equal(expectedCourse.TrainerId, validCourse.TrainerId);
-            Assert.Equal(expectedCourse.Trainer.Name, validCourse.TrainerName);
+            Assert.Equal(expectedCourse.EndDate.IsToday(), validCourse.IsExamSubmissionDate);
         }
 
         private IEnumerable<CartItem> PrepareCartItemsWithCourses()

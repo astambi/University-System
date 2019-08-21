@@ -1,6 +1,11 @@
 ﻿@model CoursePageListingViewModel
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Trainings";
+}
+
+@if (Model.Courses.Any(c => c.CanBeEvaluated))
+{
+    <partial name="_CoursesToEvaluatePartial" for="Courses" />
 }
 
 <header class="d-flex flex-wrap justify-content-between align-items-center">

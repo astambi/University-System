@@ -21,6 +21,9 @@
         public static bool IsToday(this DateTime dateTimeUtc)
             => dateTimeUtc.ToLocalTime().Date == DateTime.Now.Date;
 
+        public static bool IsUpcoming(this DateTime dateTimeUtc)
+            => DateTime.UtcNow < dateTimeUtc;
+
         public static string ToDateString(this DateTime date)
             => date.ToString(DateMonthYearFormat);
 

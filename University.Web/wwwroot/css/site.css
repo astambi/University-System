@@ -65,8 +65,13 @@ a, a:hover {
     }
 
 /*Certificate*/
-.certificate-details,
-.certificate-details:hover {
+
+section.certificate-details {
+    width: 100%;
+    padding-top: 150px;
+}
+
+.certificate-details, .certificate-details:hover {
     color: #ffffff;
     background-color: #c47a23;
 }

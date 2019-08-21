@@ -31,6 +31,16 @@
             => this.StartDate.RemainingTimeTillStart();
 
         public bool CanEnroll
-            => !this.StartDate.HasEnded();
+            => this.RemainingTimeTillStart.TotalSeconds > 0;
+
+        public bool IsActive
+            => this.StartDate <= DateTime.UtcNow && DateTime.UtcNow <= this.EndDate;
+
+        public bool IsUpcoming
+            => this.StartDate.IsUpcoming();
+
+        public bool CanBeEvaluated // should be evaluated not later than 1 month after course end
+            => this.EndDate.HasEnded()
+            && !this.EndDate.AddMonths(1).HasEnded();
     }
 }

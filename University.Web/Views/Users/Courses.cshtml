@@ -2,27 +2,16 @@
 
 @{
     ViewData["Title"] = "My Courses";
-    var todaysExams = Model.Where(c => c.CourseEndDate.IsToday());
 }
 
-@if (todaysExams.Any())
+@if (Model.Any(c => c.CourseEndDate.IsToday()))
 {
-    <h3 class="text-center">
-        You've got some exams today! <i class="fa fa-grin text-info"></i>
-    </h3>
-    <section class="card-deck d-flex justify-content-center bg-light shadow-lg py-3 my-3">
-        @foreach (var course in todaysExams)
-        {
-            <partial name="_ProfileCoursePartial" model="@course" />
-        }
-    </section>
+    <partial name="_CoursesWithExamsPartial" model="Model" />
 }
 
 <h1>My courses</h1>
-
 @if (Model.Any())
 {
-
     <section class="card-deck d-flex justify-content-start">
         @foreach (var course in Model)
         {

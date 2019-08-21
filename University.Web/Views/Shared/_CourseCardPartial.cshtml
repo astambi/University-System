@@ -1,58 +1,74 @@
 ﻿@model CourseServiceModel
 
-<article class="card-group col-sm-6 col-lg-4 col-xl-3 my-2">
-    <div class="card course-card border-info">
-        <div class="card-header bg-info small d-flex flex-wrap justify-content-between">
-            <div><i class="fa fa-clock"></i> @Model.StartDate.ToDate()</div>
-            <div><i class="fa fa-hourglass"></i> @Model.Duration.ToDays()</div>
-        </div>
-        <div class="card-body">
-            <div class="text-center">
-                <img src="https://s3-ap-south-1.amazonaws.com/icegateinstitute/wp-content/uploads/2018/11/27054729/GATE-Crash-Course.jpg" alt="Alternate Text" height="150" class="mw-100" />
+@if (Model != null)
+{
+    var btnEvaluateStyle = Model.CanBeEvaluated ? "btn-info" : "btn-outline-info";
+
+    <article class="card-group col-sm-6 col-lg-4 my-2">
+        <div class="card course-card border-info">
+            <div class="card-header bg-info small d-flex flex-wrap justify-content-between">
+                <div><i class="fa fa-clock"></i> @Model.StartDate.ToDate()</div>
+                <div><i class="fa fa-hourglass"></i> @Model.Duration.ToDays()</div>
+            </div>
+            <div class="card-body">
+                <div class="text-center">
+                    <img src="https://s3-ap-south-1.amazonaws.com/icegateinstitute/wp-content/uploads/2018/11/27054729/GATE-Crash-Course.jpg" alt="Alternate Text" height="150" class="mw-100" />
+                </div>
+            </div>
+            <div class="card-body d-flex justify-content-center align-items-center">
+                <h5 class="card-title text-center">@Model.Name</h5>
+            </div>
+
+            @if (Model.IsActive)
+            {
+                <div class="card-body text-uppercase table-success">Active</div>
+            }
+            else if (Model.IsUpcoming)
+            {
+                <div class="card-body text-uppercase table-info">Upcoming</div>
+            }
+
+            @if (Model.TrainerName != null)
+            {
+                <ul class="list-group text-center">
+                    <li class="list-group-item">Trainer: @Model.TrainerName</li>
+                </ul>
+            }
+
+            <div class="card-footer d-flex flex-wrap justify-content-around align-items-center">
+                @{
+                    var courseModel = new CourseBasicViewModel { Id = Model.Id, Name = Model.Name };
+                }
+                <partial name="_CourseInfoButtonPartial" model="@courseModel" />
+
+                @if (Model.CanEnroll)
+                {
+                    if (Model.Price == 0)
+                    {
+                        <partial name="_CourseEnrollFormPartial" for="Id" />
+                    }
+                    else
+                    {
+                        <partial name="_CourseAddToCartButtonPartial" for="Id" />
+                    }
+                }
+
+                @if (User.IsInRole(WebConstants.TrainerRole))
+                {
+                    <a asp-controller="@WebConstants.TrainersController"
+                       asp-action="@nameof(TrainersController.Students)"
+                       asp-route-id="@Model.Id" class="btn @btnEvaluateStyle" data-toggle="tooltip" title="Students">
+                        <i class="fa fa-user-graduate"></i>
+                    </a>
+                    <a asp-controller="@WebConstants.TrainersController"
+                       asp-action="@nameof(TrainersController.Resources)"
+                       asp-route-id="@Model.Id" class="btn btn-outline-info" data-toggle="tooltip" title="Resources">
+                        <i class="fa fa-folder-open"></i>
+                    </a>
+                }
+
+                <partial name="_AdminCourseActionsPartial" for="Id" />
             </div>
         </div>
-        <div class="card-body d-flex justify-content-center align-items-center">
-            <h5 class="card-title text-center">@Model.Name</h5>
-        </div>
-        @if (Model.TrainerName != null)
-        {
-            <ul class="list-group text-center">
-                <li class="list-group-item">Trainer: @Model.TrainerName</li>
-            </ul>
-        }
-        <div class="card-footer d-flex flex-wrap justify-content-around align-items-center">
-            @{
-                var courseModel = new CourseBasicViewModel { Id = Model.Id, Name = Model.Name };
-            }
-            <partial name="_CourseInfoButtonPartial" model="@courseModel" />
-
-            @if (Model.CanEnroll)
-            {
-                if (Model.Price == 0)
-                {
-                    <partial name="_CourseEnrollFormPartial" for="Id" />
-                }
-                else
-                {
-                    <partial name="_CourseAddToCartButtonPartial" for="Id" />
-                }
-            }
-
-            @if (User.IsInRole(WebConstants.TrainerRole))
-            {
-                <a asp-controller="@WebConstants.TrainersController"
-                   asp-action="@nameof(TrainersController.Students)"
-                   asp-route-id="@Model.Id" class="btn btn-outline-info" data-toggle="tooltip" title="Students">
-                    <i class="fa fa-user-graduate"></i>
-                </a>
-                <a asp-controller="@WebConstants.TrainersController"
-                   asp-action="@nameof(TrainersController.Resources)"
-                   asp-route-id="@Model.Id" class="btn btn-outline-info" data-toggle="tooltip" title="Resources">
-                    <i class="fa fa-folder-open"></i>
-                </a>
-            }
-
-            <partial name="_AdminCourseActionsPartial" for="Id" />
-        </div>
-    </div>
-</article>
+    </article>
+}
