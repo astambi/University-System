@@ -46,6 +46,9 @@
                 cfg.CreateMap<Course, CourseServiceModel>();
                 cfg.CreateMap<Course, CourseWithDescriptionServiceModel>();
                 cfg.CreateMap<Course, CourseWithResourcesServiceModel>();
+                cfg.CreateMap<CourseProfileServiceModel, CourseProfileMaxGradeServiceModel>()
+                    .ForMember(dest => dest.GradeBgMax, opt => opt.MapFrom(src
+                    => src.CertificateGrade != 0 ? src.CertificateGrade : src.GradeBg)); ;
 
                 cfg.CreateMap<ExamSubmission, ExamDownloadServiceModel>();
                 cfg.CreateMap<ExamSubmission, ExamSubmissionDetailsServiceModel>();
@@ -61,12 +64,20 @@
                 cfg.CreateMap<StudentCourse, CourseProfileServiceModel>()
                     .ForMember(dest => dest.CertificateId, opt => opt.MapFrom(src
                     => src
-                    .Course
-                    .Certificates
-                    .Where(c => c.StudentId == src.StudentId)
-                    .OrderByDescending(c => c.GradeBg)
-                    .Select(c => c.Id)
-                    .FirstOrDefault()));
+                        .Course
+                        .Certificates
+                        .Where(c => c.StudentId == src.StudentId)
+                        .OrderByDescending(c => c.GradeBg)
+                        .Select(c => c.Id)
+                        .FirstOrDefault()))
+                    .ForMember(dest => dest.CertificateGrade, opt => opt.MapFrom(src
+                    => src
+                        .Course
+                        .Certificates
+                        .Where(c => c.StudentId == src.StudentId)
+                        .OrderByDescending(c => c.GradeBg)
+                        .Select(c => c.GradeBg)
+                        .FirstOrDefault())); // 0
 
                 cfg.CreateMap<StudentCourse, StudentInCourseServiceModel>()
                     .ForMember(dest => dest.HasExamSubmission, opt => opt.MapFrom(src

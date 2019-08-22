@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Moq;
     using University.Data;
     using University.Data.Models;
     using University.Services;
@@ -13,7 +14,6 @@
     using University.Services.Models.Exams;
     using University.Services.Models.Resources;
     using University.Services.Models.Users;
-    using Moq;
     using Xunit;
 
     public class UserServiceTest
@@ -225,7 +225,7 @@
             var result = await userService.GetCoursesAsync(UserIdValid);
 
             // Assert
-            Assert.IsAssignableFrom<IEnumerable<CourseProfileServiceModel>>(result);
+            Assert.IsAssignableFrom<IEnumerable<CourseProfileMaxGradeServiceModel>>(result);
             Assert.NotEmpty(result);
 
             var resultList = result.ToList();
@@ -243,7 +243,13 @@
                             .FirstOrDefault(),
                         CertificateId = c.Certificates
                             .Where(cert => cert.StudentId == UserIdValid)
+                            .OrderByDescending(cert => cert.GradeBg)
                             .Select(cert => cert.Id)
+                            .FirstOrDefault(),
+                        CertificateGrade = c.Certificates
+                            .Where(cert => cert.StudentId == UserIdValid)
+                            .OrderByDescending(cert => cert.GradeBg)
+                            .Select(cert => cert.GradeBg)
                             .FirstOrDefault()
                     })
                     .FirstOrDefault();
@@ -254,7 +260,9 @@
                 Assert.Equal(expectedCourse.StartDate, resultItem.CourseStartDate);
                 Assert.Equal(expectedCourse.EndDate, resultItem.CourseEndDate);
 
-                Assert.Equal(expected.Grade, resultItem.GradeBg);
+                var maxGrade = expected.CertificateGrade != 0 ? expected.CertificateGrade : expected.Grade;
+
+                Assert.Equal(maxGrade, resultItem.GradeBgMax);
                 Assert.Equal(expected.CertificateId, resultItem.CertificateId);
             }
 
@@ -495,11 +503,11 @@
 
             var user = new User { Id = UserIdValid };
             user.Courses.Add(new StudentCourse { CourseId = course1.Id, GradeBg = DataConstants.GradeBgMaxValue });
-            user.Courses.Add(new StudentCourse { CourseId = course2.Id, GradeBg = DataConstants.GradeBgCertificateMinValue });
+            user.Courses.Add(new StudentCourse { CourseId = course2.Id, GradeBg = DataConstants.GradeBgMinValue });
             user.Courses.Add(new StudentCourse { CourseId = course3.Id, GradeBg = null });
 
-            var certificate1 = new Certificate { Id = "1", CourseId = course1.Id, StudentId = UserIdValid };
-            var certificate2 = new Certificate { Id = "2", CourseId = course2.Id, StudentId = UserIdValid };
+            var certificate1 = new Certificate { Id = "1", CourseId = course1.Id, StudentId = UserIdValid, GradeBg = DataConstants.GradeBgMaxValue };
+            var certificate2 = new Certificate { Id = "2", CourseId = course2.Id, StudentId = UserIdValid, GradeBg = DataConstants.GradeBgCertificateMinValue };
 
             var db = Tests.InitializeDatabase();
             await db.Courses.AddRangeAsync(course1, course2, course3);

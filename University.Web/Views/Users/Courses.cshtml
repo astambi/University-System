@@ -1,7 +1,9 @@
-﻿@model IEnumerable<CourseProfileServiceModel>
+﻿@model IEnumerable<CourseProfileMaxGradeServiceModel>
 
 @{
     ViewData["Title"] = "My Courses";
+    var gradedCourses = Model.Where(c => c.GradeBgMax != null);
+    var averageGrade = gradedCourses.Any() ? gradedCourses.Average(c => c.GradeBgMax) : null;
 }
 
 @if (Model.Any(c => c.CourseEndDate.IsToday()))
@@ -9,7 +11,13 @@
     <partial name="_CoursesWithExamsPartial" model="Model" />
 }
 
-<h1>My courses</h1>
+<h1 class="d-flex justify-content-between">
+    My courses
+    @if (averageGrade != null)
+    {
+        <span>Average grade: @averageGrade.Value.ToNumberDecimal()</span>
+    }
+</h1>
 @if (Model.Any())
 {
     <section class="card-deck d-flex justify-content-start">
@@ -18,6 +26,7 @@
             <partial name="_ProfileCoursePartial" model="@course" />
         }
     </section>
+    <p class="small text-justify">The average grade is calculated on the basis of the best course grade received even if no certificate was awarded.</p>
 }
 else
 {

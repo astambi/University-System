@@ -1,13 +1,23 @@
 ﻿@model IEnumerable<CertificatesByCourseServiceModel>
 @{
     ViewData["Title"] = "Certificates";
+    var averageGrade = Model.Any()
+        ? Model.Select(c => c.Certificates.First()).Average(c => c.GradeBg)
+        : 0;
 }
 
-<h1>My certificates</h1>
+<h1 class="d-flex justify-content-between flex-wrap">
+    My certificates
+    @if (averageGrade > 0)
+    {
+        <span>Average grade: @averageGrade.ToNumberDecimal()</span>
+    }
+</h1>
 
 @if (Model.Any())
 {
     <section class="card-columns">
+
         @foreach (var group in Model)
         {
             var courseInfoModel = new CourseBasicViewModel { Id = group.CourseId, Name = group.CourseName };
@@ -37,6 +47,7 @@
             </article>
         }
     </section>
+    <p class="small text-justify">The average grade is calculated on the basis of the certificates awarded taking into account the best certificate grade per course.</p>
 }
 else
 {

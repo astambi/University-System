@@ -62,6 +62,9 @@
         public static string ToFriendlyUrl(this string text)
             => Regex.Replace(TranslitConvert(text), @"[^A-Za-z0-9_\.~]+", "-");
 
+        public static string ToNumberDecimal(this decimal number)
+            => number.ToString(NumberDecimal);
+
         public static string ToNumberDecimal(this int number)
             => number.ToString(NumberDecimal);
 

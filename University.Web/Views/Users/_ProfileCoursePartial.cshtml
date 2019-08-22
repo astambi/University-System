@@ -1,4 +1,4 @@
-﻿@model CourseProfileServiceModel
+﻿@model CourseProfileMaxGradeServiceModel
 
 @if (Model != null)
 {
@@ -29,9 +29,9 @@
 
             <div class="card-footer">
                 <partial name="_CertificateDownloadFormPartial" for="CertificateId" />
-                @if (Model.GradeBg != null)
+                @if (Model.GradeBgMax != null)
                 {
-                    <h5 class="card-subtitle">Grade @Model.GradeBg</h5>
+                    <h5 class="card-subtitle">Grade @Model.GradeBgMax</h5>
                 }
                 else
                 {

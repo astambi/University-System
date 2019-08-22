@@ -11,7 +11,7 @@
         public static Mock<IUserService> GetMock
             => new Mock<IUserService>();
 
-        public static Mock<IUserService> GetCoursesAsync(this Mock<IUserService> mock, IEnumerable<CourseProfileServiceModel> courses)
+        public static Mock<IUserService> GetCoursesAsync(this Mock<IUserService> mock, IEnumerable<CourseProfileMaxGradeServiceModel> courses)
         {
             mock.Setup(u => u.GetCoursesAsync(It.IsAny<string>()))
                 .ReturnsAsync(courses)

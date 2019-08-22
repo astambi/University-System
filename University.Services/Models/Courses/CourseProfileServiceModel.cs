@@ -23,6 +23,8 @@
 
         public string CertificateId { get; set; }
 
+        public decimal? CertificateGrade { get; set; }
+
         public void ConfigureMapping(Profile mapper)
             => mapper
             .CreateMap<StudentCourse, CourseProfileServiceModel>()
@@ -34,6 +36,15 @@
                 .Where(c => c.StudentId == src.StudentId)
                 .OrderByDescending(c => c.GradeBg)
                 .Select(c => c.Id)
-                .FirstOrDefault()));
+                .FirstOrDefault()))
+            .ForMember(
+                dest => dest.CertificateGrade,
+                opt => opt.MapFrom(src => src
+                .Course
+                .Certificates
+                .Where(c => c.StudentId == src.StudentId)
+                .OrderByDescending(c => c.GradeBg)
+                .Select(c => c.GradeBg)
+                .FirstOrDefault())); // 0
     }
 }

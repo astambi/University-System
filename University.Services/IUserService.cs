@@ -17,7 +17,7 @@
 
         Task<UserProfileServiceModel> GetProfileAsync(string id);
 
-        Task<IEnumerable<CourseProfileServiceModel>> GetCoursesAsync(string id);
+        Task<IEnumerable<CourseProfileMaxGradeServiceModel>> GetCoursesAsync(string id);
 
         Task<IEnumerable<CertificatesByCourseServiceModel>> GetCertificatesAsync(string id);
 

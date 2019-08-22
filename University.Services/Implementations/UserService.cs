@@ -41,14 +41,18 @@
             .ProjectTo<UserProfileServiceModel>(this.GetUserById(id))
             .FirstOrDefaultAsync();
 
-        public async Task<IEnumerable<CourseProfileServiceModel>> GetCoursesAsync(string id)
-            => await this.mapper
-            .ProjectTo<CourseProfileServiceModel>(
+        public async Task<IEnumerable<CourseProfileMaxGradeServiceModel>> GetCoursesAsync(string id)
+        {
+            var coursesQueryable = this.mapper.ProjectTo<CourseProfileServiceModel>(
                 this.GetUserById(id)
-                .SelectMany(u => u.Courses))
-            .OrderByDescending(c => c.CourseStartDate)
-            .ThenByDescending(c => c.CourseEndDate)
-            .ToListAsync();
+                .SelectMany(u => u.Courses));
+
+            return await this.mapper
+                .ProjectTo<CourseProfileMaxGradeServiceModel>(coursesQueryable)
+                .OrderByDescending(c => c.CourseStartDate)
+                .ThenByDescending(c => c.CourseEndDate)
+                .ToListAsync();
+        }
 
         public async Task<IEnumerable<CertificatesByCourseServiceModel>> GetCertificatesAsync(string id)
         {
