@@ -1,8 +1,8 @@
 ﻿namespace University.Web.Models.Trainers
 {
     using System.ComponentModel.DataAnnotations;
-    using University.Data.Models;
     using Microsoft.AspNetCore.Mvc;
+    using University.Data;
 
     public class StudentCourseGradeFormModel
     {
@@ -14,6 +14,9 @@
         public int CourseId { get; set; }
 
         [Required]
-        public Grade? Grade { get; set; }
+        [Display(Name = "Grade")]
+        [Range(2, 6,
+            ErrorMessage = DataConstants.RangeMinMaxValues)]
+        public decimal? GradeBg { get; set; }
     }
 }

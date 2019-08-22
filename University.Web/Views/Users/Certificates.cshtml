@@ -24,7 +24,7 @@
                                 <a asp-controller="@WebConstants.CertificatesController"
                                    asp-action="@nameof(CertificatesController.Details)"
                                    asp-route-id="@certificate.Id" class="text-info">
-                                    Grade @certificate.Grade
+                                    Grade @certificate.GradeBg
                                 </a>
                             </h5>
                             <p class="card-text text-muted">@certificate.IssueDate.ToDate()</p>

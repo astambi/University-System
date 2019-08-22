@@ -22,8 +22,8 @@
         private const int ExamValid = 5;
         private const int ExamInvalid = 55;
 
-        private const Grade ExamGrade = Grade.A;
-        private const Grade PreviousGrade = Grade.B;
+        private const decimal ExamGradeBg = 6.00m;
+        private const decimal PreviousGradeBg = 5.00m;
 
         private const string StudentEnrolled = "StudentEnrolled";
         private const string StudentNotEnrolled = "StudentNotEnrolled";
@@ -328,13 +328,13 @@
             var examService = this.InitializeExamService(db);
 
             // Act
-            var result = await examService.EvaluateAsync(TrainerInvalid, CourseValid, StudentEnrolled, It.IsAny<Grade>());
+            var result = await examService.EvaluateAsync(TrainerInvalid, CourseValid, StudentEnrolled, It.IsAny<decimal>());
 
             var studentCourse = await db.FindAsync<StudentCourse>(StudentEnrolled, CourseValid);
 
             // Assert
             Assert.False(result);
-            Assert.Equal(PreviousGrade, studentCourse.Grade.Value);
+            Assert.Equal(PreviousGradeBg, studentCourse.GradeBg.Value);
         }
 
         [Fact]
@@ -345,12 +345,12 @@
             var examService = this.InitializeExamService(db);
 
             // Act
-            var result = await examService.EvaluateAsync(TrainerValid, CourseInvalid, StudentEnrolled, It.IsAny<Grade>());
+            var result = await examService.EvaluateAsync(TrainerValid, CourseInvalid, StudentEnrolled, It.IsAny<decimal>());
             var studentCourse = await db.FindAsync<StudentCourse>(StudentEnrolled, CourseValid);
 
             // Assert
             Assert.False(result);
-            Assert.Equal(PreviousGrade, studentCourse.Grade.Value);
+            Assert.Equal(PreviousGradeBg, studentCourse.GradeBg.Value);
         }
 
         [Fact]
@@ -361,12 +361,12 @@
             var examService = this.InitializeExamService(db);
 
             // Act
-            var result = await examService.EvaluateAsync(TrainerValid, CourseCurrent, StudentEnrolled, It.IsAny<Grade>());
+            var result = await examService.EvaluateAsync(TrainerValid, CourseCurrent, StudentEnrolled, It.IsAny<decimal>());
             var studentCourse = await db.FindAsync<StudentCourse>(StudentEnrolled, CourseValid);
 
             // Assert
             Assert.False(result);
-            Assert.Equal(PreviousGrade, studentCourse.Grade.Value);
+            Assert.Equal(PreviousGradeBg, studentCourse.GradeBg.Value);
         }
 
         [Fact]
@@ -377,12 +377,12 @@
             var examService = this.InitializeExamService(db);
 
             // Act
-            var result = await examService.EvaluateAsync(TrainerValid, CourseValid, StudentNotEnrolled, It.IsAny<Grade>());
+            var result = await examService.EvaluateAsync(TrainerValid, CourseValid, StudentNotEnrolled, It.IsAny<decimal>());
             var studentCourse = await db.FindAsync<StudentCourse>(StudentEnrolled, CourseValid);
 
             // Assert
             Assert.False(result);
-            Assert.Equal(PreviousGrade, studentCourse.Grade.Value);
+            Assert.Equal(PreviousGradeBg, studentCourse.GradeBg.Value);
         }
 
         [Fact]
@@ -394,12 +394,30 @@
             var examService = this.InitializeExamService(db);
 
             // Act
-            var result = await examService.EvaluateAsync(TrainerValid, CourseValid, StudentEnrolled, ExamGrade);
+            var result = await examService.EvaluateAsync(TrainerValid, CourseValid, StudentEnrolled, ExamGradeBg);
             var studentCourse = await db.FindAsync<StudentCourse>(StudentEnrolled, CourseValid);
 
             // Assert
             Assert.False(result);
-            Assert.Equal(PreviousGrade, studentCourse.Grade.Value);
+            Assert.Equal(PreviousGradeBg, studentCourse.GradeBg.Value);
+        }
+
+        [Theory]
+        [InlineData(1.99)]
+        [InlineData(6.01)]
+        public async Task EvaluateAsync_ShouldReturnFalseAndNotSaveGrade_GivenInvalidGrade(decimal gradeBgInvalid)
+        {
+            // Arrange
+            var db = await this.PrepareStudentInCourseExamSubmissions();
+            var examService = this.InitializeExamService(db);
+
+            // Act
+            var result = await examService.EvaluateAsync(TrainerValid, CourseValid, StudentEnrolled, gradeBgInvalid);
+            var studentCourse = await db.FindAsync<StudentCourse>(StudentEnrolled, CourseValid);
+
+            // Assert
+            Assert.False(result);
+            Assert.Equal(PreviousGradeBg, studentCourse.GradeBg.Value);
         }
 
         [Fact]
@@ -410,12 +428,12 @@
             var examService = this.InitializeExamService(db);
 
             // Act
-            var result = await examService.EvaluateAsync(TrainerValid, CourseValid, StudentEnrolled, ExamGrade);
+            var result = await examService.EvaluateAsync(TrainerValid, CourseValid, StudentEnrolled, ExamGradeBg);
             var studentCourse = await db.FindAsync<StudentCourse>(StudentEnrolled, CourseValid);
 
             // Assert
             Assert.True(result);
-            Assert.Equal(ExamGrade, studentCourse.Grade.Value);
+            Assert.Equal(ExamGradeBg, studentCourse.GradeBg.Value);
         }
 
         private static void AssertExamDownload(ExamSubmission expected, ExamDownloadServiceModel result)
@@ -450,7 +468,7 @@
             var trainer = new User { Id = TrainerValid };
 
             var coursePast = new Course { Id = CourseValid, TrainerId = TrainerValid, EndDate = pastDate };
-            coursePast.Students.Add(new StudentCourse { StudentId = StudentEnrolled, Grade = PreviousGrade });
+            coursePast.Students.Add(new StudentCourse { StudentId = StudentEnrolled, GradeBg = PreviousGradeBg });
 
             var courseCurrent = new Course { Id = CourseCurrent, TrainerId = TrainerValid, EndDate = futureDate };
             courseCurrent.Students.Add(new StudentCourse { StudentId = StudentEnrolled });
@@ -472,7 +490,7 @@
             var trainer = new User { Id = TrainerValid };
 
             var coursePast = new Course { Id = CourseValid, TrainerId = TrainerValid, EndDate = pastDate };
-            coursePast.Students.Add(new StudentCourse { StudentId = StudentEnrolled, Grade = PreviousGrade });
+            coursePast.Students.Add(new StudentCourse { StudentId = StudentEnrolled, GradeBg = PreviousGradeBg });
 
             var courseCurrent = new Course { Id = CourseCurrent, TrainerId = TrainerValid, EndDate = futureDate };
             courseCurrent.Students.Add(new StudentCourse { StudentId = StudentEnrolled });

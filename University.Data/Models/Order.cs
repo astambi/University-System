@@ -12,7 +12,8 @@
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;
 
         [Column(TypeName = "decimal(18,2)")]
-        [Range(0, double.MaxValue)]
+        [Range(0, double.MaxValue, 
+            ErrorMessage = DataConstants.NegativeNumber)]
         public decimal TotalPrice { get; set; }
 
         public PaymentType PaymentMethod { get; set; }

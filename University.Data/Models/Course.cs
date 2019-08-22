@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using University.Common.Infrastructure.Extensions;
 
     public class Course : IValidatableObject
     {
@@ -33,7 +34,8 @@
         public DateTime EndDate { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
-        [Range(0, double.MaxValue)]
+        [Range(0, double.MaxValue,
+            ErrorMessage = DataConstants.NegativeNumber)]
         public decimal Price { get; set; }
 
         public ICollection<Resource> Resources { get; set; } = new List<Resource>();
@@ -46,7 +48,8 @@
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            var hasStartBeforeToday = this.StartDate.ToLocalTime().Date < DateTime.Now.Date;
+            //var hasStartBeforeToday = this.StartDate.ToLocalTime().Date < DateTime.Now.Date;
+            var hasStartBeforeToday = this.StartDate.HasEnded();
             var hasEndBeforeStart = this.StartDate < this.EndDate;
 
             if (hasStartBeforeToday)

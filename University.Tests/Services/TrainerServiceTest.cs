@@ -386,14 +386,14 @@
                 var exprectedGrade = expectedUser
                     .Courses
                     .Where(sc => sc.CourseId == CourseValid)
-                    .Select(s => s.Grade)
+                    .Select(s => s.GradeBg)
                     .FirstOrDefault();
 
                 var expectedHasExamSubmissions = expectedUser
                     .ExamSubmissions
                     .Any(e => e.CourseId == CourseValid);
 
-                Assert.Equal(exprectedGrade, resultUser.Grade);
+                Assert.Equal(exprectedGrade, resultUser.GradeBg);
                 Assert.Equal(expectedHasExamSubmissions, resultUser.HasExamSubmission);
             }
         }
@@ -462,8 +462,8 @@
             var course3 = new Course { Id = CourseEnded, EndDate = DateTime.UtcNow.AddDays(-1) }; // past
             var course4 = new Course { Id = CourseNotEnded, EndDate = DateTime.UtcNow.AddDays(1) }; // future
 
-            course1.Students.Add(new StudentCourse { StudentId = "1", Grade = Grade.A });
-            course1.Students.Add(new StudentCourse { StudentId = "2", Grade = Grade.B });
+            course1.Students.Add(new StudentCourse { StudentId = "1", GradeBg = DataConstants.GradeBgMaxValue });
+            course1.Students.Add(new StudentCourse { StudentId = "2", GradeBg = DataConstants.GradeBgCertificateMinValue });
 
             student1.ExamSubmissions.Add(new ExamSubmission { Id = 1, CourseId = CourseValid });
             student1.ExamSubmissions.Add(new ExamSubmission { Id = 2, CourseId = CourseValid });

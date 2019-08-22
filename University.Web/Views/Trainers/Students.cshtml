@@ -15,13 +15,11 @@
         <thead>
             <tr class="align-bottom">
                 <th>Student</th>
-                <th>Username</th>
-                <th>Email</th>
                 @if (courseHasEnded)
                 {
                     <th>Exam</th>
                     <th>Grade</th>
-                    <th>Assessment</th>
+                    <th>Update grade</th>
                 }
             </tr>
         </thead>
@@ -29,10 +27,10 @@
             @foreach (var student in Model.Students)
             {
                 <tr>
-                    <td class="align-middle">@student.StudentName</td>
-                    <td class="align-middle">@student.StudentUserName</td>
-                    <td class="align-middle">@student.StudentEmail</td>
-
+                    <td class="align-middle">
+                        @student.StudentName (@student.StudentUserName)
+                        <partial name="_EmailPartial" model="@student.StudentEmail" />
+                    </td>
                     @if (courseHasEnded)
                     {
                         <td class="align-middle text-center">
@@ -48,7 +46,7 @@
                                 <i class="fa fa-user-slash"></i>
                             }
                         </td>
-                        <td class="align-middle">@student.Grade</td>
+                        <td class="align-middle">@student.GradeBg</td>
                         <td class="align-middle">
                             @if (student.HasExamSubmission)
                             {
@@ -56,7 +54,7 @@
                                 {
                                     CourseId = Model.Course.Id,
                                     StudentId = student.StudentId,
-                                    Grade = student.Grade
+                                    GradeBg = student.GradeBg
                                 };
                                 <partial name="_GradeFormPartial" model="@formModel" />
                             }

@@ -3,13 +3,13 @@
     using System;
     using System.Linq;
     using System.Threading.Tasks;
-    using University.Data.Models;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using University.Data;
     using University.Services.Models.Certificates;
     using University.Tests.Mocks;
     using University.Web;
     using University.Web.Controllers;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
     using Xunit;
 
     public class CertificatesControllerTest
@@ -197,7 +197,7 @@
             Assert.Equal(expectedCertificate.CourseStartDate, certificate.CourseStartDate);
             Assert.Equal(expectedCertificate.CourseEndDate, certificate.CourseEndDate);
             Assert.Equal(expectedCertificate.CourseTrainerName, certificate.CourseTrainerName);
-            Assert.Equal(expectedCertificate.Grade, certificate.Grade);
+            Assert.Equal(expectedCertificate.GradeBg, certificate.GradeBg);
             Assert.Equal(expectedCertificate.IssueDate, certificate.IssueDate);
             Assert.Equal(expectedCertificate.DownloadUrl, certificate.DownloadUrl);
         }
@@ -223,7 +223,7 @@
                CourseName = "Course",
                CourseStartDate = new DateTime(2019, 1, 1),
                CourseEndDate = new DateTime(2019, 5, 15),
-               Grade = Grade.A,
+               GradeBg = DataConstants.GradeBgMaxValue,
                CourseTrainerName = "TrainerId",
                IssueDate = new DateTime(2019, 7, 10),
                DownloadUrl = DownloadUrl

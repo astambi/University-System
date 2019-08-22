@@ -12,6 +12,7 @@
         private const string CurrencyFormat = "C2";
         private const string CultureBg = "bg-BG";
         private const string NumberFormat = "N0";
+        private const string NumberDecimal = "F2";
         private const string PercentageFormat = "P2";
 
         private const string BgAlphabet = "а б в г д е ж  з и й к л м н о п р с т у ф х ц  ч  ш  щ   ъ ь ю  я";
@@ -60,6 +61,9 @@
 
         public static string ToFriendlyUrl(this string text)
             => Regex.Replace(TranslitConvert(text), @"[^A-Za-z0-9_\.~]+", "-");
+
+        public static string ToNumberDecimal(this int number)
+            => number.ToString(NumberDecimal);
 
         public static string ToNumber(this int number)
             => number.ToString(NumberFormat);

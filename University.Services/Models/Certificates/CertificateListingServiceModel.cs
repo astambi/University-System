@@ -10,6 +10,6 @@
 
         public DateTime IssueDate { get; set; }
 
-        public Grade Grade { get; set; }        
+        public decimal GradeBg { get; set; }
     }
 }

@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using University.Common.Infrastructure.Extensions;
 
     public class Article : IValidatableObject
     {
@@ -28,7 +29,8 @@
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            var isFutureDate = DateTime.Now.Date < this.PublishDate.ToLocalTime().Date;
+            //var isFutureDate = DateTime.Now.Date < this.PublishDate.ToLocalTime().Date;
+            var isFutureDate = this.PublishDate.IsUpcoming();
             if (isFutureDate)
             {
                 yield return new ValidationResult(DataConstants.ArticlePublishDate,

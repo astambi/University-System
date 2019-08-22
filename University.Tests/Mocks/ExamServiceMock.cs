@@ -13,7 +13,7 @@
         public static Mock<IExamService> EvaluateAsync(this Mock<IExamService> mock, bool result)
         {
             mock
-                .Setup(s => s.EvaluateAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<Grade>()))
+                .Setup(s => s.EvaluateAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<decimal>()))
                 .ReturnsAsync(result)
                 .Verifiable();
 

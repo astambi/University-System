@@ -16,7 +16,7 @@
 
         public string StudentName { get; set; }
 
-        public Grade Grade { get; set; }
+        public decimal GradeBg { get; set; }
 
         public string CourseTrainerName { get; set; }
 

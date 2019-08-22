@@ -1,9 +1,8 @@
 ﻿namespace University.Tests.Mocks
 {
-    using University.Data.Models;
+    using Moq;
     using University.Services;
     using University.Services.Models.Certificates;
-    using Moq;
 
     public static class CertificateServiceMock
     {
@@ -13,7 +12,7 @@
         public static Mock<ICertificateService> CreateAsync(this Mock<ICertificateService> mock, bool result)
         {
             mock
-                .Setup(s => s.CreateAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<Grade>()))
+                .Setup(s => s.CreateAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<decimal>()))
                 .ReturnsAsync(result)
                 .Verifiable();
 
@@ -31,7 +30,7 @@
         public static Mock<ICertificateService> IsGradeEligibleForCertificate(this Mock<ICertificateService> mock, bool result)
         {
             mock
-                .Setup(s => s.IsGradeEligibleForCertificate(It.IsAny<Grade?>()))
+                .Setup(s => s.IsGradeEligibleForCertificate(It.IsAny<decimal?>()))
                 .Returns(result)
                 .Verifiable();
 

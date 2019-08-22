@@ -19,6 +19,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Moq;
     using Xunit;
+    using University.Data;
 
     public class TrainersControllerTest
     {
@@ -330,7 +331,7 @@
             var result = await controller.EvaluateExam(TestCourseId, It.IsAny<StudentCourseGradeFormModel>());
 
             // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.StudentAssessmentErrorMsg);
+            controller.TempData.AssertErrorMsg(WebConstants.GradeInvalidMsg);
 
             this.AssertRedirectToTrainersControllerStudents(result);
             this.AssertRouteWithId(result);
@@ -951,7 +952,7 @@
                 var actual = students.FirstOrDefault(st => st.StudentId == expected.StudentId);
                 Assert.NotNull(actual);
 
-                Assert.Equal(expected.Grade, actual.Grade);
+                Assert.Equal(expected.GradeBg, actual.GradeBg);
                 Assert.Equal(expected.HasExamSubmission, actual.HasExamSubmission);
                 Assert.Equal(expected.StudentName, actual.StudentName);
                 Assert.Equal(expected.StudentUserName, actual.StudentUserName);
@@ -971,13 +972,18 @@
         private IEnumerable<StudentInCourseServiceModel> GetStudentInCourseServiceModelCollection()
             => new List<StudentInCourseServiceModel>
             {
-                new StudentInCourseServiceModel { StudentId = "1", StudentName = "Name1", StudentUserName = "Username1", StudentEmail = "email.1@email.com", Grade = Grade.A, HasExamSubmission = true },
-                new StudentInCourseServiceModel { StudentId = "2", StudentName = "Name2", StudentUserName = "Username2", StudentEmail = "email.2@email.com", Grade = Grade.B, HasExamSubmission = true },
-                new StudentInCourseServiceModel { StudentId = "3", StudentName = "Name3", StudentUserName = "Username3", StudentEmail = "email.3@email.com", Grade = null, HasExamSubmission = true},
-                new StudentInCourseServiceModel { StudentId = "4", StudentName = "Name4", StudentUserName = "Username4", StudentEmail = "email.4@email.com", Grade = null, HasExamSubmission = false},
+                new StudentInCourseServiceModel { StudentId = "1", StudentName = "Name1", StudentUserName = "Username1", StudentEmail = "email.1@email.com", GradeBg = DataConstants.GradeBgMaxValue, HasExamSubmission = true },
+                new StudentInCourseServiceModel { StudentId = "2", StudentName = "Name2", StudentUserName = "Username2", StudentEmail = "email.2@email.com", GradeBg = DataConstants.GradeBgCertificateMinValue, HasExamSubmission = true },
+                new StudentInCourseServiceModel { StudentId = "3", StudentName = "Name3", StudentUserName = "Username3", StudentEmail = "email.3@email.com", GradeBg = null, HasExamSubmission = true},
+                new StudentInCourseServiceModel { StudentId = "4", StudentName = "Name4", StudentUserName = "Username4", StudentEmail = "email.4@email.com", GradeBg = null, HasExamSubmission = false},
             };
 
         private StudentCourseGradeFormModel GetStudentInCourseWithGrade()
-            => new StudentCourseGradeFormModel { CourseId = TestCourseId, StudentId = TestStudentId, Grade = Grade.A };
+            => new StudentCourseGradeFormModel
+            {
+                CourseId = TestCourseId,
+                StudentId = TestStudentId,
+                GradeBg = DataConstants.GradeBgMaxValue
+            };
     }
 }

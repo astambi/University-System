@@ -15,7 +15,7 @@
 
         public string StudentName { get; set; }
 
-        public Grade? Grade { get; set; }
+        public decimal? GradeBg { get; set; }
 
         public bool HasExamSubmission { get; set; }
 

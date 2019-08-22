@@ -7,10 +7,10 @@
     <input asp-for="StudentId" hidden />
 
     <div class="form-group d-flex p-0 m-0">
-        <select asp-for="Grade" asp-items="Html.GetEnumSelectList<Grade>()" class="form-control" required>
-            <option selected disabled>Grade</option>
-        </select>
-        <span asp-validation-for="Grade" class="text-danger"></span>
+        <div class="form-group m-0">
+            <input asp-for="GradeBg" class="form-control" type="number" min="2" max="6" step="0.01" required />
+            <span asp-validation-for="GradeBg" class="text-danger"></span>
+        </div>
         <partial name="_FormSubmitPartial" model="FormActionEnum.Grade" />
     </div>
 </form>

@@ -86,7 +86,7 @@
             => await this.GetForStudentById(id, userId)
             .AnyAsync();
 
-        public async Task<bool> EvaluateAsync(string trainerId, int courseId, string studentId, Grade grade)
+        public async Task<bool> EvaluateAsync(string trainerId, int courseId, string studentId, decimal gradeBg)
         {
             var isCourseTrainer = await this.db
                 .Courses
@@ -110,17 +110,19 @@
 
             if (!(isCourseTrainer && courseHasEnded)
                 || studentCourse == null
-                || !examsFound)
+                || !examsFound
+                || gradeBg < DataConstants.GradeBgMinValue
+                || gradeBg > DataConstants.GradeBgMaxValue)
             {
                 return false;
             }
 
-            if (studentCourse.Grade == grade)
+            if (studentCourse.GradeBg == gradeBg)
             {
                 return true;
             }
 
-            studentCourse.Grade = grade;
+            studentCourse.GradeBg = gradeBg;
             var result = await this.db.SaveChangesAsync();
 
             return result > 0;

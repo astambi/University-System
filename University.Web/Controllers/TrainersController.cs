@@ -150,7 +150,7 @@
 
             if (!this.ModelState.IsValid)
             {
-                this.TempData.AddErrorMessage(WebConstants.StudentAssessmentErrorMsg);
+                this.TempData.AddErrorMessage(WebConstants.GradeInvalidMsg);
                 return this.RedirectToTrainerStudentsForCourse(id);
             }
 
@@ -182,7 +182,7 @@
                 return this.RedirectToTrainerStudentsForCourse(id);
             }
 
-            var gradeValue = model.Grade.Value;
+            var gradeValue = model.GradeBg.Value;
             var success = await this.examService.EvaluateAsync(userId, id, model.StudentId, gradeValue);
             if (!success)
             {
@@ -241,9 +241,9 @@
 
         private async Task CreateCertificate(int courseId, string trainerId, StudentCourseGradeFormModel model)
         {
-            if (this.certificateService.IsGradeEligibleForCertificate(model.Grade))
+            if (this.certificateService.IsGradeEligibleForCertificate(model.GradeBg))
             {
-                var success = await this.certificateService.CreateAsync(trainerId, courseId, model.StudentId, model.Grade.Value);
+                var success = await this.certificateService.CreateAsync(trainerId, courseId, model.StudentId, model.GradeBg.Value);
                 if (success)
                 {
                     this.TempData.AddSuccessMessage(WebConstants.ExamAssessedMsg + Environment.NewLine + WebConstants.CertificateIssuedMsg);

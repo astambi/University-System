@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using University.Data;
     using University.Data.Models;
     using University.Services.Models.Courses;
     using University.Services.Models.Users;
@@ -104,7 +105,7 @@
                 Assert.Equal(expectedCourse.CourseStartDate, actualCourse.CourseStartDate);
                 Assert.Equal(expectedCourse.CourseEndDate, actualCourse.CourseEndDate);
                 Assert.Equal(expectedCourse.CertificateId, actualCourse.CertificateId);
-                Assert.Equal(expectedCourse.Grade, actualCourse.Grade);
+                Assert.Equal(expectedCourse.GradeBg, actualCourse.GradeBg);
             }
         }
 
@@ -150,8 +151,8 @@
         private IList<CourseProfileServiceModel> GetProfileCourses()
             => new List<CourseProfileServiceModel>()
             {
-                new CourseProfileServiceModel { CourseId = 1, CourseName = "Name1", CourseStartDate = new DateTime(2019, 1, 15), CourseEndDate = new DateTime(2019, 4, 15), Grade = Grade.A, CertificateId = "1" },
-                new CourseProfileServiceModel { CourseId = 2, CourseName = "Name2", CourseStartDate = new DateTime(2019, 3, 10), CourseEndDate = new DateTime(2019, 5, 10), Grade = null, CertificateId = null },
+                new CourseProfileServiceModel { CourseId = 1, CourseName = "Name1", CourseStartDate = new DateTime(2019, 1, 15), CourseEndDate = new DateTime(2019, 4, 15), GradeBg = DataConstants.GradeBgMaxValue, CertificateId = "1" },
+                new CourseProfileServiceModel { CourseId = 2, CourseName = "Name2", CourseStartDate = new DateTime(2019, 3, 10), CourseEndDate = new DateTime(2019, 5, 10), GradeBg = null, CertificateId = null },
             };
 
         private UserProfileServiceModel GetProfileUserData()

@@ -17,6 +17,6 @@
 
         Task<bool> ExistsForStudentAsync(int id, string userId);
 
-        Task<bool> EvaluateAsync(string trainerId, int courseId, string studentId, Grade grade);
+        Task<bool> EvaluateAsync(string trainerId, int courseId, string studentId, decimal gradeBg);
     }
 }

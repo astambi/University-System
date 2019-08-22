@@ -239,7 +239,7 @@
                         Course = c,
                         Grade = c.Students
                             .Where(sc => sc.StudentId == UserIdValid)
-                            .Select(sc => sc.Grade)
+                            .Select(sc => sc.GradeBg)
                             .FirstOrDefault(),
                         CertificateId = c.Certificates
                             .Where(cert => cert.StudentId == UserIdValid)
@@ -254,7 +254,7 @@
                 Assert.Equal(expectedCourse.StartDate, resultItem.CourseStartDate);
                 Assert.Equal(expectedCourse.EndDate, resultItem.CourseEndDate);
 
-                Assert.Equal(expected.Grade, resultItem.Grade);
+                Assert.Equal(expected.Grade, resultItem.GradeBg);
                 Assert.Equal(expected.CertificateId, resultItem.CertificateId);
             }
 
@@ -436,7 +436,7 @@
                 var actualCertificate = actualGroupList[i];
 
                 Assert.Equal(expectedCertificate.Id, actualCertificate.Id);
-                Assert.Equal(expectedCertificate.Grade, actualCertificate.Grade);
+                Assert.Equal(expectedCertificate.GradeBg, actualCertificate.GradeBg);
                 Assert.Equal(expectedCertificate.IssueDate, actualCertificate.IssueDate);
             }
         }
@@ -494,9 +494,9 @@
             var course3 = new Course { Id = 3, Name = "Course 1", StartDate = new DateTime(2019, 7, 10), EndDate = new DateTime(2019, 8, 10) }; // first
 
             var user = new User { Id = UserIdValid };
-            user.Courses.Add(new StudentCourse { CourseId = course1.Id, Grade = Grade.A });
-            user.Courses.Add(new StudentCourse { CourseId = course2.Id, Grade = Grade.B });
-            user.Courses.Add(new StudentCourse { CourseId = course3.Id, Grade = null });
+            user.Courses.Add(new StudentCourse { CourseId = course1.Id, GradeBg = DataConstants.GradeBgMaxValue });
+            user.Courses.Add(new StudentCourse { CourseId = course2.Id, GradeBg = DataConstants.GradeBgCertificateMinValue });
+            user.Courses.Add(new StudentCourse { CourseId = course3.Id, GradeBg = null });
 
             var certificate1 = new Certificate { Id = "1", CourseId = course1.Id, StudentId = UserIdValid };
             var certificate2 = new Certificate { Id = "2", CourseId = course2.Id, StudentId = UserIdValid };
@@ -518,11 +518,11 @@
             var course1 = new Course { Id = CourseIdSecond, Name = CourseNameSecond };
             var course2 = new Course { Id = CourseIdFirst, Name = CourseNameFirst };
 
-            var certificate1 = new Certificate { Id = "CertificateAAA", CourseId = CourseIdSecond, Grade = Grade.B, IssueDate = DateFirst, StudentId = UserIdValid };
-            var certificate2 = new Certificate { Id = "CertificateBBB", CourseId = CourseIdSecond, Grade = Grade.A, IssueDate = DateSecond, StudentId = UserIdValid };
-            var certificate3 = new Certificate { Id = "CertificateCCC", CourseId = CourseIdFirst, Grade = Grade.A, IssueDate = DateThird, StudentId = UserIdValid };
+            var certificate1 = new Certificate { Id = "CertificateAAA", CourseId = CourseIdSecond, GradeBg = DataConstants.GradeBgCertificateMinValue, IssueDate = DateFirst, StudentId = UserIdValid };
+            var certificate2 = new Certificate { Id = "CertificateBBB", CourseId = CourseIdSecond, GradeBg = DataConstants.GradeBgMaxValue, IssueDate = DateSecond, StudentId = UserIdValid };
+            var certificate3 = new Certificate { Id = "CertificateCCC", CourseId = CourseIdFirst, GradeBg = DataConstants.GradeBgMaxValue, IssueDate = DateThird, StudentId = UserIdValid };
 
-            var certificateOther = new Certificate { Id = "CertificateDDD", CourseId = CourseIdSecond, Grade = Grade.A, IssueDate = DateThird, StudentId = UserIdInvalid };
+            var certificateOther = new Certificate { Id = "CertificateDDD", CourseId = CourseIdSecond, GradeBg = DataConstants.GradeBgMaxValue, IssueDate = DateThird, StudentId = UserIdInvalid };
 
             var db = Tests.InitializeDatabase();
             await db.Courses.AddRangeAsync(course1, course2);

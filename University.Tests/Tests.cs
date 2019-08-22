@@ -64,7 +64,7 @@
                     .Course
                     .Certificates
                     .Where(c => c.StudentId == src.StudentId)
-                    .OrderBy(c => c.Grade)
+                    .OrderByDescending(c => c.GradeBg)
                     .Select(c => c.Id)
                     .FirstOrDefault()));
 

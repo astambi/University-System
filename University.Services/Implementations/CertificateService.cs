@@ -4,10 +4,10 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
+    using Microsoft.EntityFrameworkCore;
     using University.Data;
     using University.Data.Models;
     using University.Services.Models.Certificates;
-    using Microsoft.EntityFrameworkCore;
 
     public class CertificateService : ICertificateService
     {
@@ -22,7 +22,7 @@
             this.mapper = mapper;
         }
 
-        public async Task<bool> CreateAsync(string trainerId, int courseId, string studentId, Grade grade)
+        public async Task<bool> CreateAsync(string trainerId, int courseId, string studentId, decimal gradeBg)
         {
             var isCourseTrainer = await this.db
                 .Courses
@@ -36,7 +36,7 @@
 
             if (!(isCourseTrainer
                 && isUserEnrolledInCourse
-                && this.IsGradeEligibleForCertificate(grade)))
+                && this.IsGradeEligibleForCertificate(gradeBg)))
             {
                 return false;
             }
@@ -45,12 +45,12 @@
                 .Certificates
                 .Where(c => c.CourseId == courseId)
                 .Where(c => c.StudentId == studentId)
-                .OrderBy(c => c.Grade)
+                .OrderByDescending(c => c.GradeBg) // best grade [2; 6]
                 .FirstOrDefaultAsync();
 
             var canUpgradeCertificate =
                 prevBestCertificate == null // no prev certificate
-                || grade < prevBestCertificate.Grade; // Enum Grade value smaller is better (A = 0, B = 1, etc.)
+                || prevBestCertificate.GradeBg < gradeBg; // better grade
 
             if (!canUpgradeCertificate)
             {
@@ -62,7 +62,7 @@
                 Id = Guid.NewGuid().ToString().Replace("-", string.Empty),
                 StudentId = studentId,
                 CourseId = courseId,
-                Grade = grade,
+                GradeBg = gradeBg,
                 IssueDate = DateTime.UtcNow
             };
 
@@ -80,8 +80,8 @@
                 .Where(c => c.Id == certificateId))
             .FirstOrDefaultAsync();
 
-        public bool IsGradeEligibleForCertificate(Grade? grade)
-            => grade != null
-            && Grade.A <= grade && grade <= Grade.C;
+        public bool IsGradeEligibleForCertificate(decimal? gradeBg)
+            => gradeBg != null
+            && DataConstants.GradeBgCertificateMinValue <= gradeBg && gradeBg <= DataConstants.GradeBgMaxValue;
     }
 }

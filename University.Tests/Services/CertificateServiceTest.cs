@@ -21,6 +21,11 @@
         private const string CertificateIdValid = "CertificateValid";
         private const string CertificateIdInvalid = "CertificateInvalid";
 
+        private const decimal CertificateGrade = 6.00m;
+
+        private const decimal GradeSame = 5.50m;
+        private const decimal GradeWorse = 5.49m;
+
         private const string StudentEnrolledId = "StudentEnrolledId";
         private const string StudentNotEnrolledId = "StudentNotEnrolledId";
 
@@ -28,7 +33,6 @@
         private const string TrainerInvalidId = "TrainerInvalidId";
         private const string UserIdValid = "UserValid";
 
-        private const Grade CertificateGrade = Grade.A;
 
         [Fact]
         public async Task CreateAsync_ShouldReturnFalse_GivenInvalidCourseTrainer()
@@ -40,8 +44,8 @@
             var certificateService = this.InitializeCertificateService(db);
 
             // Act
-            var resultInvalidCourse = await certificateService.CreateAsync(TrainerValidId, CourseInvalidId, It.IsAny<string>(), It.IsAny<Grade>());
-            var resultInvalidTrainer = await certificateService.CreateAsync(TrainerInvalidId, CourseValidId, It.IsAny<string>(), It.IsAny<Grade>());
+            var resultInvalidCourse = await certificateService.CreateAsync(TrainerValidId, CourseInvalidId, It.IsAny<string>(), It.IsAny<decimal>());
+            var resultInvalidTrainer = await certificateService.CreateAsync(TrainerInvalidId, CourseValidId, It.IsAny<string>(), It.IsAny<decimal>());
 
             // Assert
             Assert.False(resultInvalidCourse);
@@ -58,17 +62,16 @@
             var certificateService = this.InitializeCertificateService(db);
 
             // Act
-            var result = await certificateService.CreateAsync(TrainerValidId, CourseValidId, StudentNotEnrolledId, It.IsAny<Grade>());
+            var result = await certificateService.CreateAsync(TrainerValidId, CourseValidId, StudentNotEnrolledId, It.IsAny<decimal>());
 
             // Assert
             Assert.False(result);
         }
 
         [Theory]
-        [InlineData(Grade.D)]
-        [InlineData(Grade.E)]
-        [InlineData(Grade.F)]
-        public async Task CreateAsync_ShouldReturnFalse_GivenInvalidGrade(Grade invalidGrade)
+        [InlineData(4.99)]
+        [InlineData(6.01)]
+        public async Task CreateAsync_ShouldReturnFalse_GivenInvalidGrade(decimal invalidGrade)
         {
             // Arrange
             var db = Tests.InitializeDatabase();
@@ -90,15 +93,17 @@
             // Arrange
             var db = Tests.InitializeDatabase();
             await this.PrepareStudentInCourse(db);
-            await this.PrepareStudentCourseCertificate(db, Grade.B);
+
+
+            await this.PrepareStudentCourseCertificate(db, GradeSame);
 
             var certificateService = this.InitializeCertificateService(db);
 
             // Act
             var resultSameGrade = await certificateService.CreateAsync(
-                TrainerValidId, CourseValidId, StudentEnrolledId, Grade.B);
+                TrainerValidId, CourseValidId, StudentEnrolledId, GradeSame);
             var resultWorseGrade = await certificateService.CreateAsync(
-                TrainerValidId, CourseValidId, StudentEnrolledId, Grade.C);
+                TrainerValidId, CourseValidId, StudentEnrolledId, GradeWorse);
 
             // Assert
             Assert.False(resultSameGrade);
@@ -129,12 +134,12 @@
         }
 
         [Fact]
-        public async Task CreateAsync_ShouldReturnTrue_ExistingGradeHasImproved()
+        public async Task CreateAsync_ShouldReturnTrue_GivenExistingGradeHasImproved()
         {
             // Arrange
             var db = Tests.InitializeDatabase();
             await this.PrepareStudentInCourse(db);
-            await this.PrepareStudentCourseCertificate(db, Grade.B);
+            await this.PrepareStudentCourseCertificate(db, GradeWorse);
 
             var certificateService = this.InitializeCertificateService(db);
             var certificatesCountBefore = this.GetCertificatesCountForValidStudentCourse(db);
@@ -186,7 +191,7 @@
             {
                 Id = CertificateIdValid,
                 IssueDate = DateTime.UtcNow,
-                Grade = Grade.A,
+                GradeBg = DataConstants.GradeBgMaxValue,
                 StudentId = UserIdValid,
                 CourseId = CourseValidId
             };
@@ -206,7 +211,7 @@
             Assert.IsType<CertificateServiceModel>(result);
 
             Assert.Equal(certificate.Id, result.Id);
-            Assert.Equal(certificate.Grade, result.Grade);
+            Assert.Equal(certificate.GradeBg, result.GradeBg);
             Assert.Equal(certificate.IssueDate, result.IssueDate);
 
             Assert.Equal(course.Name, result.CourseName);
@@ -219,37 +224,38 @@
             Assert.Null(result.DownloadUrl); // to be set in controller
         }
 
-        [Theory]
-        [InlineData(Grade.D, false)]
-        [InlineData(Grade.E, false)]
-        [InlineData(Grade.F, false)]
-        [InlineData(null, false)]
-        public void IsGradeEligibleForCertificate_ShouldReturnFalse_WithGradesDEForNull(Grade? grade, bool expectedResult)
+        [Fact]
+        public void IsGradeEligibleForCertificate_ShouldReturnFalse_WithInvalidGrade()
         {
             // Arrange
             var db = Tests.InitializeDatabase();
             var certificateService = this.InitializeCertificateService(db);
 
             // Act
-            var result = certificateService.IsGradeEligibleForCertificate(grade);
+            var resultInvalidMin = certificateService.IsGradeEligibleForCertificate(DataConstants.GradeBgCertificateMinValue - 0.01m);
+            var resultInvalidMax = certificateService.IsGradeEligibleForCertificate(DataConstants.GradeBgMaxValue + 0.01m);
 
             // Assert
-            Assert.Equal(expectedResult, result);
+            Assert.False(resultInvalidMin);
+            Assert.False(resultInvalidMax);
         }
 
         [Fact]
-        public void IsGradeEligibleForCertificate_ShouldReturnTrue_WithGradesInRangeAtoC()
+        public void IsGradeEligibleForCertificate_ShouldReturnTrue_WithValidGrades()
         {
             // Arrange
             var db = Tests.InitializeDatabase();
             var certificateService = this.InitializeCertificateService(db);
 
             // Act
-            var result = certificateService.IsGradeEligibleForCertificate(
-                It.IsInRange(Grade.A, Grade.C, Range.Inclusive));
+            var resultMin = certificateService.IsGradeEligibleForCertificate(DataConstants.GradeBgCertificateMinValue);
+            var resultMid = certificateService.IsGradeEligibleForCertificate(5.50m);
+            var resultMax = certificateService.IsGradeEligibleForCertificate(DataConstants.GradeBgMaxValue);
 
             // Assert
-            Assert.True(result);
+            Assert.True(resultMin);
+            Assert.True(resultMid);
+            Assert.True(resultMax);
         }
 
         private static void AssertCertificate(Certificate certificate)
@@ -258,7 +264,7 @@
 
             Assert.Equal(StudentEnrolledId, certificate.StudentId);
             Assert.Equal(CourseValidId, certificate.CourseId);
-            Assert.Equal(CertificateGrade, certificate.Grade);
+            Assert.Equal(CertificateGrade, certificate.GradeBg);
 
             Assert.Equal(dateTimeUtcNow.Year, certificate.IssueDate.Year);
             Assert.Equal(dateTimeUtcNow.Month, certificate.IssueDate.Month);
@@ -277,13 +283,13 @@
             .Where(c => c.CourseId == CourseValidId)
             .Count();
 
-        private async Task PrepareStudentCourseCertificate(UniversityDbContext db, Grade grade)
+        private async Task PrepareStudentCourseCertificate(UniversityDbContext db, decimal grade)
         {
             await db.Certificates.AddAsync(new Certificate
             {
                 StudentId = StudentEnrolledId,
                 CourseId = CourseValidId,
-                Grade = grade
+                GradeBg = grade
             });
 
             await db.SaveChangesAsync();

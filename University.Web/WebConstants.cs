@@ -122,6 +122,8 @@
         public const string FileSizeInvalidMsg = "File size should not exceed {0} MB.";
         public const string FileInvalidMsg = "Invalid file size.";
 
+        public const string GradeInvalidMsg = "Invalid grade.";
+
         public const string InvalidIdentityOrRoleMsg = "Invalid identity or role.";
         public const string InvalidUserMsg = "Invalid user.";
 

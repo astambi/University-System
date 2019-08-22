@@ -19,7 +19,7 @@
         [DataType(DataType.Date)]
         public DateTime CourseEndDate { get; set; }
 
-        public Grade? Grade { get; set; }
+        public decimal? GradeBg { get; set; }
 
         public string CertificateId { get; set; }
 
@@ -32,7 +32,7 @@
                 .Course
                 .Certificates
                 .Where(c => c.StudentId == src.StudentId)
-                .OrderBy(c => c.Grade)
+                .OrderByDescending(c => c.GradeBg)
                 .Select(c => c.Id)
                 .FirstOrDefault()));
     }

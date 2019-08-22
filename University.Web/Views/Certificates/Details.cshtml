@@ -11,7 +11,7 @@
         <h2 class="p-5">@Model.StudentName</h2>
         <p>has successfully completed a course</p>
         <h2 class="pt-5 pb-3">@Model.CourseName</h2>
-        <h3>with <label>Grade @Model.Grade</label></h3>
+        <h3>with <label>Grade @Model.GradeBg / @DataConstants.GradeBgMaxValue.ToNumberDecimal()</label></h3>
     </header>
     <article class="py-5 my-5">
         <h4 class="text-center pb-2">Course details:</h4>
