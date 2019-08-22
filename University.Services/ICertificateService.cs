@@ -10,5 +10,7 @@
         Task<CertificateServiceModel> DownloadAsync(string certificateId);
 
         bool IsGradeEligibleForCertificate(decimal? gradeBg);
+
+        Task<bool> RemoveAsync(string id, string trainerId, int courseId);
     }
 }

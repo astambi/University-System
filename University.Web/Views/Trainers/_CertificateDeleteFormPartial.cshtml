@@ -1,0 +1,15 @@
+﻿@model CertificateDeleteFormModel
+
+<form asp-action="@nameof(TrainersController.DeleteCertificate)"
+      asp-route-id="@Model.CourseId" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input asp-for="CourseId" hidden />
+    <input asp-for="CertificateId" hidden />
+    <button type="submit" class="btn btn-sm btn-@FormActionEnum.Delete.ToStyle()">
+        <i class="fa fa-trash"></i>
+    </button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

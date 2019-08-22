@@ -6,10 +6,10 @@
 
 <h1>Resources</h1>
 
-<section class="d-flex justify-content-around align-items-start">
+<section class="d-flex flex-wrap justify-content-around align-items-start">
     <partial name="_CourseCardPartial" model="Model" />
 
-    <article>
+    <article class="col-sm-12 col-lg-8">
         <partial name="_ResourceUploadFormPartial" model="@resourceCreateModel" />
 
         @if (Model.Resources.Any())

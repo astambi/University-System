@@ -3,6 +3,9 @@
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
     using University.Data.Models;
     using University.Services;
     using University.Web.Infrastructure.Extensions;
@@ -10,9 +13,6 @@
     using University.Web.Models;
     using University.Web.Models.Courses;
     using University.Web.Models.Trainers;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
 
     [Authorize]
     public class TrainersController : Controller
@@ -237,6 +237,51 @@
             var fileName = FileHelpers.ExamFileName(exam.CourseName, exam.StudentUserName, exam.SubmissionDate);
 
             return this.File(exam.FileSubmission, WebConstants.ApplicationZip, fileName);
+        }
+
+        [Authorize(Roles = WebConstants.TrainerRole)]
+        [HttpPost]
+        public async Task<IActionResult> DeleteCertificate(int id, CertificateDeleteFormModel model)
+        {
+            var courseExists = this.courseService.Exists(id);
+            if (!courseExists
+                || model.CourseId != id)
+            {
+                this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            if (!this.ModelState.IsValid)
+            {
+                this.TempData.AddErrorMessage(WebConstants.CertificateNotFoundMsg);
+                return this.RedirectToTrainerStudentsForCourse(id);
+            }
+
+            var userId = this.userManager.GetUserId(this.User);
+            if (userId == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            var isTrainer = await this.trainerService.IsTrainerForCourseAsync(userId, id);
+            if (!isTrainer)
+            {
+                this.TempData.AddErrorMessage(WebConstants.NotTrainerForCourseMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            var success = await this.certificateService.RemoveAsync(model.CertificateId, userId, id);
+            if (!success)
+            {
+                this.TempData.AddErrorMessage(WebConstants.CertificateDeletedErrorMsg);
+            }
+            else
+            {
+                this.TempData.AddSuccessMessage(WebConstants.CertificateDeletedSuccessMsg);
+            }
+
+            return this.RedirectToTrainerStudentsForCourse(id);
         }
 
         private async Task CreateCertificate(int courseId, string trainerId, StudentCourseGradeFormModel model)

@@ -38,6 +38,7 @@
                 cfg.CreateMap<AdminCourseServiceModel, CourseFormModel>();
 
                 cfg.CreateMap<Certificate, CertificateDetailsListingServiceModel>();
+                cfg.CreateMap<Certificate, CertificateListingServiceModel>();
                 cfg.CreateMap<Certificate, CertificateServiceModel>();
 
                 cfg.CreateMap<Course, AdminCourseServiceModel>();
@@ -46,9 +47,10 @@
                 cfg.CreateMap<Course, CourseServiceModel>();
                 cfg.CreateMap<Course, CourseWithDescriptionServiceModel>();
                 cfg.CreateMap<Course, CourseWithResourcesServiceModel>();
+
                 cfg.CreateMap<CourseProfileServiceModel, CourseProfileMaxGradeServiceModel>()
-                    .ForMember(dest => dest.GradeBgMax, opt => opt.MapFrom(src
-                    => src.CertificateGrade != 0 ? src.CertificateGrade : src.GradeBg)); ;
+                    .ForMember(dest => dest.GradeBgMax,
+                        opt => opt.MapFrom(src => src.CertificateGrade != 0 ? src.CertificateGrade : src.GradeBg)); ;
 
                 cfg.CreateMap<ExamSubmission, ExamDownloadServiceModel>();
                 cfg.CreateMap<ExamSubmission, ExamSubmissionDetailsServiceModel>();
@@ -62,26 +64,34 @@
                 cfg.CreateMap<Resource, ResourceServiceModel>();
 
                 cfg.CreateMap<StudentCourse, CourseProfileServiceModel>()
-                    .ForMember(dest => dest.CertificateId, opt => opt.MapFrom(src
-                    => src
-                        .Course
-                        .Certificates
-                        .Where(c => c.StudentId == src.StudentId)
-                        .OrderByDescending(c => c.GradeBg)
-                        .Select(c => c.Id)
-                        .FirstOrDefault()))
-                    .ForMember(dest => dest.CertificateGrade, opt => opt.MapFrom(src
-                    => src
-                        .Course
-                        .Certificates
-                        .Where(c => c.StudentId == src.StudentId)
-                        .OrderByDescending(c => c.GradeBg)
-                        .Select(c => c.GradeBg)
-                        .FirstOrDefault())); // 0
-
+                    .ForMember(dest => dest.CertificateId,
+                        opt => opt.MapFrom(src => src
+                            .Course
+                            .Certificates
+                            .Where(c => c.StudentId == src.StudentId)
+                            .OrderByDescending(c => c.GradeBg)
+                            .Select(c => c.Id)
+                            .FirstOrDefault()))
+                    .ForMember(dest => dest.CertificateGrade,
+                        opt => opt.MapFrom(src => src
+                            .Course
+                            .Certificates
+                            .Where(c => c.StudentId == src.StudentId)
+                            .OrderByDescending(c => c.GradeBg)
+                            .Select(c => c.GradeBg)
+                            .FirstOrDefault())); // 0
                 cfg.CreateMap<StudentCourse, StudentInCourseServiceModel>()
-                    .ForMember(dest => dest.HasExamSubmission, opt => opt.MapFrom(src
-                    => src.Student.ExamSubmissions.Any(e => e.CourseId == src.CourseId)));
+                    .ForMember(dest => dest.HasExamSubmission,
+                        opt => opt.MapFrom(src => src
+                            .Student
+                            .ExamSubmissions
+                            .Any(e => e.CourseId == src.CourseId)))
+                    .ForMember(dest => dest.Certificates,
+                        opt => opt.MapFrom(src => src
+                            .Student
+                            .Certificates
+                            .Where(c => c.CourseId == src.CourseId)
+                            .OrderByDescending(c => c.GradeBg)));
 
                 cfg.CreateMap<User, AdminUserListingServiceModel>();
                 cfg.CreateMap<User, UserBasicServiceModel>();

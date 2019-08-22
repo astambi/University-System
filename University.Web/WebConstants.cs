@@ -85,6 +85,8 @@
         public const string CertificateIssuedMsg = "Course certificate issued successfully.";
         public const string CertificateNotFoundMsg = "Certificate not found.";
         public const string CertificateDownloadInProgressMsg = "Certificate download in progress. This could take a few more seconds.";
+        public const string CertificateDeletedErrorMsg = "Certificate was not deleted.";
+        public const string CertificateDeletedSuccessMsg = "Certificate deleted successfully.";
         public const string CertificateDownloadSuccessMsg = "Certificate downloaded successfully.";
 
         public const string CourseAddedToShoppingCartSuccessMsg = "Course added to shopping cart successfully.";
@@ -109,7 +111,6 @@
         public const string Disable2faErrorMsg = "Cannot disable 2FA for user.";
         public const string ExternalLoginInfoErrorMsg = "Unable to load external login info.";
 
-        public const string FormErrorsMsg = "Review the form for errors.";
 
         public const string ExamAssessedMsg = "Exam was assessed successfully.";
         public const string ExamAssessmentErrorMsg = "Exam was not assessed.";
@@ -122,7 +123,11 @@
         public const string FileSizeInvalidMsg = "File size should not exceed {0} MB.";
         public const string FileInvalidMsg = "Invalid file size.";
 
+        public const string FormErrorsMsg = "Review the form for errors.";
+
         public const string GradeInvalidMsg = "Invalid grade.";
+        public const string GradeAverageCoursesMsg = "The average grade is calculated on the basis of the best course grade received even if no certificate was awarded.";
+        public const string GradeAverageCertificatesMsg = "The average grade is calculated on the basis of the certificates awarded taking into account the best certificate grade per course.";
 
         public const string InvalidIdentityOrRoleMsg = "Invalid identity or role.";
         public const string InvalidUserMsg = "Invalid user.";
@@ -168,7 +173,7 @@
 
         public const string NotTrainerForCourseMsg = "Not authorized as trainer for this course.";
         public const string TrainerNotFoundMsg = "Trainer not found.";
-        public const string TrainersAssessPerformanceAfterCourseEndsMsg = "Trainers can assess students' course performance only when the course is over.";
+        public const string TrainersEvaluateExamsAfterCourseEndsMsg = "Trainers can evaluate students' course performance once the course is over but not later than one month after the course has ended.";
 
         public const string UserAddedToRoleMsg = "User {0} added to role {1}.";
         public const string UserDeleteErrorMsg = "User cannot be deleted. Delete user's blog articles & remove user as trainer from all courses first.";

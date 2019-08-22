@@ -83,5 +83,27 @@
         public bool IsGradeEligibleForCertificate(decimal? gradeBg)
             => gradeBg != null
             && DataConstants.GradeBgCertificateMinValue <= gradeBg && gradeBg <= DataConstants.GradeBgMaxValue;
+
+        public async Task<bool> RemoveAsync(string id, string trainerId, int courseId)
+        {
+            var certificate = this.db.Certificates.Find(id);
+
+            var isCourseTrainer = await this.db
+                .Courses
+                .Where(c => c.Id == courseId)
+                .Where(c => c.TrainerId == trainerId)
+                .AnyAsync();
+
+            if (certificate == null
+                || !isCourseTrainer)
+            {
+                return false;
+            }
+
+            this.db.Certificates.Remove(certificate);
+            var result = await this.db.SaveChangesAsync();
+
+            return result > 0;
+        }
     }
 }

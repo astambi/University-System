@@ -1,68 +1,78 @@
 ﻿@model StudentCourseGradeViewModel
 @{
     ViewData["Title"] = "Students";
-    var courseHasEnded = Model.Course.EndDate.HasEnded();
 }
 
 <h1>Students</h1>
 
-<section class="d-flex justify-content-around align-items-start">
+<section class="d-flex flex-wrap justify-content-around align-items-start">
     <partial name="_CourseCardPartial" for="Course" />
-</section>
 
-<article>
-    <table class="table">
-        <thead>
-            <tr class="align-bottom">
-                <th>Student</th>
-                @if (courseHasEnded)
-                {
-                    <th>Exam</th>
+    <article class="col-sm-12 col-lg-8">
+        <table class="table">
+            <thead>
+                <tr class="align-bottom">
+                    <th>Student / Certificates</th>
                     <th>Grade</th>
-                    <th>Update grade</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var student in Model.Students)
-            {
-                <tr>
-                    <td class="align-middle">
-                        @student.StudentName (@student.StudentUserName)
-                        <partial name="_EmailPartial" model="@student.StudentEmail" />
-                    </td>
-                    @if (courseHasEnded)
+                    @if (Model.Course.CanBeEvaluated)
                     {
-                        <td class="align-middle text-center">
-                            @if (student.HasExamSubmission)
-                            {
-                                <a asp-action="@nameof(TrainersController.DownloadExam)"
-                                   asp-route-id="@Model.Course.Id"
-                                   asp-route-studentId="@student.StudentId"
-                                   class="btn btn-@StyleHelpers.ToStyle(FormActionEnum.Download)"><i class="fa fa-download"></i></a>
-                            }
-                            else
-                            {
-                                <i class="fa fa-user-slash"></i>
-                            }
-                        </td>
-                        <td class="align-middle">@student.GradeBg</td>
-                        <td class="align-middle">
-                            @if (student.HasExamSubmission)
-                            {
-                                var formModel = new StudentCourseGradeFormModel
-                                {
-                                    CourseId = Model.Course.Id,
-                                    StudentId = student.StudentId,
-                                    GradeBg = student.GradeBg
-                                };
-                                <partial name="_GradeFormPartial" model="@formModel" />
-                            }
-                        </td>
+                        <th>Exam</th>
+                        <th>Update grade</th>
                     }
                 </tr>
-            }
-        </tbody>
-    </table>
-    <p class="small">@WebConstants.TrainersAssessPerformanceAfterCourseEndsMsg</p>
-</article>
+            </thead>
+            <tbody>
+                @foreach (var student in Model.Students)
+                {
+                    <tr>
+                        <td class="align-top">
+                            @student.StudentName (@student.StudentUserName)
+                            <partial name="_EmailPartial" model="@student.StudentEmail" />
+                            @foreach (var certificate in student.Certificates)
+                            {
+                                var certificateDeleteModel = new CertificateDeleteFormModel { CertificateId = certificate.Id, CourseId = Model.Course.Id };
+                                <div class="d-flex justify-content-start align-items-center">
+                                    <span class="mr-1">
+                                        <i class="fa fa-certificate btn text-info"></i>
+                                        @certificate.IssueDate.ToDate() (@certificate.GradeBg)
+                                    </span>
+                                    <partial name="_CertificateDeleteFormPartial" model="certificateDeleteModel" />
+                                </div>
+                            }
+                        </td>
+                        <td class="align-top">@student.GradeBg</td>
+
+                        @if (Model.Course.CanBeEvaluated)
+                        {
+                            <td class="align-top text-center">
+                                @if (student.HasExamSubmission)
+                                {
+                                    <a asp-action="@nameof(TrainersController.DownloadExam)"
+                                       asp-route-id="@Model.Course.Id"
+                                       asp-route-studentId="@student.StudentId"
+                                       class="btn btn-@StyleHelpers.ToStyle(FormActionEnum.Download)"><i class="fa fa-download"></i></a>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-user-slash"></i>
+                                }
+                            </td>
+                            <td class="align-top">
+                                @if (student.HasExamSubmission)
+                                {
+                                    var formModel = new StudentCourseGradeFormModel { CourseId = Model.Course.Id, StudentId = student.StudentId, GradeBg = student.GradeBg };
+                                    <partial name="_GradeFormPartial" model="@formModel" />
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <p class="small text-justify">@WebConstants.TrainersEvaluateExamsAfterCourseEndsMsg</p>
+    </article>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

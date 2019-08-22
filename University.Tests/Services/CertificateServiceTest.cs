@@ -3,12 +3,12 @@
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+    using Moq;
     using University.Data;
     using University.Data.Models;
     using University.Services;
     using University.Services.Implementations;
     using University.Services.Models.Certificates;
-    using Moq;
     using Xunit;
 
     public class CertificateServiceTest
@@ -32,7 +32,6 @@
         private const string TrainerValidId = "TrainerValidId";
         private const string TrainerInvalidId = "TrainerInvalidId";
         private const string UserIdValid = "UserValid";
-
 
         [Fact]
         public async Task CreateAsync_ShouldReturnFalse_GivenInvalidCourseTrainer()
@@ -155,6 +154,58 @@
             Assert.True(result);
             Assert.Equal(1, certificatesCountAfter - certificatesCountBefore);
             AssertCertificate(certificate);
+        }
+
+        [Fact]
+        public async Task RemovedAsync_ShouldReturnFalse_GivenInvalidCertificate()
+        {
+            // Arrange
+            var db = Tests.InitializeDatabase();
+            var certificateService = this.InitializeCertificateService(db);
+
+            // Act
+            var result = await certificateService.RemoveAsync(CertificateIdInvalid, It.IsAny<string>(), It.IsAny<int>());
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task RemovedAsync_ShouldReturnFalse_GivenInvalidTrainerCourse()
+        {
+            // Arrange
+            var db = Tests.InitializeDatabase();
+            await this.PrepareStudentInCourse(db);
+            await this.PrepareStudentCourseCertificate(db, 6.00m);
+
+            var certificateService = this.InitializeCertificateService(db);
+
+            // Act
+            var resultInvalidTrainer = await certificateService.RemoveAsync(CertificateIdValid, TrainerInvalidId, CourseValidId);
+            var resultInvalidCourse = await certificateService.RemoveAsync(CertificateIdValid, TrainerValidId, CourseInvalidId);
+
+            // Assert
+            Assert.False(resultInvalidTrainer);
+            Assert.False(resultInvalidCourse);
+        }
+
+        [Fact]
+        public async Task RemovedAsync_ShouldRemoveCertificate_GivenValidInput()
+        {
+            // Arrange
+            var db = Tests.InitializeDatabase();
+            await this.PrepareStudentInCourse(db);
+            await this.PrepareStudentCourseCertificate(db, 6.00m);
+
+            var certificateService = this.InitializeCertificateService(db);
+
+            // Act
+            var result = await certificateService.RemoveAsync(CertificateIdValid, TrainerValidId, CourseValidId);
+            var certificate = db.Certificates.Find(CertificateIdValid);
+
+            // Assert
+            Assert.True(result);
+            Assert.Null(certificate);
         }
 
         [Fact]
@@ -287,6 +338,7 @@
         {
             await db.Certificates.AddAsync(new Certificate
             {
+                Id = CertificateIdValid,
                 StudentId = StudentEnrolledId,
                 CourseId = CourseValidId,
                 GradeBg = grade
