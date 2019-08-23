@@ -19,20 +19,24 @@
                 <h5 class="card-title text-center">@Model.Name</h5>
             </div>
 
-            @if (Model.IsActive)
-            {
-                <div class="card-body text-uppercase table-success">Active</div>
-            }
-            else if (Model.IsUpcoming)
-            {
-                <div class="card-body text-uppercase table-info">Upcoming</div>
-            }
-
             @if (Model.TrainerName != null)
             {
                 <ul class="list-group text-center">
                     <li class="list-group-item">Trainer: @Model.TrainerName</li>
                 </ul>
+            }
+
+            @if (Model.IsActive)
+            {
+                <div class="card-footer text-uppercase shadow p-0 m-0">
+                    <div class="table-success shadow p-1">Active</div>
+                </div>
+            }
+            else if (Model.IsUpcoming)
+            {
+                <div class="card-footer text-uppercase shadow p-0 m-0">
+                    <div class="table-info shadow p-1">Upcoming</div>
+                </div>
             }
 
             <div class="card-footer d-flex flex-wrap justify-content-around align-items-center">

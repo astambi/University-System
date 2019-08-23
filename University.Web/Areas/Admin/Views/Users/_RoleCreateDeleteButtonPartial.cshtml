@@ -1,7 +1,16 @@
 ﻿@model AdminRoleFormModel
 @*Button trigger modal*@
 <button type="button" class="btn btn-sm btn-@Model.Action.ToStyle()" data-toggle="modal" data-target="#roleModal-@Model.Name">
-    @Model.Action.ToFriendlyName()
+    @switch (Model.Action)
+    {
+        case FormActionEnum.Add: // intentional fall-through
+        case FormActionEnum.Create:<i class="fa fa-plus"></i>
+            break;
+        case FormActionEnum.Delete: // intentional fall-through
+        case FormActionEnum.Remove:<i class="fa fa-trash"></i>
+            break;
+        default: break;
+    }
 </button>
 
 @*Modal*@

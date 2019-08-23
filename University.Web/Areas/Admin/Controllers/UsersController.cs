@@ -40,7 +40,7 @@
             {
                 RolesWithUsersInRole = rolesWithUsers,
                 Users = users,
-                RoleFormModel = new AdminUserRoleFormModel { Roles = rolesSelectListItems }
+                Roles = rolesSelectListItems
             };
 
             return this.View(model);
@@ -101,7 +101,7 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> RoleAddRemoveAsync(AdminUserRoleFormModel model)
+        public async Task<IActionResult> RoleAddRemoveUserAsync(AdminUserRoleFormModel model)
         {
             var user = await this.userManager.FindByIdAsync(model.UserId);
             var roleExists = await this.roleManager.RoleExistsAsync(model.Role);

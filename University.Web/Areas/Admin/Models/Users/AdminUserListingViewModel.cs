@@ -1,6 +1,7 @@
 ﻿namespace University.Web.Areas.Admin.Models.Users
 {
     using System.Collections.Generic;
+    using Microsoft.AspNetCore.Mvc.Rendering;
     using University.Services.Admin.Models;
 
     public class AdminUserListingViewModel
@@ -9,6 +10,6 @@
 
         public IEnumerable<RoleWithUsersViewModel> RolesWithUsersInRole { get; set; }
 
-        public AdminUserRoleFormModel RoleFormModel { get; set; }
+        public IEnumerable<SelectListItem> Roles { get; set; }
     }
 }

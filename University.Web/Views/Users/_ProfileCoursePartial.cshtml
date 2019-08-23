@@ -14,19 +14,6 @@
                 <h5 class="card-title">@Model.CourseName</h5>
             </div>
 
-            @if (Model.CourseStartDate.IsUpcoming())
-            {
-                <div class="card-body text-uppercase table-info">Upcoming</div>
-            }
-            else if (Model.CourseEndDate.IsToday())
-            {
-                <partial name="_ExamUploadFormPartial" for="CourseId" />
-            }
-            else if (!Model.CourseEndDate.HasEnded())
-            {
-                <div class="card-body text-uppercase table-success">Active</div>
-            }
-
             <div class="card-footer">
                 <partial name="_CertificateDownloadFormPartial" for="CertificateId" />
                 @if (Model.GradeBgMax != null)
@@ -38,6 +25,24 @@
                     <h5 class="card-subtitle font-weight-light">No grade</h5>
                 }
             </div>
+
+            @if (Model.CourseStartDate.IsUpcoming())
+            {
+                <div class="card-footer shadow p-0 m-0">
+                    <div class="text-uppercase table-info shadow p-1">Upcoming</div>
+                </div>
+            }
+            else if (Model.CourseEndDate.IsToday())
+            {
+                <partial name="_ExamUploadFormPartial" for="CourseId" />
+            }
+            else if (!Model.CourseEndDate.HasEnded())
+            {
+                <div class="card-footer shadow p-0 m-0">
+
+                    <div class="text-uppercase table-success shadow p-1">Active</div>
+                </div>
+            }
 
             <div class="card-footer d-flex flex-wrap justify-content-around align-items-center">
                 <partial name="_CourseInfoButtonPartial" model="@courseInfoModel" />

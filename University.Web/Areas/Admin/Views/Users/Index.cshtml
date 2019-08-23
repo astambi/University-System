@@ -1,28 +1,35 @@
 ﻿@model AdminUserListingViewModel
 @{
     ViewData["Title"] = "User Administration";
+    var createRoleModel = new AdminRoleFormModel { Action = FormActionEnum.Create };
 }
 
 <section class="d-flex flex-wrap justify-content-between">
-    <article class="col-sm-6 col-md-6 col-lg-4 table-info shadow p-3">
+    <article class="col-sm-12 col-lg-6 border border-info rounded shadow p-3">
         <h1>
             Roles
-            <partial name="_RoleButtonPartial" model="@new AdminRoleFormModel { Action = FormActionEnum.Create }" />
+            <partial name="_RoleCreateDeleteButtonPartial" model="createRoleModel" />
         </h1>
+
         @foreach (var role in Model.RolesWithUsersInRole)
         {
-            var deleteForm = new AdminRoleFormModel { Action = FormActionEnum.Delete, Name = role.Role };
             <h3>
                 @role.Role.ToFriendlyName()
-                <partial name="_RoleButtonPartial" model="@deleteForm" />
+                @{
+                    var deleteRoleForm = new AdminRoleFormModel { Action = FormActionEnum.Delete, Name = role.Role };
+                }
+                <partial name="_RoleCreateDeleteButtonPartial" model="deleteRoleForm" />
             </h3>
+
             @if (role.UsersInRole.Any())
             {
                 <ul>
                     @foreach (var user in role.UsersInRole)
                     {
-                        <li>
-                            <partial name="_UserPartial" model="@user" />
+                        var removeUserFromRoleModel = new AdminUserRoleFormModel { UserId = user.Id, Role = role.Role };
+                        <li class="d-flex flex-wrap justify-content-start align-items-center">
+                            <partial name="_UserPartial" model="user" />
+                            <partial name="_RoleRemoveUserFormPartial" model="removeUserFromRoleModel" />
                         </li>
                     }
                 </ul>
@@ -34,30 +41,19 @@
         }
     </article>
 
-    <article class="col-sm-6 col-md-6 col-lg-8 p-3">
+    <article class="col-sm-12 col-lg-6 p-3">
         <h1>User administration</h1>
         <header class="d-flex flex-wrap py-3">
-            <div class="col-md-4"><i class="fa fa-user"></i> User</div>
-            <div class="col-md-8"><i class="fa fa-tag"></i> Roles</div>
+            <div class="col-md-6"><i class="fa fa-user"></i> User</div>
+            <div class="col-md-6"><i class="fa fa-tag"></i> Roles</div>
         </header>
+
         @foreach (var user in Model.Users)
         {
-            var model = Model.RoleFormModel;
-            model.UserId = user.Id;
-            <article class="d-flex flex-wrap py-2 my-1 shadow-sm">
-                <div class="col-md-4">
-                    <partial name="_UserPartial" model="@user" />
-                </div>
-                <div class="col-md-8 d-flex justify-content-around flex-wrap">
-                    @{
-                        model.Action = FormActionEnum.Add;
-                    }
-                    <partial name="_UserRoleFormPartial" model="model" />
-                    @{
-                        model.Action = FormActionEnum.Remove;
-                    }
-                    <partial name="_UserRoleFormPartial" model="model" />
-                </div>
+            var model = new AdminUserRoleFormModel { UserId = user.Id, Roles = Model.Roles };
+            <article class="d-flex flex-wrap shadow-sm py-2 my-1">
+                <div class="col-md-6"><partial name="_UserPartial" model="@user" /></div>
+                <div class="col-md-6"><partial name="_RoleAddUserFormPartial" model="model" /></div>
             </article>
         }
     </article>
