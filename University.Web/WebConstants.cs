@@ -36,6 +36,7 @@
         public const string ArticlesController = "Articles";
         public const string CertificatesController = "Certificates";
         public const string CoursesController = "Courses";
+        public const string CurriculumsController = "Curriculums";
         public const string ExamsController = "Exams";
         public const string HomeController = "Home";
         public const string OrdersController = "Orders";
@@ -89,7 +90,13 @@
         public const string CertificateDeletedSuccessMsg = "Certificate deleted successfully.";
         public const string CertificateDownloadSuccessMsg = "Certificate downloaded successfully.";
 
+        public const string CourseAddedToCurriculumErrorMsg = "Could not add course to curriculum.";
+        public const string CourseAddedToCurriculumSuccessMsg = "Course added to curriculum successfully.";
+        public const string CourseRemoveFromCurriculumErrorMsg = "Could not remove course from curriculum.";
+        public const string CourseRemoveFromCurriculumSuccessMsg = "Course removed from curriculum successfully.";
+
         public const string CourseAddedToShoppingCartSuccessMsg = "Course added to shopping cart successfully.";
+
         public const string CourseCreateErrorMsg = "Course not created.";
         public const string CourseCreateSuccessMsg = "Course created successfully.";
         public const string CourseDeleteSuccessMsg = "Course deleted successfully.";
@@ -108,9 +115,14 @@
         public const string CourseUpdateErrorMsg = "Course not updated.";
         public const string CourseUpdateSuccessMsg = "Course updated successfully.";
 
+        public const string CurriculumCreateErrorMsg = "Curriculum not created.";
+        public const string CurriculumCreateSuccessMsg = "Curriculum created successfully.";
+        public const string CurriculumNotFoundMsg = "Curriculum not found.";
+        public const string CurriculumContainsCourseAlreadyMsg = "Curriculum already contains this course.";
+        public const string CurriculumDoesNotContainCourseMsg = "Course not found in this curriculum.";
+
         public const string Disable2faErrorMsg = "Cannot disable 2FA for user.";
         public const string ExternalLoginInfoErrorMsg = "Unable to load external login info.";
-
 
         public const string ExamAssessedMsg = "Exam was assessed successfully.";
         public const string ExamAssessmentErrorMsg = "Exam was not assessed.";

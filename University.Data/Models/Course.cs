@@ -46,6 +46,8 @@
 
         public ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();
 
+        public ICollection<CurriculumCourse> Curriculums { get; set; } = new List<CurriculumCourse>();
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             //var hasStartBeforeToday = this.StartDate.ToLocalTime().Date < DateTime.Now.Date;

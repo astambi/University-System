@@ -25,6 +25,10 @@
 
         public DbSet<OrderItem> OrderItems { get; set; }
 
+        public DbSet<Curriculum> Curriculums { get; set; }
+
+        public DbSet<Diploma> Diplomas { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -45,6 +49,22 @@
                .HasOne(sc => sc.Course)
                .WithMany(c => c.Students)
                .HasForeignKey(sc => sc.CourseId);
+
+            builder
+               .Entity<CurriculumCourse>()
+               .HasKey(cc => new { cc.CurriculumId, cc.CourseId });
+
+            builder
+                .Entity<CurriculumCourse>()
+                .HasOne(cc => cc.Curriculum)
+                .WithMany(c => c.Courses)
+                .HasForeignKey(cc => cc.CurriculumId);
+
+            builder
+                .Entity<CurriculumCourse>()
+                .HasOne(cc => cc.Course)
+                .WithMany(c => c.Curriculums)
+                .HasForeignKey(cc => cc.CourseId);
 
             // One-to-Many
             builder
@@ -101,6 +121,18 @@
                 .HasMany(o => o.OrderItems)
                 .WithOne(oi => oi.Order)
                 .HasForeignKey(oi => oi.OrderId);
+
+            builder
+                .Entity<Diploma>()
+                .HasOne(d => d.Curriculum)
+                .WithMany(c => c.Diplomas)
+                .HasForeignKey(d => d.CurriculumId);
+
+            builder
+                .Entity<Diploma>()
+                .HasOne(d => d.Student)
+                .WithMany(st => st.Diplomas)
+                .HasForeignKey(d => d.StudentId);
         }
     }
 }

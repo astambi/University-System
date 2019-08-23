@@ -6,7 +6,7 @@
     <input asp-for="UserId" hidden />
     <input asp-for="Role" hidden />
 
-    <button type="submit" class="btn btn-sm btn-@StyleHelpers.ToStyle(FormActionEnum.Remove)"><i class="fa fa-minus"></i></button>
+    <button type="submit" data-toggle="tooltip" title="Remove from role" class="btn btn-sm btn-@StyleHelpers.ToStyle(FormActionEnum.Remove)"><i class="fa fa-times"></i></button>
 </form>
 
 @section Scripts {

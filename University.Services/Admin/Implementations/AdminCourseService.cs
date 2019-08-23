@@ -9,6 +9,7 @@
     using University.Data.Models;
     using University.Services.Admin.Models;
     using Microsoft.EntityFrameworkCore;
+    using System.Collections.Generic;
 
     public class AdminCourseService : IAdminCourseService
     {
@@ -24,6 +25,13 @@
             this.db = db;
             this.mapper = mapper;
         }
+
+        public async Task<IEnumerable<AdminCourseBasicServiceModel>> AllAsync()
+            => await this.mapper.ProjectTo<AdminCourseBasicServiceModel>(
+                this.db.Courses
+                .OrderBy(c => c.Name)
+                .ThenByDescending(c => c.StartDate))
+            .ToListAsync();
 
         public async Task<int> CreateAsync(
             string name,

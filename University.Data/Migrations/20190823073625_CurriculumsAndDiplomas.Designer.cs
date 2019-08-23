@@ -5,13 +5,15 @@ namespace University.Data.Migrations
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Infrastructure;
     using Microsoft.EntityFrameworkCore.Metadata;
+    using Microsoft.EntityFrameworkCore.Migrations;
     using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
     using University.Data;
 
     [DbContext(typeof(UniversityDbContext))]
-    partial class UniversityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190823073625_CurriculumsAndDiplomas")]
+    partial class CurriculumsAndDiplomas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -513,13 +515,13 @@ namespace University.Data.Migrations
 
             modelBuilder.Entity("University.Data.Models.CurriculumCourse", b =>
                 {
-                    b.HasOne("University.Data.Models.Course", "Course")
-                        .WithMany("Curriculums")
+                    b.HasOne("University.Data.Models.Curriculum", "Curriculum")
+                        .WithMany("Courses")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("University.Data.Models.Curriculum", "Curriculum")
-                        .WithMany("Courses")
+                    b.HasOne("University.Data.Models.Course", "Course")
+                        .WithMany("Curriculums")
                         .HasForeignKey("CurriculumId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

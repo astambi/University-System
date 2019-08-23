@@ -12,6 +12,10 @@
                asp-area="@WebConstants.AdminArea"
                asp-controller="@WebConstants.CoursesController"
                asp-action="@nameof(University.Web.Areas.Admin.Controllers.CoursesController.Create)">Create course</a>
+            <a class="dropdown-item text-dark"
+               asp-area="@WebConstants.AdminArea"
+               asp-controller="@WebConstants.CurriculumsController"
+               asp-action="@nameof(CurriculumsController.Index)">Curriculums</a>
         </div>
     </li>
 }

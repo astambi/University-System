@@ -1,11 +1,14 @@
 ﻿namespace University.Services.Admin
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using University.Services.Admin.Models;
 
     public interface IAdminCourseService
     {
+        Task<IEnumerable<AdminCourseBasicServiceModel>> AllAsync();
+
         Task<int> CreateAsync(
             string name,
             string description,

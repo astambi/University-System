@@ -1,0 +1,15 @@
+﻿@model CurriculumAddCourseFormModel
+
+    <form asp-action="@nameof(CurriculumsController.RemoveCourse)" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input asp-for="CurriculumId" hidden />
+        <input asp-for="CourseId" hidden />
+
+        <button type="submit" data-toggle="tooltip" title="Remove from curriculum" class="btn btn-@FormActionEnum.Remove.ToStyle() mx-1">
+            <i class="fa fa-times"></i>
+        </button>
+    </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -29,8 +29,8 @@
         public const int FileMaxLengthInBytes = FileMaxLengthInMb * BytesInMb;
         public const string FileType = "zip";
 
-        public const int GradeBgMinValue = 2;
         public const int GradeBgCertificateMinValue = 5;
+        public const int GradeBgMinValue = 2;
         public const int GradeBgMaxValue = 6;
 
         public const int InvoiceIdMaxLength = 50;

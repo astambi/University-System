@@ -1,0 +1,21 @@
+﻿@model CurriculumAddCourseFormModel
+
+<form asp-action="@nameof(CurriculumsController.AddCourse)" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input asp-for="CurriculumId" hidden />
+
+    <div class="form-group d-flex">
+        <select asp-for="CourseId" asp-items="Model.Courses" class="form-control" required>
+            <option value="-1" selected disabled>Choose course...</option>
+        </select>
+        <span asp-validation-for="CourseId" class="text-danger"></span>
+
+        <button type="submit" data-toggle="tooltip" title="Add to curriculum" class="btn btn-@FormActionEnum.Add.ToStyle() mx-1">
+            <i class="fa fa-plus"></i>
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

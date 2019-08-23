@@ -28,6 +28,8 @@
 
         public ICollection<Order> Orders { get; set; } = new List<Order>();
 
+        public ICollection<Diploma> Diplomas { get; set; } = new List<Diploma>();
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var isFutureDate = DateTime.Now.Date < this.Birthdate.ToLocalTime().Date;
