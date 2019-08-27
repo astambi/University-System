@@ -8,6 +8,7 @@
     using University.Data;
     using University.Data.Models;
     using University.Services.Admin.Models.Courses;
+    using University.Services.Admin.Models.Curriculums;
     using University.Services.Admin.Models.Users;
     using University.Services.Models.Certificates;
     using University.Services.Models.Courses;
@@ -42,6 +43,7 @@
                 cfg.CreateMap<Certificate, CertificateListingServiceModel>();
                 cfg.CreateMap<Certificate, CertificateServiceModel>();
 
+                cfg.CreateMap<Course, AdminCourseBasicServiceModel>();
                 cfg.CreateMap<Course, AdminCourseServiceModel>();
                 cfg.CreateMap<Course, CartItemDetailsServiceModel>();
                 cfg.CreateMap<Course, CourseDetailsServiceModel>();
@@ -52,6 +54,16 @@
                 cfg.CreateMap<CourseProfileServiceModel, CourseProfileMaxGradeServiceModel>()
                     .ForMember(dest => dest.GradeBgMax,
                         opt => opt.MapFrom(src => src.CertificateGrade != 0 ? src.CertificateGrade : src.GradeBg)); ;
+
+                cfg.CreateMap<Curriculum, AdminCurriculumBasicServiceModel>();
+                cfg.CreateMap<Curriculum, AdminCurriculumServiceModel>()
+                    .ForMember(dest => dest.Courses,
+                        opt => opt.MapFrom(src => src
+                            .Courses
+                            .Where(cc => cc.CurriculumId == src.Id)
+                            .Select(c => c.Course)
+                            .OrderBy(c => c.Name)
+                            .ThenByDescending(c => c.StartDate)));
 
                 cfg.CreateMap<ExamSubmission, ExamDownloadServiceModel>();
                 cfg.CreateMap<ExamSubmission, ExamSubmissionDetailsServiceModel>();
