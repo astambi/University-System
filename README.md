@@ -3,19 +3,24 @@
 ## Project Description
 
 The University system provides online courses for students.
-Students can search all courses by name, view course details, enroll in free courses (and cancel course enrollment), buy paid courses (and cancel course payments), download course resources for courses they have purchased (or are enrolled in), upload course exams on exam day, receive public certificates for courses they have successfully passed. Administrators can create, edit and delete courses and curriculums. Trainers can add and remove course resources, evaluate course exams and create and delete course certificates.
 
-- Home (all users):
-  The Home View lists active and forthcoming courses provided by the University. Any user can view the list of courses and the course details (incl. trainers, schedule, price and number of students already enrolled). Access to the course's resources and exams is available to enrolled users after successful login only.
+Students can search all courses by name, view course details, enroll in free courses (and cancel existing course enrollments), buy paid courses (and cancel course payments), download course resources for courses they have purchased (or are enrolled in), upload course exams on exam day, receive public certificates for courses they have successfully passed.
+
+Administrators can create, edit and delete courses and curriculums.
+
+Trainers can add and remove course resources, evaluate course exams and create and delete course certificates.
+
+- Landing page (all users):
+  The Landing page lists active and upcoming courses provided by the University. Any user can view the list of courses and the course details (incl. trainers, schedule, price and number of students already enrolled). Access to the courses resources and exams is available only to enrolled users after successful login.
 
 - Pagination:
-  Courses on the Home page as well as the Active and Archived courses sections are listed with pagination.
+  Courses on the Landing page as well as the Active and Archived courses sections are listed with pagination.
 
-- Search courses by name (all users):
-  Users can search courses on the Home page as well as on the Active and Archived courses sections by course name. The search funtionality is available to all users.
+- Searching courses by name on the Landing page, Active / Archived courses sections (all users):
+  Users can search courses on the Landing page as well as on the Active and Archived courses sections by course name. The search funtionality is available to all users.
 
-- Search courses by trainer (logged in users only):
-  The course details page container a link to all trainings from the current course trainer. The search funtionality is available to logged in users only.
+- Viewing courses by trainer & Searching trainer's courses by name (logged in users only):
+  The course details page contains a link to the course trainer's other trainings. The funtionality is available to logged in users only. Users can also search courses on the trainer's profile page by name, the funtionality is available only to logged in users only.
 
 - Creating / Editing / Deleting Courses (Administrators only):
   Courses can be created by users in Administrator role only. Administrators can edit course details, delete a course, replace the course's trainer, update the course's start and end dates and pricing. Each course has a name, a description, start and end date, price, a single trainer, and a list of course resources.
@@ -24,72 +29,81 @@ Students can search all courses by name, view course details, enroll in free cou
   Curriculums can be created by users in Administrator role only. Administrators can add and remove courses to multiple curriculums.
 
 - Creating / Deleting Roles & Adding / Removing Users to existing roles (Administrators only):
-  Roles can be created by users in Administrator role only. Administrators can add and remove roles, as well as add and remove registered users to existing roles.
+  Roles can be created by users in Administrator role only. Administrators can add and remove roles, as well as add and remove registered users to existing roles. Pre-defined roles: Administrator, Trainer, BlogAuthor.
 
 - Uploading / Deleting Course Resources (Trainers only):
-  Course resources can be uploaded by logged in users in Trainer role only. Trainers can replace or delete any uploaded resource.
+  Course resources can be uploaded by logged in users in Trainer role only and only for the courses they train. Trainers can delete uploaded resources from their own trainings.
 
-- Adding / Viewing / Downloading Course Exams (logged in users enrolled in the respective course):
-  Course exams can be uploaded by logged in users on exam day only. Exams can be viewed and downloaded by their creators but cannot be deleted.
+- Viewing / Downloading Course Resources (logged in users enrolled in the respective course and course trainers):
+  Course resources can be viewed and downloaded only by logged in users enrolled in the respective course or by the course's trainer.
 
-- Downloading Course Exams (Trainers only):
-  The latest course exams for any enrolled student in the training can be downloaded by the course trainers when the course is over.
+- Uploading / Viewing / Downloading Course Exams (logged in users enrolled in the respective course):
+  Course exams can be uploaded by logged in users, enrolled in the respective course on exam day only. Exams can be viewed and downloaded by their creators but cannot be deleted.
+
+- Downloading the latest student course Exam (Trainers only):
+  The latest uploaded course exam for any enrolled student in the training can be downloaded by the course trainer when the course is over.
 
 - Evaluating Course Exams (Trainers only):
-  Course exams can be evaluated by the course's trainer once the exam is over and not later than 1 month after the exam date. The course grade is on the scale from 2 to 6 (highest) and can be updated at any time by the trainer.
+  Course exams can be evaluated by the course trainer once the exam is over and not later than 1 month after the exam date. The course grade is on the scale from 2.00 (lowest) to 6.00 (highest) and can be updated at any time by the trainer. The grade can easily be converted to other scales.
 
 - Issuing / Deleting Course Certificates (Trainers only):
-  Course exams evaluated above 5.00 (on the scale of 2 to 6) will authomatically receive a course certificate when the trainer updated the grade to an eligible grade. Subsequent higher grades will generate a new certificate, however previous certificates will be not be authomatically deleted as certificates should be publicly accessible. A trainer has the option, however, to view all course certificates and remove any invalid ones.
+  Course exams evaluated above 5.00 (on the scale of 2 to 6) will authomatically receive a course certificate when the course trainer updates the grade to an eligible one. Subsequent higher grades will generate a new certificate, however previous certificates will not be authomatically deleted, as the presumption is that certificates should be publicly accessible even if a better result is achieved on retake exams by the student. A trainer has the option, however, to review all course certificates and remove any invalid ones.
 
 - Viewing / Downloading Course Certificates (all users):
-  Course cetrtificates are publically accessible. Any user with the link would be able to view the documents contents and download a pdf certificate.
+  Course cetrtificates are publically accessible. Any user with a link would be able to view the certificate's contents and download the document as a pdf file.
 
-- Ordering a paid course / Enrolling in a free course / Cancelling course enrollement & payment (logged in users only):
-  User authentication (login) is required to buy a course (add it to the user's shopping cart), to enroll in a free course, as well as cancel existing course enrollment or course payment made. Anonymous users are redirected to the Login page when they hit a functionality that requires user authentication.
+- Ordering a paid course / Enrolling in a free course / Cancelling course enrollements & payments (logged in users only):
+  User authentication (login) is required to buy a paid course, to enroll in a free course, as well as cancel existing course enrollment or course payment. Anonymous users will be redirected to the Login page when they hit a functionality that requires user authentication. In addition, enrolling in any course, as well as cancellation of enrollment or payment is possible only before the respective course begins.
 
-- Adding / Removing a paid course to the Shopping Cart (all users):
-  The user shopping cart is accessible to all users. Logging in removes any courses that the logged in user has already purchased or is enrolled in. Logging out clears the shopping cart. Users can remove a course from the cart or empty the entire cart. If the item is no longer available (deleted by an Admin from Store) the item is removed from the shopping cart. Hitting checkout required that a payment method is selected. Checkout creates a new payment (order) and enrolls the user in all courses in the shopping cart, upon which clears the shopping cart.
+- Adding / Removing a Paid Course to the Shopping Cart (all users):
+  The user shopping cart is accessible to all users (with or without login). Users can add and remove a course from the cart, update or empty the entire cart. If a course in the shopping cart is no longer available (deleted by an Adminitrator) the course will be removed from the shopping cart authomaticaly. User authentication is required before the user can continue to checkout. Logging in will authomatically remove any course that the logged in user has already purchased or is enrolled in. Logging out will clear the shopping cart.
 
-- Shopping Cart & Shopping Cart Manager:
-  The shopping cart Id is stored in the HTTP session. The shopping cart manager holds a list of all user shopping carts in a concurrent dictionary and is registered as a Singleton service.
+- Checkout (logged in users only):
+  Hitting checkout is available to logged in users only and requires a selection of a payment method. Hitting checkout will create a new payment (order) and enroll the user in all courses in the shopping cart. Upon successful payment and enrollment in all courses, the shopping cart will be cleared.
 
-- Orders (logged in users):
-  Authenticated users can view a list of their own orders. An authenticated user is allowed to cancel a order if the order has not yet been approved by the Store Admin for delivery, i.e. a user can cancel only his/her own pending orders. Upon appoval of an order for delivery book cancellation by the user is not allowed. Only Admins can update the order status after approval for delivery.
+- Storing Users' Shopping Carts:
+  A unique shopping cart key is created for all users and stored in the users' HTTP session. All shopping carts are stored in a concurrent dictionary in the Shopping Cart Manager and identified by the unique shopping cart key from the user session. The Shopping Cart Manager itself is registered as a Singleton service.
 
-- Downloading Course Resources (logged in users):
-  Authorized users can download an e-book they have purchased when the order is finalized (i.e. when the order status is Delivered).
+- Payments / Orders (logged in users):
+  Authenticated users can view a list of their own payments (orders). An authenticated user is allowed to cancel a payment (order) only if all courses included in the respective payment (order) have not started yet.
 
-- Viewing / Updating User Profile (logged in users):
-  Users can view they own profile data (username, email, user roles if any), update or delete their profile. The profile provides a collection of the user's purchased e-books (from finalized orders, i.e. orders with status Delivered), the user's favourite books (book the user has liked) and the user's written book reviews.
+- Payment Invoice (logged in users):
+  An invoice can be downloaded (as a pdf file) for any payment made.
+
+- Viewing / Updating / Deleting the User Profile (logged in users):
+  Users can view they own profile data (name, username, email, birthdate, phone number and user roles if any) and update or delete their profile. The username cannot be updated. The profile provides a collection of the user's payments (by date), courses (by start / end date) with reminders for exam dates, course resources (by course), exams (by course) and certificates (by course).
 
 - Registration / Login (anonymous users):
   Users can register providing name, username, email, birthdate and password. Upon registration users are redirected to Login.
 
 - Registration / Login with external provider authentication (Google, Facebook):
-  Users can register and login with credentials from external authentication providers (Google & Facebook). On first login users should complete a registration form confirming their name, email address, username and providing a birthdate.
+  Users can register / login with credentials from external authentication providers (Google & Facebook). On first login users should complete a registration form confirming their name, email address, username and providing a birthdate.
+
+- Two-factor authentication:
+  Registered users can configure an authenticator app and set-up a two-factor authentication.
 
 ### Public Part (Any user: Authenticated or Anonymous)
 
-The public part of the University is visible by any user without authentication:
+The public part of the University is visible by any user with or without authentication:
 
-- Login / Register
-- Home Page listing only the active and forthcoming courses selection with pagination & search
-- All courses (active & forthcoming and archived courses) with Search by course name and pagination
-- Course Details Page listing all course details (name, description, start-end dates, price, trainer, number of students enrolled) and buttons for Enroll/ Cancell enrollment, Add/Remove course to/from Shopping Cart, link to trainer's other trainings.
+- Login / Register (anonymous users only)
+- Home Page listing only the active and upcoming courses selection with pagination & search
+- All courses (active & upcoming and archived courses) with search by course name and pagination
+- Course Details Page listing all course details (name, description, start-end dates, price, trainer, number of students enrolled) and buttons for Enroll/ Cancell enrollment, Add/Remove course to/from Shopping Cart, link to trainer's other trainings
 - Shopping Cart with added courses, functionality to add/remove course, as well as to empty the shopping cart
 
 ### Private Part (Logged in users only)
 
 - Enrolling in free courses
 - Buying courses in the shopping cart, provided the user is not yet enrolled in the respective course
-- Viewing Payments made (Orders) with an option for payment cancellation before course start date. After course start date the payment cannot be cancelled.
+- Viewing Payments made (Orders) with an option for payment cancellation prior to the course start date. After the course starts the payment can no longer be cancelled.
 - Payment Details, including links to the courses purchased
-- Viewing / Downloading resources for free courses they are enrolled in & for courses purchased
-- Uploading Exams on exam day for courses they are enrolled in & courses purchased
+- Viewing / Downloading resources for courses they are enrolled in
+- Uploading Exams on exam day for courses they are enrolled in
 - Viewing / Downloading Exams by course and date
 - Viewing / Downloading Certificates for courses successfully passed
 - User's Profile with stats:
-  - Collection of user's courses (free and purchased) with option to upload exams on exam day
+  - Collection of user's courses (free and purchased) with the option to upload exams on exam day
   - Collection of user's resources by course
   - Collection of user's exams by course
   - Collection of user's certificates by course
@@ -103,12 +117,14 @@ The public part of the University is visible by any user without authentication:
 ### Administration Part (Logged in users in role Administrator)
 
 - Creating / Updating / Deleting Courses
-- Creating / Deleting Curriculums & Adding / Removing courses to/from curriculums
-- Creating / Deleting user Roles & Adding / Removing user to/from existing role
+- Creating / Deleting Curriculums
+- Adding / Removing Courses to/from Curriculums
+- Creating / Deleting user Roles
+- Adding / Removing Users to/from existing Roles
 
 ### Trainers Part (Logged in users in role Trainer)
 
-- Viewing their own trainings (courses they train)
+- Viewing their own trainings
 - Adding / Removing / Viewing Resources to their own trainings
 - Downloading students' exams for their own trainings
 - Evaluating students' exams for their own trainings
