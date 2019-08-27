@@ -110,11 +110,16 @@
                 .WithMany(c => c.Resources)
                 .HasForeignKey(r => r.CourseId);
 
+            //// Removing FK Orders_Users_UserId to allow users to delete their profiles without affecting the payments history
             builder
                 .Entity<Order>()
-                .HasOne(o => o.User)
-                .WithMany(u => u.Orders)
-                .HasForeignKey(o => o.UserId);
+                .HasIndex(o => o.UserId);
+
+            //builder
+            //    .Entity<Order>()
+            //    .HasOne(o => o.User)
+            //    .WithMany(u => u.Orders)
+            //    .HasForeignKey(o => o.UserId);
 
             builder
                 .Entity<Order>()

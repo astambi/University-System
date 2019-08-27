@@ -11,9 +11,11 @@
         [StringLength(DataConstants.UserNameMaxLength,
             ErrorMessage = DataConstants.StringMinMaxLength,
             MinimumLength = DataConstants.UserNameMinLength)]
+        [PersonalData]
         public string Name { get; set; }
 
         [DataType(DataType.Date)]
+        [PersonalData]
         public DateTime Birthdate { get; set; }
 
         public ICollection<StudentCourse> Courses { get; set; } = new List<StudentCourse>();
@@ -25,8 +27,6 @@
         public ICollection<ExamSubmission> ExamSubmissions { get; set; } = new List<ExamSubmission>();
 
         public ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();
-
-        public ICollection<Order> Orders { get; set; } = new List<Order>();
 
         public ICollection<Diploma> Diplomas { get; set; } = new List<Diploma>();
 

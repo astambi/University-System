@@ -76,8 +76,8 @@
         {
             var invalidOrderId = int.MinValue;
 
-            var userExists = this.db.Users.Any(u => u.Id == userId);
-            if (!userExists
+            var user = this.db.Users.Find(userId);
+            if (user == null
                 || !cartItems.Any())
             {
                 return invalidOrderId;
@@ -109,11 +109,13 @@
             var order = new Order
             {
                 UserId = userId,
+                UserName = user.Name,
                 TotalPrice = totalPrice,
                 OrderItems = validOrderItems,
                 PaymentMethod = paymentMethod,
                 OrderDate = DateTime.UtcNow,
-                Status = Status.Pending
+                Status = Status.Pending,
+                InvoiceId = Guid.NewGuid().ToString().Replace("-", string.Empty)
             };
 
             await this.db.Orders.AddAsync(order);

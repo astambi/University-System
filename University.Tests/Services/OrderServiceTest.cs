@@ -32,6 +32,7 @@
 
         private const string UserIdValid = "UserValid";
         private const string UserIdInvalid = "UserInvalid";
+        private const string UserName = "User Name";
 
         [Fact]
         public async Task AllByUserAsync_ShouldReturnEmptyCollection_GivenInvalidInput()
@@ -338,6 +339,7 @@
             Assert.NotNull(resultOrderSaved);
 
             Assert.Equal(UserIdValid, resultOrderSaved.UserId);
+            Assert.Equal(UserName, resultOrderSaved.UserName);
             Assert.Equal(Status.Pending, resultOrderSaved.Status);
             Assert.Equal(PaymentMethod, resultOrderSaved.PaymentMethod);
             Assert.NotNull(resultOrderSaved.InvoiceId);
@@ -683,7 +685,7 @@
             await db.Courses.AddRangeAsync(
                 new Course { Id = CourseIdValid, Name = "Course 1", Price = 1, StartDate = futureDateTime },
                 new Course { Id = CourseIdFuture, Name = "Course 2", Price = 2, StartDate = futureDateTime });
-            await db.Users.AddAsync(new User { Id = UserIdValid });
+            await db.Users.AddAsync(new User { Id = UserIdValid, Name = UserName });
             await db.SaveChangesAsync();
 
             return db;
