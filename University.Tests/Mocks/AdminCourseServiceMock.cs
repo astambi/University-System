@@ -1,9 +1,9 @@
 ﻿namespace University.Tests.Mocks
 {
     using System;
-    using University.Services.Admin;
-    using University.Services.Admin.Models;
     using Moq;
+    using University.Services.Admin;
+    using University.Services.Admin.Models.Courses;
 
     public static class AdminCourseServiceMock
     {

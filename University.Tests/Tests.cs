@@ -4,9 +4,11 @@
     using System.Collections.Generic;
     using System.Linq;
     using AutoMapper;
+    using Microsoft.EntityFrameworkCore;
     using University.Data;
     using University.Data.Models;
-    using University.Services.Admin.Models;
+    using University.Services.Admin.Models.Courses;
+    using University.Services.Admin.Models.Users;
     using University.Services.Models.Certificates;
     using University.Services.Models.Courses;
     using University.Services.Models.Exams;
@@ -17,7 +19,6 @@
     using University.Web;
     using University.Web.Areas.Admin.Models.Courses;
     using University.Web.Models;
-    using Microsoft.EntityFrameworkCore;
     using Xunit;
 
     public class Tests

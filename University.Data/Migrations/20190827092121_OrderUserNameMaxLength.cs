@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-
-namespace University.Data.Migrations
+﻿namespace University.Data.Migrations
 {
+    using Microsoft.EntityFrameworkCore.Migrations;
+
     public partial class OrderUserNameMaxLength : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using University.Services.Admin.Models;
+    using University.Services.Admin.Models.Courses;
 
     public interface IAdminCourseService
     {

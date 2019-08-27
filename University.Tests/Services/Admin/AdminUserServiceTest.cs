@@ -7,7 +7,7 @@
     using University.Data.Models;
     using University.Services.Admin;
     using University.Services.Admin.Implementations;
-    using University.Services.Admin.Models;
+    using University.Services.Admin.Models.Users;
     using Xunit;
 
     public class AdminUserServiceTest

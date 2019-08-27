@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using University.Services.Admin.Models;
+    using University.Services.Admin.Models.Curriculums;
 
     public interface IAdminCurriculumService
     {
@@ -16,6 +16,12 @@
 
         Task<bool> ExistsCurriculumCourseAsync(int curriculumId, int courseId);
 
+        Task<AdminCurriculumBasicServiceModel> GetByIdAsync(int id);
+
+        Task<bool> RemoveAsync(int id);
+
         Task<bool> RemoveCourseAsync(int curriculumId, int courseId);
+
+        Task<bool> UpdateAsync(int id, string name, string description);
     }
 }

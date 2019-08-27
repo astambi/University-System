@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Mvc.Rendering;
-    using University.Services.Admin.Models;
+    using University.Services.Admin.Models.Users;
 
     public class AdminUserListingViewModel
     {

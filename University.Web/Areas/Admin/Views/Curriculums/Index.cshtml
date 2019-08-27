@@ -5,8 +5,7 @@
 
 <h1>
     Curriculums
-    <a asp-controller="@WebConstants.CurriculumsController"
-       asp-action="@nameof(CurriculumsController.Create)" class="btn btn-outline-success">
+    <a asp-action="@nameof(CurriculumsController.Create)" class="btn btn-outline-success">
         <i class="fa fa-plus"></i>
     </a>
 </h1>
@@ -14,7 +13,7 @@
 <section class="card-deck d-flex justify-content-start">
     @foreach (var curriculum in Model.Curriculums)
     {
-        var addCourseModel = new CurriculumAddCourseFormModel { CurriculumId = curriculum.Id, Courses = Model.CoursesSelectList };
+        var addCourseModel = new CurriculumAddRemoveCourseFormModel { CurriculumId = curriculum.Id, Courses = Model.CoursesSelectList };
         <article class="card-group col-sm-12 col-md-6 my-2">
             <div class="card course-card border-info">
                 <div class="card-header bg-info d-flex flex-wrap justify-content-around">
@@ -28,7 +27,7 @@
                         @foreach (var course in curriculum.Courses)
                         {
                             var courseInfoModel = new CourseBasicViewModel { Id = course.Id, Name = course.Name };
-                            var removeCourseModel = new CurriculumAddCourseFormModel { CourseId = course.Id, CurriculumId = curriculum.Id };
+                            var removeCourseModel = new CurriculumAddRemoveCourseFormModel { CourseId = course.Id, CurriculumId = curriculum.Id };
 
                             <li class="list-group-item list-group-item-action d-flex justify-content-center align-items-center">
                                 @course.Name - @course.StartDate.ToDateString()
@@ -38,8 +37,9 @@
                         }
                     </ul>
                 </div>
-                <div class="card-footer d-flex flex-wrap justify-content-around align-items-center">
+                <div class="card-footer d-flex justify-content-between align-items-center">
                     <partial name="_CourseAddFormPartial" model="addCourseModel" />
+                    <partial name="_AdminCurriculumActionsPartial" model="curriculum.Id" />
                 </div>
             </div>
         </article>

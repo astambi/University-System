@@ -1,10 +1,11 @@
-﻿namespace University.Services.Admin.Models
+﻿namespace University.Services.Admin.Models.Curriculums
 {
     using System.Collections.Generic;
     using System.Linq;
     using AutoMapper;
     using University.Common.Mapping;
     using University.Data.Models;
+    using University.Services.Admin.Models.Courses;
 
     public class AdminCurriculumServiceModel : IMapFrom<Curriculum>, IHaveCustomMapping
     {

@@ -4,16 +4,16 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Rendering;
     using University.Data.Models;
-    using University.Services.Admin.Models;
+    using University.Services.Admin.Models.Courses;
     using University.Tests.Mocks;
     using University.Web;
     using University.Web.Areas.Admin.Controllers;
     using University.Web.Areas.Admin.Models.Courses;
     using University.Web.Models;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Rendering;
     using Xunit;
 
     public class CoursesControllerTest

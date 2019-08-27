@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using AutoMapper;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using University.Common.Infrastructure.Extensions;
@@ -10,6 +11,7 @@
     using University.Services.Admin;
     using University.Web.Areas.Admin.Models.Curriculums;
     using University.Web.Infrastructure.Extensions;
+    using University.Web.Models;
 
     public class CurriculumsController : BaseAdminController
     {
@@ -18,15 +20,18 @@
         private readonly IAdminCourseService adminCourseService;
         private readonly IAdminCurriculumService adminCurriculumService;
         private readonly ICourseService courseService;
+        private readonly IMapper mapper;
 
         public CurriculumsController(
             IAdminCourseService adminCourseService,
             IAdminCurriculumService adminCurriculumService,
-            ICourseService courseService)
+            ICourseService courseService,
+            IMapper mapper)
         {
             this.adminCourseService = adminCourseService;
             this.adminCurriculumService = adminCurriculumService;
             this.courseService = courseService;
+            this.mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
@@ -64,8 +69,65 @@
             return this.RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> Edit(int id)
+           => await this.LoadCurriculumForm(id, FormActionEnum.Edit);
+
         [HttpPost]
-        public async Task<IActionResult> AddCourse(CurriculumAddCourseFormModel model)
+        public async Task<IActionResult> Edit(int id, CurriculumFormModel model)
+        {
+            var exists = await this.adminCurriculumService.ExistsAsync(id);
+            if (!exists
+                || id != model.Id)
+            {
+                this.TempData.AddErrorMessage(WebConstants.CurriculumNotFoundMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            if (!this.ModelState.IsValid)
+            {
+                return this.View(CurriculumFormView, model);
+            }
+
+            var success = await this.adminCurriculumService.UpdateAsync(id, model.Name, model.Description);
+            if (!success)
+            {
+                this.TempData.AddInfoMessage(WebConstants.CurriculumUpdateErrorMsg);
+                return this.View(CurriculumFormView, model);
+            }
+
+            this.TempData.AddSuccessMessage(WebConstants.CurriculumUpdateSuccessMsg);
+
+            return this.RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Delete(int id)
+           => await this.LoadCurriculumForm(id, FormActionEnum.Delete);
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id, CurriculumFormModel model)
+        {
+            var exists = await this.adminCurriculumService.ExistsAsync(id);
+            if (!exists
+                || id != model.Id)
+            {
+                this.TempData.AddErrorMessage(WebConstants.CurriculumNotFoundMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            var success = await this.adminCurriculumService.RemoveAsync(id);
+            if (!success)
+            {
+                this.TempData.AddErrorMessage(WebConstants.CurriculumDeleteErrorMsg);
+                return this.RedirectToAction(nameof(Delete), new { id });
+            }
+
+            this.TempData.AddSuccessMessage(WebConstants.CurriculumDeleteSuccessMsg);
+
+            return this.RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddCourse(CurriculumAddRemoveCourseFormModel model)
         {
             if (!this.ModelState.IsValid)
             {
@@ -105,9 +167,9 @@
 
             return this.RedirectToAction(nameof(Index));
         }
-
+        
         [HttpPost]
-        public async Task<IActionResult> RemoveCourse(CurriculumAddCourseFormModel model)
+        public async Task<IActionResult> RemoveCourse(CurriculumAddRemoveCourseFormModel model)
         {
             if (!this.ModelState.IsValid)
             {
@@ -156,5 +218,20 @@
                 Text = $"{c.Name} - {c.StartDate.ToDateString()}"
             })
             .ToList();
+
+        private async Task<IActionResult> LoadCurriculumForm(int id, FormActionEnum action)
+        {
+            var curriculum = await this.adminCurriculumService.GetByIdAsync(id);
+            if (curriculum == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.CurriculumNotFoundMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            var model = this.mapper.Map<CurriculumFormModel>(curriculum);
+            model.Action = action;
+
+            return this.View(CurriculumFormView, model);
+        }
     }
 }

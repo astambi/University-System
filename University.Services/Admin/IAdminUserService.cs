@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using University.Services.Admin.Models;
+    using University.Services.Admin.Models.Users;
 
     public interface IAdminUserService
     {

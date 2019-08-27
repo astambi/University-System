@@ -9,7 +9,7 @@
     using Microsoft.EntityFrameworkCore;
     using University.Data.Models;
     using University.Services.Admin;
-    using University.Services.Admin.Models;
+    using University.Services.Admin.Models.Users;
     using University.Web.Areas.Admin.Models.Users;
     using University.Web.Infrastructure.Extensions;
     using University.Web.Models;

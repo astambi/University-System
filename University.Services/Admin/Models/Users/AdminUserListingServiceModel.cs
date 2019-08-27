@@ -1,4 +1,4 @@
-﻿namespace University.Services.Admin.Models
+﻿namespace University.Services.Admin.Models.Users
 {
     using University.Common.Mapping;
     using University.Data.Models;

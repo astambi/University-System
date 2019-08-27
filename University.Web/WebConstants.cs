@@ -97,10 +97,12 @@
 
         public const string CourseAddedToShoppingCartSuccessMsg = "Course added to shopping cart successfully.";
 
-        public const string CourseCreateErrorMsg = "Course not created.";
+        public const string CourseCreateErrorMsg = "Could not create course.";
         public const string CourseCreateSuccessMsg = "Course created successfully.";
-        public const string CourseDeleteSuccessMsg = "Course deleted successfully.";
         public const string CourseDeleteErrorMsg = "Could not delete course.";
+        public const string CourseDeleteSuccessMsg = "Course deleted successfully.";
+        public const string CourseUpdateErrorMsg = "Could not update course.";
+        public const string CourseUpdateSuccessMsg = "Course updated successfully.";
         public const string CourseEnrollmentCancellationErrorMsg = "Course enrollment cannot be cancelled after start date.";
         public const string CourseEnrollmentCancellationSuccessMsg = "Course enrollment cancelled successfully.";
         public const string CourseEnrollmentClosedMsg = "Course is closed for enrollment after start date.";
@@ -112,13 +114,15 @@
         public const string CourseInvalidMsg = "Invalid course.";
         public const string CourseNotFoundMsg = "Course not found.";
         public const string CourseRemovedFromShoppingCartSuccessMsg = "Course removed from shopping cart successfully.";
-        public const string CourseUpdateErrorMsg = "Course not updated.";
-        public const string CourseUpdateSuccessMsg = "Course updated successfully.";
 
-        public const string CurriculumCreateErrorMsg = "Curriculum not created.";
+        public const string CurriculumCreateErrorMsg = "Could not create curriculum.";
         public const string CurriculumCreateSuccessMsg = "Curriculum created successfully.";
+        public const string CurriculumDeleteErrorMsg = "Could not delete curriculum.";
+        public const string CurriculumDeleteSuccessMsg = "Curriculum deleted successfully.";
+        public const string CurriculumUpdateErrorMsg = "Curriculum was not updated.";
+        public const string CurriculumUpdateSuccessMsg = "Curriculum updated successfully.";
         public const string CurriculumNotFoundMsg = "Curriculum not found.";
-        public const string CurriculumContainsCourseAlreadyMsg = "Curriculum already contains this course.";
+        public const string CurriculumContainsCourseAlreadyMsg = "Curriculum contains this course already.";
         public const string CurriculumDoesNotContainCourseMsg = "Course not found in this curriculum.";
 
         public const string Disable2faErrorMsg = "Cannot disable 2FA for user.";

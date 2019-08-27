@@ -31,9 +31,10 @@ $("#form-submit").click(() => $("#upload-form").submit());
 // Notifications fade out
 const notificationFadeOut = (selector, timeout = 5000) => selector.fadeTo(timeout, 0.7);
 
-notificationFadeOut($(".alert.alert-info"));
-notificationFadeOut($(".alert.alert-success"));
-notificationFadeOut($(".alert.alert-warning"));
+notificationFadeOut($(".notification.alert.alert-info"));
+notificationFadeOut($(".notification.alert.alert-success"));
+notificationFadeOut($(".notification.alert.alert-warning"));
+notificationFadeOut($(".notification.alert.alert-danger"));
 
 // Toggle Order details (order items) on orders list
 const toggleOrderDetails = event => {

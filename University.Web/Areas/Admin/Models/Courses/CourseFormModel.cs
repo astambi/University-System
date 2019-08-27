@@ -4,11 +4,11 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using AutoMapper;
+    using Microsoft.AspNetCore.Mvc.Rendering;
     using University.Common.Mapping;
     using University.Data;
-    using University.Services.Admin.Models;
+    using University.Services.Admin.Models.Courses;
     using University.Web.Models;
-    using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class CourseFormModel : IValidatableObject, IMapFrom<AdminCourseServiceModel>
     {

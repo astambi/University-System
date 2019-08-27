@@ -8,6 +8,7 @@
     using University.Data;
     using University.Data.Models;
     using University.Services.Admin.Models;
+    using University.Services.Admin.Models.Curriculums;
 
     public class AdminCurriculumService : IAdminCurriculumService
     {
@@ -76,6 +77,27 @@
             => await this.db
             .FindAsync<CurriculumCourse>(curriculumId, courseId) != null;
 
+        public async Task<AdminCurriculumBasicServiceModel> GetByIdAsync(int id)
+            => await this.mapper
+            .ProjectTo<AdminCurriculumBasicServiceModel>(
+                this.db.Curriculums
+                .Where(c => c.Id == id))
+            .FirstOrDefaultAsync();
+
+        public async Task<bool> RemoveAsync(int id)
+        {
+            var curriculum = this.db.Curriculums.Find(id);
+            if (curriculum == null)
+            {
+                return false;
+            }
+
+            this.db.Curriculums.Remove(curriculum);
+            var result = await this.db.SaveChangesAsync();
+
+            return result > 0;
+        }
+
         public async Task<bool> RemoveCourseAsync(int curriculumId, int courseId)
         {
             var curriculumCourse = await this.db.FindAsync<CurriculumCourse>(curriculumId, courseId);
@@ -86,6 +108,32 @@
 
             this.db.Remove(curriculumCourse);
             var result = await this.db.SaveChangesAsync();
+
+            return result > 0;
+        }
+
+        public async Task<bool> UpdateAsync(int id, string name, string description)
+        {
+            var curriculum = this.db.Curriculums.Find(id);
+            if (curriculum == null
+                || string.IsNullOrWhiteSpace(name)
+                || string.IsNullOrWhiteSpace(description))
+            {
+                return false;
+            }
+
+            var newName = name.Trim();
+            var newDescription = description.Trim();
+            var result = 0;
+
+            if (curriculum.Name != newName
+                || curriculum.Description != newDescription)
+            {
+                curriculum.Name = newName;
+                curriculum.Description = newDescription;
+
+                result = await this.db.SaveChangesAsync();
+            }
 
             return result > 0;
         }

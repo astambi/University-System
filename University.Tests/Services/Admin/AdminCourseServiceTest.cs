@@ -10,6 +10,7 @@
     using University.Services.Admin.Models;
     using Moq;
     using Xunit;
+    using University.Services.Admin.Models.Courses;
 
     public class AdminCourseServiceTest
     {

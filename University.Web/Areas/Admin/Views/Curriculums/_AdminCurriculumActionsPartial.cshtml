@@ -1,0 +1,20 @@
+﻿@model int
+
+@if (User.IsInRole(WebConstants.AdministratorRole))
+{
+    <div class="d-flex">
+        <a asp-area="@WebConstants.AdminArea"
+           asp-controller="@WebConstants.CurriculumsController"
+           asp-action="@nameof(CurriculumsController.Edit)"
+           asp-route-id="@Model" class="btn btn-@StyleHelpers.ToStyle(FormActionEnum.Edit)" data-toggle="tooltip" title="Edit">
+            <i class="fa fa-pen"></i>
+        </a>
+
+        <a asp-area="@WebConstants.AdminArea"
+           asp-controller="@WebConstants.CurriculumsController"
+           asp-action="@nameof(CurriculumsController.Delete)"
+           asp-route-id="@Model" class="btn btn-@StyleHelpers.ToStyle(FormActionEnum.Delete)" data-toggle="tooltip" title="Delete">
+            <i class="fa fa-trash"></i>
+        </a>
+    </div>
+}

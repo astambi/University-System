@@ -4,9 +4,9 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
-    using University.Data;
-    using University.Services.Admin.Models;
     using Microsoft.EntityFrameworkCore;
+    using University.Data;
+    using University.Services.Admin.Models.Users;
 
     public class AdminUserService : IAdminUserService
     {
@@ -14,7 +14,7 @@
         private readonly IMapper mapper;
 
         public AdminUserService(
-            UniversityDbContext db, 
+            UniversityDbContext db,
             IMapper mapper)
         {
             this.db = db;

@@ -12,8 +12,11 @@
 }
 
 <section class="col-md-6">
-    <form asp-action="@Model.Action" method="post">
+    <form asp-action="@Model.Action"
+          asp-route-id="@Model.Id" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <input asp-for="Id" class="form-control" hidden />
         <div class="form-group">
             <label asp-for="Name" class="control-label"></label>
             <input asp-for="Name" class="form-control" readonly="@isDeleteDisabled" />
