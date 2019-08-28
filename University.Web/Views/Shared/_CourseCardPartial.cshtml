@@ -21,21 +21,19 @@
 
             @if (Model.TrainerName != null)
             {
-                <ul class="list-group text-center">
-                    <li class="list-group-item">Trainer: @Model.TrainerName</li>
-                </ul>
+                <div class="card-footer">Trainer: @Model.TrainerName</div>
             }
 
             @if (Model.IsActive)
             {
-                <div class="card-footer text-uppercase shadow p-0 m-0">
-                    <div class="table-success shadow p-1">Active</div>
+                <div class="card-footer text-uppercase shadow">
+                    <div class="bg-success text-white shadow py-2">Active</div>
                 </div>
             }
             else if (Model.IsUpcoming)
             {
-                <div class="card-footer text-uppercase shadow p-0 m-0">
-                    <div class="table-info shadow p-1">Upcoming</div>
+                <div class="card-footer text-uppercase shadow">
+                    <div class="bg-info text-white shadow py-2">Upcoming</div>
                 </div>
             }
 

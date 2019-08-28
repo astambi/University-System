@@ -53,6 +53,8 @@
             Tests.AssertSearchViewModel(TestSearchTerm, model.Search);
             Tests.AssertPagination(testPagination, model.Pagination);
 
+            Assert.Equal(nameof(HomeController.Index), model.Pagination.Action);
+
             courseService.Verify();
         }
     }

@@ -19,6 +19,8 @@
             int page = 1,
             int pageSize = ServicesConstants.PageSize);
 
+        Task<IEnumerable<CourseServiceModel>> CoursesToEvaluateAsync(string trainerId);
+
         Task<UserServiceModel> GetProfileAsync(string trainerId);
 
         Task<bool> IsTrainerForCourseAsync(string userId, int courseId);

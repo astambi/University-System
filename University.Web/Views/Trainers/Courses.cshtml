@@ -1,11 +1,11 @@
-﻿@model CoursePageListingViewModel
+﻿@model TrainerCoursePageListingViewModel
 @{
     ViewData["Title"] = "Trainings";
 }
 
-@if (Model.Courses.Any(c => c.CanBeEvaluated))
+@if (Model.CoursesToEvaluate.Any())
 {
-    <partial name="_CoursesToEvaluatePartial" for="Courses" />
+    <partial name="_CoursesToEvaluatePartial" for="CoursesToEvaluate" />
 }
 
 <header class="d-flex flex-wrap justify-content-between align-items-center">

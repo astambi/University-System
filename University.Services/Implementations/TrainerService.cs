@@ -54,6 +54,13 @@
             .GetPageItems(page, pageSize)
             .ToListAsync();
 
+        public async Task<IEnumerable<CourseServiceModel>> CoursesToEvaluateAsync(string trainerId)
+            => await this.mapper
+            .ProjectTo<CourseServiceModel>(this.GetTrainerCourses(trainerId))
+            .Where(c => c.CanBeEvaluated)
+            .OrderBy(c => c.Name)
+            .ToListAsync();
+
         public async Task<UserServiceModel> GetProfileAsync(string trainerId)
             => await this.mapper
             .ProjectTo<UserServiceModel>(this.db.Users.Where(u => u.Id == trainerId))

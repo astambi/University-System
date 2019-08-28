@@ -160,7 +160,7 @@
             => this.RedirectToAction(nameof(CoursesController.Index), WebConstants.CoursesController);
 
         private IActionResult RedirectToTrainersIndex()
-            => this.RedirectToAction(nameof(TrainersController.Index), WebConstants.TrainersController);
+            => this.RedirectToAction(nameof(TrainersController.Courses), WebConstants.TrainersController);
 
         private IActionResult RedirectToTrainersResources(int courseId)
             => this.RedirectToAction(nameof(TrainersController.Resources), WebConstants.TrainersController, routeValues: new { id = courseId });

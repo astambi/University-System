@@ -707,7 +707,7 @@
         private void AssertRedirectToTrainersIndex(IActionResult result)
         {
             var redirectToActionResult = this.AssertRedirectToAction(result);
-            Assert.Equal(nameof(TrainersController.Index), redirectToActionResult.ActionName);
+            Assert.Equal(nameof(TrainersController.Courses), redirectToActionResult.ActionName);
             Assert.Equal(WebConstants.TrainersController, redirectToActionResult.ControllerName);
         }
 

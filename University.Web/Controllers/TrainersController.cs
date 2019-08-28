@@ -38,7 +38,7 @@
         }
 
         [Authorize(Roles = WebConstants.TrainerRole)]
-        public async Task<IActionResult> Index(string search = null, int currentPage = 1)
+        public async Task<IActionResult> Courses(string search = null, int currentPage = 1)
         {
             var userId = this.userManager.GetUserId(this.User);
             if (userId == null)
@@ -47,16 +47,12 @@
                 return this.RedirectToAction(nameof(CoursesController.Index), WebConstants.CoursesController);
             }
 
-            var model = await this.GetTrainerCoursesWithSearchAndPagination(userId, search, currentPage, nameof(Index));
+            var model = await this.GetTrainerCoursesWithSearchAndPagination(userId, search, currentPage, nameof(Courses));
 
             return this.View(model);
         }
 
-        /// <summary>
-        /// Trainer's courses with search & pagination for authorized users
-        /// </summary>
-        /// <param name="id"> NB! Provide trainer Username</param>
-        public async Task<IActionResult> Details(string id, string search = null, int currentPage = 1)
+        public async Task<IActionResult> Details(string id, string search = null, int currentPage = 1) // id = trainer username
         {
             var trainerUsername = id;
 
@@ -82,21 +78,21 @@
             if (!courseExists)
             {
                 this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
-                return this.RedirectToAction(nameof(Index));
+                return this.RedirectToAction(nameof(Courses));
             }
 
             var userId = this.userManager.GetUserId(this.User);
             if (userId == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RedirectToAction(nameof(Index));
+                return this.RedirectToAction(nameof(Courses));
             }
 
             var isTrainer = await this.trainerService.IsTrainerForCourseAsync(userId, id);
             if (!isTrainer)
             {
                 this.TempData.AddErrorMessage(WebConstants.NotTrainerForCourseMsg);
-                return this.RedirectToAction(nameof(Index));
+                return this.RedirectToAction(nameof(Courses));
             }
 
             var model = await this.trainerService.CourseWithResourcesByIdAsync(userId, id);
@@ -111,21 +107,21 @@
             if (!courseExists)
             {
                 this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
-                return this.RedirectToAction(nameof(Index));
+                return this.RedirectToAction(nameof(Courses));
             }
 
             var userId = this.userManager.GetUserId(this.User);
             if (userId == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RedirectToAction(nameof(Index));
+                return this.RedirectToAction(nameof(Courses));
             }
 
             var isTrainer = await this.trainerService.IsTrainerForCourseAsync(userId, id);
             if (!isTrainer)
             {
                 this.TempData.AddErrorMessage(WebConstants.NotTrainerForCourseMsg);
-                return this.RedirectToAction(nameof(Index));
+                return this.RedirectToAction(nameof(Courses));
             }
 
             var model = new StudentCourseGradeViewModel
@@ -145,7 +141,7 @@
             if (!courseExists)
             {
                 this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
-                return this.RedirectToAction(nameof(Index));
+                return this.RedirectToAction(nameof(Courses));
             }
 
             if (!this.ModelState.IsValid)
@@ -158,14 +154,14 @@
             if (userId == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RedirectToAction(nameof(Index));
+                return this.RedirectToAction(nameof(Courses));
             }
 
             var isTrainer = await this.trainerService.IsTrainerForCourseAsync(userId, id);
             if (!isTrainer)
             {
                 this.TempData.AddErrorMessage(WebConstants.NotTrainerForCourseMsg);
-                return this.RedirectToAction(nameof(Index));
+                return this.RedirectToAction(nameof(Courses));
             }
 
             var courseHasEnded = await this.trainerService.CourseHasEndedAsync(id);
@@ -203,21 +199,21 @@
             if (!courseExists)
             {
                 this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
-                return this.RedirectToAction(nameof(Index));
+                return this.RedirectToAction(nameof(Courses));
             }
 
             var userId = this.userManager.GetUserId(this.User);
             if (userId == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RedirectToAction(nameof(Index));
+                return this.RedirectToAction(nameof(Courses));
             }
 
             var isTrainer = await this.trainerService.IsTrainerForCourseAsync(userId, id);
             if (!isTrainer)
             {
                 this.TempData.AddErrorMessage(WebConstants.NotTrainerForCourseMsg);
-                return this.RedirectToAction(nameof(Index));
+                return this.RedirectToAction(nameof(Courses));
             }
 
             var courseHasEnded = await this.trainerService.CourseHasEndedAsync(id);
@@ -248,7 +244,7 @@
                 || model.CourseId != id)
             {
                 this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
-                return this.RedirectToAction(nameof(Index));
+                return this.RedirectToAction(nameof(Courses));
             }
 
             if (!this.ModelState.IsValid)
@@ -261,14 +257,14 @@
             if (userId == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RedirectToAction(nameof(Index));
+                return this.RedirectToAction(nameof(Courses));
             }
 
             var isTrainer = await this.trainerService.IsTrainerForCourseAsync(userId, id);
             if (!isTrainer)
             {
                 this.TempData.AddErrorMessage(WebConstants.NotTrainerForCourseMsg);
-                return this.RedirectToAction(nameof(Index));
+                return this.RedirectToAction(nameof(Courses));
             }
 
             var success = await this.certificateService.RemoveAsync(model.CertificateId, userId, id);
@@ -296,7 +292,7 @@
             }
         }
 
-        private async Task<CoursePageListingViewModel> GetTrainerCoursesWithSearchAndPagination(string trainerId, string search, int currentPage, string action = nameof(Index))
+        private async Task<CoursePageListingViewModel> GetTrainerCoursesWithSearchAndPagination(string trainerId, string search, int currentPage, string action = nameof(Courses))
         {
             var pagination = new PaginationViewModel
             {
@@ -307,9 +303,11 @@
             };
 
             var courses = await this.trainerService.CoursesAsync(trainerId, search, pagination.CurrentPage, WebConstants.PageSize);
+            var coursesToEvaluate = await this.trainerService.CoursesToEvaluateAsync(trainerId);
 
-            var model = new CoursePageListingViewModel
+            var model = new TrainerCoursePageListingViewModel
             {
+                CoursesToEvaluate = coursesToEvaluate,
                 Courses = courses,
                 Pagination = pagination,
                 Search = new SearchViewModel { SearchTerm = search, Placeholder = WebConstants.SearchByCourseName }

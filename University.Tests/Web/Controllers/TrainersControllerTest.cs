@@ -44,8 +44,8 @@
         }
 
         [Fact]
-        public void Index_ShouldHaveAuthorizeAttribute_ForTrainerRole()
-           => this.AssertAuthorizeAttributeForTrainerRole(nameof(TrainersController.Index));
+        public void Courses_ShouldHaveAuthorizeAttribute_ForTrainerRole()
+           => this.AssertAuthorizeAttributeForTrainerRole(nameof(TrainersController.Courses));
 
         [Fact]
         public void DownloadExam_ShouldHaveAuthorizeAttribute_ForTrainerRole()
@@ -78,7 +78,7 @@
 
         // Methods
         [Fact]
-        public async Task Index_ShouldReturnRedirectToAction_GivenInvalidUser()
+        public async Task Courses_ShouldReturnRedirectToAction_GivenInvalidUser()
         {
             // Arrange
             var userManager = UserManagerMock.GetMock;
@@ -95,7 +95,7 @@
             };
 
             // Act
-            var result = await controller.Index(It.IsAny<string>(), It.IsAny<int>());
+            var result = await controller.Courses(It.IsAny<string>(), It.IsAny<int>());
 
             // Assert
             controller.TempData.AssertErrorMsg(WebConstants.InvalidUserMsg);
@@ -111,7 +111,7 @@
         [InlineData(5)]
         [InlineData(10)] // last
         [InlineData(int.MaxValue)] // invalid
-        public async Task Index_ShouldReturnViewResultWithCorrectModel_GivenValidUser(int page)
+        public async Task Courses_ShouldReturnViewResultWithCorrectModel_GivenValidUser(int page)
         {
             // Arrange
             var testPagination = Tests.GetPaginationViewModel(page, TestTotalItems, TestSearchTerm);
@@ -132,7 +132,7 @@
                 trainerService.Object);
 
             // Act
-            var result = await controller.Index(TestSearchTerm, page);
+            var result = await controller.Courses(TestSearchTerm, page);
 
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
@@ -908,6 +908,8 @@
             Tests.AssertCourseServiceModelCollection(model.Courses);
             Tests.AssertSearchViewModel(TestSearchTerm, model.Search);
             Tests.AssertPagination(testPagination, model.Pagination);
+
+            Assert.Equal(nameof(TrainersController.Courses), model.Pagination.Action);
         }
 
         private RedirectToActionResult AssertRedirectToAction(IActionResult result)
@@ -922,7 +924,7 @@
         private void AssertRedirectToTrainersControllerIndex(IActionResult result)
         {
             var redirectToActionResult = this.AssertRedirectToAction(result);
-            Assert.Equal(nameof(TrainersController.Index), redirectToActionResult.ActionName);
+            Assert.Equal(nameof(TrainersController.Courses), redirectToActionResult.ActionName);
         }
 
         private void AssertRedirectToTrainersControllerStudents(IActionResult result)

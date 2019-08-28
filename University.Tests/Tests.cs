@@ -173,7 +173,6 @@
             Assert.NotNull(pagination);
             Assert.IsType<PaginationViewModel>(pagination);
 
-            Assert.Equal(WebConstants.Index, pagination.Action);
             Assert.Equal(expectedPagination.SearchTerm, pagination.SearchTerm);
             Assert.Equal(expectedPagination.TotalItems, pagination.TotalItems);
             Assert.Equal(expectedPagination.RequestedPage, pagination.RequestedPage);

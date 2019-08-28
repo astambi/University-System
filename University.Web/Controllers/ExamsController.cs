@@ -1,16 +1,16 @@
 ﻿namespace University.Web.Controllers
 {
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
     using University.Data;
     using University.Data.Models;
     using University.Services;
     using University.Web.Infrastructure.Extensions;
     using University.Web.Infrastructure.Helpers;
     using University.Web.Models.Exams;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
 
     [Authorize]
     public class ExamsController : Controller
@@ -29,8 +29,7 @@
             this.examService = examService;
         }
 
-        [Route(WebConstants.ExamsController + "/course/" + WebConstants.WithId)]
-        public async Task<IActionResult> All(int id) // courseId
+        public async Task<IActionResult> Course(int id)
         {
             var courseExists = this.courseService.Exists(id);
             if (!courseExists)
@@ -120,7 +119,7 @@
 
             this.TempData.AddSuccessMessage(WebConstants.ExamSubmittedMsg);
 
-            return this.RedirectToAction(nameof(All), new { id });
+            return this.RedirectToAction(nameof(Course), new { id });
         }
 
         public async Task<IActionResult> Download(int id)

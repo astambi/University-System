@@ -4,7 +4,7 @@
 {
     var courseInfoModel = new CourseBasicViewModel { Id = Model.CourseId, Name = Model.CourseName };
 
-    <article class="card-group col-sm-6 col-md-4 col-lg-3 my-2">
+    <article class="card-group col-sm-6 col-lg-4 col-xl-3 my-2">
         <div class="card course-card border-info">
             <div class="card-header bg-info d-flex flex-wrap justify-content-around small">
                 <div class="px-1"><i class="fa fa-hourglass-start"></i> @Model.CourseStartDate.ToDate()</div>
@@ -13,7 +13,6 @@
             <div class="card-body d-flex justify-content-center align-items-center">
                 <h5 class="card-title">@Model.CourseName</h5>
             </div>
-
             <div class="card-footer">
                 <partial name="_CertificateDownloadFormPartial" for="CertificateId" />
                 @if (Model.GradeBgMax != null)
@@ -25,25 +24,24 @@
                     <h5 class="card-subtitle font-weight-light">No grade</h5>
                 }
             </div>
-
             @if (Model.CourseStartDate.IsUpcoming())
             {
-                <div class="card-footer shadow p-0 m-0">
-                    <div class="text-uppercase table-info shadow p-1">Upcoming</div>
+                <div class="card-footer text-uppercase shadow">
+                    <div class="bg-info text-white shadow py-2">Upcoming</div>
                 </div>
             }
             else if (Model.CourseEndDate.IsToday())
             {
-                <partial name="_ExamUploadFormPartial" for="CourseId" />
+                <div class="card-footer shadow">
+                    <partial name="_ExamUploadFormPartial" for="CourseId" />
+                </div>
             }
             else if (!Model.CourseEndDate.HasEnded())
             {
-                <div class="card-footer shadow p-0 m-0">
-
-                    <div class="text-uppercase table-success shadow p-1">Active</div>
+                <div class="card-footer text-uppercase shadow">
+                    <div class="bg-success text-white shadow py-2">Active</div>
                 </div>
             }
-
             <div class="card-footer d-flex flex-wrap justify-content-around align-items-center">
                 <partial name="_CourseInfoButtonPartial" model="@courseInfoModel" />
                 <partial name="_StudentCourseExamsButtonPartial" for="CourseId" />
