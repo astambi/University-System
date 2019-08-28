@@ -25,6 +25,7 @@
 
         private const string TrainerValid = "TrainerValid";
         private const string TrainerInvalid = "TrainerInvalid";
+        private const string TrainerInvalid2 = "TrainerInvalid2";
 
         private const string TrainerId = "TrainerId";
         private const string TrainerName = "Trainer name";
@@ -271,7 +272,7 @@
             Assert.IsAssignableFrom<IEnumerable<CourseServiceModel>>(result);
             Assert.Equal(expected.Count, result.Count());
 
-            for (int i = 0; i < resultList.Count; i++)
+            for (var i = 0; i < resultList.Count; i++)
             {
                 var expectedItem = expected[i];
                 var resultItem = resultList[i];
@@ -319,6 +320,59 @@
 
             Assert.Equal(new List<int> { 3 }, resultPageNegativeOf1.Select(c => c.Id).ToList());
             Assert.Equal(new List<int> { 3 }, resultPageNegativeOfNegativeDefault.Select(c => c.Id).ToList());
+        }
+
+        [Fact]
+        public async Task CoursesToEvaluateAsync_ShouldReturnEmptyCollection_GivenInvalidTrainerOrCourseDates()
+        {
+            // Arrange
+            var db = await this.PrepareTrainerCoursesToEvaluate();
+            var trainerService = this.InitializeTrainerService(db);
+
+            // Act
+            var resultInvalidTrainer = await trainerService.CoursesToEvaluateAsync(TrainerInvalid);
+            var resultInvalidCourses = await trainerService.CoursesToEvaluateAsync(TrainerInvalid2);
+
+            // Assert
+            Assert.IsAssignableFrom<IEnumerable<CourseServiceModel>>(resultInvalidTrainer);
+            Assert.IsAssignableFrom<IEnumerable<CourseServiceModel>>(resultInvalidCourses);
+
+            Assert.Empty(resultInvalidTrainer);
+            Assert.Empty(resultInvalidCourses);
+        }
+
+        [Fact]
+        public async Task CoursesToEvaluateAsync_ShouldReturnCorrectDataAndOrder_GivenValidTrainer()
+        {
+            // Arrange
+            var db = await this.PrepareTrainerCoursesToEvaluate();
+            var trainerService = this.InitializeTrainerService(db);
+
+            var expected = db
+                .Courses
+                .Where(c => c.TrainerId == TrainerValid)
+                .Where(c => c.EndDate.HasEnded())
+                .Where(c => !c.EndDate.AddMonths(1).HasEnded())
+                .OrderBy(c => c.Name)
+                .ToList();
+
+            // Act
+            var result = await trainerService.CoursesToEvaluateAsync(TrainerValid);
+            var resultList = result.ToList();
+
+            // Assert
+            Assert.IsAssignableFrom<IEnumerable<CourseServiceModel>>(result);
+
+            Assert.Equal(new[] { 6, 5, 4, 3 }, result.Select(c => c.Id).ToList()); // correct order
+
+            Assert.Equal(expected.Count, result.Count());
+            for (var i = 0; i < resultList.Count; i++)
+            {
+                var expectedItem = expected[i];
+                var resultItem = resultList[i];
+
+                AssertCourseServiceModel(expectedItem, resultItem);
+            }
         }
 
         [Fact]
@@ -414,6 +468,39 @@
                 UserName = TrainerUsername,
                 Email = TrainerEmail
             });
+            await db.SaveChangesAsync();
+
+            return db;
+        }
+
+        private async Task<UniversityDbContext> PrepareTrainerCoursesToEvaluate()
+        {
+            var today = DateTime.Now;
+            var endDate = today.ToEndDateUtc();
+
+            var trainer1 = new User { Id = TrainerValid };
+            var trainer2 = new User { Id = TrainerInvalid2 };
+            var trainer3 = new User { Id = TrainerInvalid };
+
+            var courses = new List<Course>
+            {
+                new Course{Id = 1, Name = "XXX", TrainerId = TrainerValid, EndDate = endDate.AddDays(0) },  // active 
+                new Course{Id = 2, Name = "YYY", TrainerId = TrainerValid, EndDate = endDate.AddDays(1) },  // active 
+
+                new Course{Id = 3, Name = "RRR", TrainerId = TrainerValid, EndDate = endDate.AddDays(-1) },  // to evaluate 
+                new Course{Id = 4, Name = "DDD", TrainerId = TrainerValid, EndDate = endDate.AddDays(-10) },  // to evaluate
+                new Course{Id = 5, Name = "CCC", TrainerId = TrainerValid, EndDate = endDate.AddDays(-28) }, // to evaluate
+                new Course{Id = 6, Name = "BBB", TrainerId = TrainerValid, EndDate = endDate.AddMonths(-1) }, // to evaluate
+
+                new Course{Id = 7, Name = "AAA", TrainerId = TrainerValid, EndDate = endDate.AddMonths(-1).AddDays(-1) }, // overdue
+
+                new Course{Id = 8, Name = "AAA", TrainerId = TrainerInvalid2, EndDate = endDate.AddMonths(-1).AddDays(-1) }, // overdue
+                new Course{Id = 9, Name = "BBB", TrainerId = TrainerInvalid2, EndDate = endDate.AddDays(-35) }, // overdue
+            };
+
+            var db = Tests.InitializeDatabase();
+            await db.Users.AddRangeAsync(trainer1, trainer2, trainer3);
+            await db.Courses.AddRangeAsync(courses);
             await db.SaveChangesAsync();
 
             return db;

@@ -1,16 +1,17 @@
 ﻿namespace University.Tests.Services.Admin
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
+    using Moq;
     using University.Common.Infrastructure.Extensions;
     using University.Data;
     using University.Data.Models;
     using University.Services.Admin;
     using University.Services.Admin.Implementations;
-    using University.Services.Admin.Models;
-    using Moq;
-    using Xunit;
     using University.Services.Admin.Models.Courses;
+    using Xunit;
 
     public class AdminCourseServiceTest
     {
@@ -234,6 +235,35 @@
             AssertCourse(expected, result);
         }
 
+        [Fact]
+        public async Task AllAsync_ShouldReturnCorrectDataAndOrder()
+        {
+            // Arrange
+            var db = await this.PrepareCourses();
+            var adminCourseService = this.InitializeAdminCourseService(db);
+
+            // Act
+            var result = await adminCourseService.AllAsync();
+
+            // Assert
+            Assert.IsAssignableFrom<IEnumerable<AdminCourseBasicServiceModel>>(result);
+
+            Assert.Equal(new[] { 3, 2, CourseValid }, result.Select(c => c.Id));
+
+            foreach (var resultCourse in result)
+            {
+                var expectedCourse = db.Courses.Find(resultCourse.Id);
+                AssertCourseBasic(expectedCourse, resultCourse);
+            }
+        }
+
+        private static void AssertCourseBasic(Course expected, AdminCourseBasicServiceModel result)
+        {
+            Assert.Equal(expected.Id, result.Id);
+            Assert.Equal(expected.Name, result.Name);
+            Assert.Equal(expected.StartDate, result.StartDate);
+        }
+
         private static void AssertCourse(Course expected, AdminCourseServiceModel result)
         {
             Assert.Equal(CourseValid, result.Id);
@@ -251,7 +281,7 @@
             {
                 Id = CourseValid,
                 TrainerId = TrainerValid,
-                Name = "Name 1",
+                Name = "Name BBB",
                 Description = "Description 1",
                 StartDate = new DateTime(2019, 8, 10),
                 EndDate = new DateTime(2019, 8, 15),
@@ -261,16 +291,26 @@
             {
                 Id = 2,
                 TrainerId = TrainerValid,
-                Name = "Name 2",
+                Name = "Name BBB",
                 Description = "Description 2",
                 StartDate = new DateTime(2019, 8, 15),
                 EndDate = new DateTime(2019, 8, 17),
                 Price = 250
             };
+            var course3 = new Course
+            {
+                Id = 3,
+                TrainerId = TrainerValid,
+                Name = "Name AAA",
+                Description = "Description 3",
+                StartDate = new DateTime(2019, 8, 15),
+                EndDate = new DateTime(2019, 8, 17),
+                Price = 350
+            };
             var trainer = new User { Id = TrainerValid };
 
             var db = Tests.InitializeDatabase();
-            await db.Courses.AddRangeAsync(course1, course2);
+            await db.Courses.AddRangeAsync(course1, course2, course3);
             await db.Users.AddAsync(trainer);
             await db.SaveChangesAsync();
 

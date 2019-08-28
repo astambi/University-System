@@ -1,11 +1,10 @@
 ﻿namespace University.Tests.Mocks
 {
     using System.Collections.Generic;
-    using University.Data.Models;
+    using Moq;
     using University.Services;
     using University.Services.Models.Courses;
     using University.Services.Models.Users;
-    using Moq;
 
     public static class TrainerServiceMock
     {
@@ -35,6 +34,16 @@
         {
             mock
                 .Setup(s => s.CoursesAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(courses)
+                .Verifiable();
+
+            return mock;
+        }
+
+        public static Mock<ITrainerService> CoursesToEvaluateAsync(this Mock<ITrainerService> mock, IEnumerable<CourseServiceModel> courses)
+        {
+            mock
+                .Setup(s => s.CoursesToEvaluateAsync(It.IsAny<string>()))
                 .ReturnsAsync(courses)
                 .Verifiable();
 

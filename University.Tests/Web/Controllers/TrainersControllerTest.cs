@@ -4,7 +4,10 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using University.Data.Models;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Moq;
+    using University.Data;
     using University.Services;
     using University.Services.Models.Exams;
     using University.Services.Models.Users;
@@ -15,11 +18,7 @@
     using University.Web.Models;
     using University.Web.Models.Courses;
     using University.Web.Models.Trainers;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using Moq;
     using Xunit;
-    using University.Data;
 
     public class TrainersControllerTest
     {
@@ -122,7 +121,8 @@
             var trainerService = TrainerServiceMock.GetMock;
             trainerService
                 .TotalCoursesAsync(TestTotalItems)
-                .CoursesAsync(Tests.GetCourseServiceModelCollection());
+                .CoursesAsync(Tests.GetCourseServiceModelCollection())
+                .CoursesToEvaluateAsync(Tests.GetCourseServiceModelCollection());
 
             var controller = new TrainersController(
                 userManager.Object,
@@ -136,9 +136,11 @@
 
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            var model = Assert.IsType<CoursePageListingViewModel>(viewResult.Model);
+            var model = Assert.IsType<TrainerCoursePageListingViewModel>(viewResult.Model);
 
             this.AssertCoursePage(testPagination, model);
+
+            Tests.AssertCourseServiceModelCollection(model.CoursesToEvaluate);
 
             userManager.Verify();
             trainerService.Verify();
