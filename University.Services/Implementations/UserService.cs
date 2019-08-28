@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
+    using Microsoft.EntityFrameworkCore;
     using University.Data;
     using University.Data.Models;
     using University.Services.Models.Certificates;
@@ -12,7 +13,6 @@
     using University.Services.Models.Exams;
     using University.Services.Models.Resources;
     using University.Services.Models.Users;
-    using Microsoft.EntityFrameworkCore;
 
     public class UserService : IUserService
     {

@@ -1,7 +1,7 @@
 ﻿namespace University.Tests.Mocks
 {
-    using University.Services;
     using Moq;
+    using University.Services;
 
     public static class PdfServiceMock
     {

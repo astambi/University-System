@@ -13,7 +13,7 @@
         public string CourseName { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
-        [Range(0, double.MaxValue, 
+        [Range(0, double.MaxValue,
             ErrorMessage = DataConstants.NegativeNumber)]
         public decimal Price { get; set; }
 

@@ -4,14 +4,14 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using Moq;
     using University.Data;
     using University.Data.Models;
     using University.Services;
     using University.Services.Implementations;
     using University.Services.Models.Orders;
     using University.Services.Models.ShoppingCart;
-    using Microsoft.EntityFrameworkCore;
-    using Moq;
     using Xunit;
 
     public class OrderServiceTest

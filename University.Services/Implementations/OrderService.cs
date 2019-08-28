@@ -5,12 +5,12 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
+    using Microsoft.EntityFrameworkCore;
     using University.Common.Infrastructure.Extensions;
     using University.Data;
     using University.Data.Models;
     using University.Services.Models.Orders;
     using University.Services.Models.ShoppingCart;
-    using Microsoft.EntityFrameworkCore;
 
     public class OrderService : IOrderService
     {

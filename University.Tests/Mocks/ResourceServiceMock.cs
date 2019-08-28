@@ -1,8 +1,8 @@
 ﻿namespace University.Tests.Mocks
 {
+    using Moq;
     using University.Services;
     using University.Services.Models.Resources;
-    using Moq;
 
     public static class ResourceServiceMock
     {

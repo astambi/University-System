@@ -1,10 +1,10 @@
 ﻿namespace University.Tests.Mocks
 {
     using System.Collections.Generic;
+    using Moq;
     using University.Services;
     using University.Services.Models.Courses;
     using University.Services.Models.Users;
-    using Moq;
 
     public static class UserServiceMock
     {

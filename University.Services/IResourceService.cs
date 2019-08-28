@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using University.Services.Models.Courses;
     using University.Services.Models.Resources;
 
     public interface IResourceService

@@ -2,10 +2,10 @@
 {
     using System.Diagnostics;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Mvc;
     using University.Services;
     using University.Web.Models;
     using University.Web.Models.Courses;
-    using Microsoft.AspNetCore.Mvc;
 
     public class HomeController : Controller
     {

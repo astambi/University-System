@@ -2,12 +2,12 @@
 {
     using System;
     using System.Threading.Tasks;
-    using University.Data.Models;
-    using University.Services;
-    using University.Web.Infrastructure.Extensions;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using University.Data.Models;
+    using University.Services;
+    using University.Web.Infrastructure.Extensions;
 
     [Authorize]
     public class OrdersController : Controller

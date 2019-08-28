@@ -2,13 +2,13 @@
 {
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
     using University.Services.Models.Resources;
     using University.Tests.Mocks;
     using University.Web;
     using University.Web.Controllers;
     using University.Web.Models.Resources;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
     using Xunit;
 
     public class ResourcesControllerTest

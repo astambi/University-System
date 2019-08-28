@@ -2,10 +2,10 @@
 {
     using System.Collections.Generic;
     using System.Security.Claims;
-    using University.Data.Models;
-    using University.Web;
     using Microsoft.AspNetCore.Identity;
     using Moq;
+    using University.Data.Models;
+    using University.Web;
 
     public static class UserManagerMock
     {

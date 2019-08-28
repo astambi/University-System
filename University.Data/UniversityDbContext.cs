@@ -1,8 +1,8 @@
 ﻿namespace University.Data
 {
-    using University.Data.Models;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
+    using University.Data.Models;
 
     public class UniversityDbContext : IdentityDbContext<User>
     {
@@ -114,12 +114,6 @@
             builder
                 .Entity<Order>()
                 .HasIndex(o => o.UserId);
-
-            //builder
-            //    .Entity<Order>()
-            //    .HasOne(o => o.User)
-            //    .WithMany(u => u.Orders)
-            //    .HasForeignKey(o => o.UserId);
 
             builder
                 .Entity<Order>()

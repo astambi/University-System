@@ -2,8 +2,8 @@
 {
     using System.Linq;
     using System.Reflection;
-    using University.Services;
     using Microsoft.Extensions.DependencyInjection;
+    using University.Services;
 
     public static class ServiceCollectionExtensions
     {

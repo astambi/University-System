@@ -2,11 +2,11 @@
 {
     using System;
     using System.Threading.Tasks;
-    using University.Data.Models;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.RazorPages;
+    using University.Data.Models;
 
     [AllowAnonymous]
     public class ConfirmEmailModel : PageModel

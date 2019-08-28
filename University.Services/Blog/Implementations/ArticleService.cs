@@ -6,12 +6,12 @@
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using AutoMapper;
+    using Microsoft.EntityFrameworkCore;
     using University.Common.Infrastructure.Extensions;
     using University.Data;
     using University.Data.Models;
     using University.Services;
     using University.Services.Blog.Models;
-    using Microsoft.EntityFrameworkCore;
 
     public class ArticleService : IArticleService
     {

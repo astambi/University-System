@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
@@ -45,7 +44,7 @@
             var builder = new StringBuilder()
                 .Append(text[0]);
 
-            for (int i = 1; i < text.Length; i++)
+            for (var i = 1; i < text.Length; i++)
             {
                 var symbol = text[i];
                 if (char.IsUpper(symbol))

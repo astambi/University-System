@@ -5,12 +5,12 @@
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    using University.Data.Models;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.RazorPages;
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
+    using University.Data.Models;
 
     public class DownloadPersonalDataModel : PageModel
     {

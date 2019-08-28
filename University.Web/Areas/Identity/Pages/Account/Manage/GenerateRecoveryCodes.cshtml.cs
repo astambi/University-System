@@ -3,11 +3,11 @@
     using System;
     using System.Linq;
     using System.Threading.Tasks;
-    using University.Data.Models;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.RazorPages;
     using Microsoft.Extensions.Logging;
+    using University.Data.Models;
 
     public class GenerateRecoveryCodesModel : PageModel
     {

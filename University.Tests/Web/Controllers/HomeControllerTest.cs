@@ -1,11 +1,11 @@
 ﻿namespace University.Tests.Web.Controllers
 {
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
     using University.Tests.Mocks;
     using University.Web.Controllers;
     using University.Web.Models.Courses;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
     using Xunit;
 
     public class HomeControllerTest

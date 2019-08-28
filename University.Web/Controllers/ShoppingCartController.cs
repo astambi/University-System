@@ -2,13 +2,13 @@
 {
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
     using University.Data.Models;
     using University.Services;
     using University.Web.Infrastructure.Extensions;
     using University.Web.Models.ShoppingCart;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
 
     public class ShoppingCartController : Controller
     {

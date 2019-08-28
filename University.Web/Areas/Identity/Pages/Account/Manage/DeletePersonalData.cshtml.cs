@@ -1,15 +1,14 @@
 ﻿namespace University.Web.Areas.Identity.Pages.Account.Manage
 {
-    using System;
     using System.ComponentModel.DataAnnotations;
     using System.Threading.Tasks;
-    using University.Data.Models;
-    using University.Services;
-    using University.Web.Infrastructure.Extensions;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.RazorPages;
     using Microsoft.Extensions.Logging;
+    using University.Data.Models;
+    using University.Services;
+    using University.Web.Infrastructure.Extensions;
 
     public class DeletePersonalDataModel : PageModel
     {

@@ -2,8 +2,8 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using University.Data;
     using Microsoft.AspNetCore.Http;
+    using University.Data;
 
     public class ResourceCreateFormModel : IValidatableObject
     {

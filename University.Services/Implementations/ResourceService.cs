@@ -4,11 +4,10 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
+    using Microsoft.EntityFrameworkCore;
     using University.Data;
     using University.Data.Models;
-    using University.Services.Models.Courses;
     using University.Services.Models.Resources;
-    using Microsoft.EntityFrameworkCore;
 
     public class ResourceService : IResourceService
     {

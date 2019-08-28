@@ -5,15 +5,15 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Rendering;
     using University.Data.Models;
     using University.Services;
     using University.Services.Admin;
     using University.Web.Areas.Admin.Models.Courses;
     using University.Web.Infrastructure.Extensions;
     using University.Web.Models;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class CoursesController : BaseAdminController
     {

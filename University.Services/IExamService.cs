@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using University.Data.Models;
     using University.Services.Models.Exams;
 
     public interface IExamService

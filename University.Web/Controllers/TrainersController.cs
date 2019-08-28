@@ -292,7 +292,8 @@
             }
         }
 
-        private async Task<CoursePageListingViewModel> GetTrainerCoursesWithSearchAndPagination(string trainerId, string search, int currentPage, string action = nameof(Courses))
+        private async Task<CoursePageListingViewModel> GetTrainerCoursesWithSearchAndPagination(
+            string trainerId, string search, int currentPage, string action = nameof(Courses))
         {
             var pagination = new PaginationViewModel
             {

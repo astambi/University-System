@@ -167,7 +167,7 @@
 
             return this.RedirectToAction(nameof(Index));
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> RemoveCourse(CurriculumAddRemoveCourseFormModel model)
         {

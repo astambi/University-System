@@ -1,9 +1,8 @@
 ﻿namespace University.Tests.Mocks
 {
-    using University.Data.Models;
+    using Moq;
     using University.Services;
     using University.Services.Models.Exams;
-    using Moq;
 
     public static class ExamServiceMock
     {

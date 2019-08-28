@@ -1,10 +1,10 @@
 ﻿namespace University.Web.Controllers
 {
     using System.Threading.Tasks;
-    using University.Services;
-    using University.Web.Infrastructure.Extensions;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using University.Services;
+    using University.Web.Infrastructure.Extensions;
 
     public class CertificatesController : Controller
     {

@@ -7,7 +7,6 @@
     using Microsoft.EntityFrameworkCore;
     using University.Data;
     using University.Data.Models;
-    using University.Services.Admin.Models;
     using University.Services.Admin.Models.Curriculums;
 
     public class AdminCurriculumService : IAdminCurriculumService

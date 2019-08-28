@@ -2,12 +2,12 @@
 {
     using System;
     using System.Threading.Tasks;
-    using University.Data;
-    using University.Data.Models;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
+    using University.Data;
+    using University.Data.Models;
 
     public static class ApplicationBuilderExtensions
     {

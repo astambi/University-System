@@ -5,12 +5,12 @@
     using System.Text;
     using System.Text.Encodings.Web;
     using System.Threading.Tasks;
-    using University.Data.Models;
-    using University.Web.Infrastructure.Extensions;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.RazorPages;
     using Microsoft.Extensions.Logging;
+    using University.Data.Models;
+    using University.Web.Infrastructure.Extensions;
 
     public class EnableAuthenticatorModel : PageModel
     {

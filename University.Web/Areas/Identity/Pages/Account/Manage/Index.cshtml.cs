@@ -5,14 +5,14 @@
     using System.ComponentModel.DataAnnotations;
     using System.Text.Encodings.Web;
     using System.Threading.Tasks;
-    using University.Data;
-    using University.Data.Models;
-    using University.Services;
-    using University.Web.Infrastructure.Extensions;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.UI.Services;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.RazorPages;
+    using University.Data;
+    using University.Data.Models;
+    using University.Services;
+    using University.Web.Infrastructure.Extensions;
 
     public partial class IndexModel : PageModel
     {

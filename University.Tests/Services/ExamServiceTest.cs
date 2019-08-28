@@ -5,12 +5,12 @@
     using System.Linq;
     using System.Threading.Tasks;
     using FluentAssertions;
+    using Moq;
     using University.Data;
     using University.Data.Models;
     using University.Services;
     using University.Services.Implementations;
     using University.Services.Models.Exams;
-    using Moq;
     using Xunit;
 
     public class ExamServiceTest

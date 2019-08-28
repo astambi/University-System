@@ -2,14 +2,14 @@
 {
     using System.Threading.Tasks;
     using AutoMapper;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
     using University.Data.Models;
     using University.Services;
     using University.Web.Infrastructure.Extensions;
     using University.Web.Models;
     using University.Web.Models.Courses;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
 
     public class CoursesController : Controller
     {

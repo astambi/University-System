@@ -1,9 +1,9 @@
 ﻿namespace University.Tests.Mocks
 {
-    using University.Web;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Moq;
+    using University.Web;
     using Xunit;
 
     public static class TempDataMock

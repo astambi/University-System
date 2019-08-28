@@ -1,19 +1,19 @@
 ﻿namespace University.Web.Controllers
 {
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
     using University.Data.Models;
     using University.Services;
     using University.Web.Infrastructure.Extensions;
     using University.Web.Models.Resources;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
 
     [Authorize]
     public class ResourcesController : Controller
     {
         private readonly UserManager<User> userManager;
-        private readonly ICourseService courseService; 
+        private readonly ICourseService courseService;
         private readonly IResourceService resourceService;
         private readonly ITrainerService trainerService;
 

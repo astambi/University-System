@@ -1,15 +1,15 @@
 ﻿namespace University.Web.Areas.Blog.Controllers
 {
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
     using University.Data.Models;
     using University.Services.Blog;
     using University.Web.Areas.Blog.Models.Articles;
     using University.Web.Infrastructure.Extensions;
     using University.Web.Infrastructure.Filters;
     using University.Web.Models;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
 
     [Area(WebConstants.BlogArea)]
     [Authorize]
