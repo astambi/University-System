@@ -37,6 +37,7 @@
         public const string CertificatesController = "Certificates";
         public const string CoursesController = "Courses";
         public const string CurriculumsController = "Curriculums";
+        public const string DiplomasController = "Diplomas";
         public const string ExamsController = "Exams";
         public const string HomeController = "Home";
         public const string OrdersController = "Orders";
@@ -125,6 +126,15 @@
         public const string CurriculumContainsCourseAlreadyMsg = "Curriculum contains this course already.";
         public const string CurriculumDoesNotContainCourseMsg = "Course not found in this curriculum.";
 
+        public const string CurriculumOrStudentErrorMsg = "Invalid curriculum or student.";
+
+        public const string DiplomaCreateErrorMsg = "Could not issue diploma.";
+        public const string DiplomaCreateSuccessMsg = "Diploma issued successfully.";
+        public const string DiplomaDeleteErrorMsg = "Could not delete diploma.";
+        public const string DiplomaDeleteSuccessMsg = "Diploma deleted successfully.";
+        public const string DiplomaExistsAlreadyMsg = "Diploma has already been issued for this curriculum.";
+        public const string DiplomaNotFoundMsg = "Diploma not found.";
+
         public const string Disable2faErrorMsg = "Cannot disable 2FA for user.";
         public const string ExternalLoginInfoErrorMsg = "Unable to load external login info.";
 
@@ -182,6 +192,7 @@
         public const string StudentAssessmentErrorMsg = "Student assessment error.";
         public const string StudentHasNotSubmittedExamMsg = "Student has not submitted an exam.";
         public const string StudentNotEnrolledInCourseMsg = "Student not enrolled in this course.";
+        public const string StudentNotEligibleForDiplomaMsg = "Student not eligible for diploma in this curriculum.";
 
         public const string SearchByArticleTitleOrContent = "Search by title or content";
         public const string SearchByCourseName = "Search by course name";

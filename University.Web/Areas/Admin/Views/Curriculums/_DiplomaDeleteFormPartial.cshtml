@@ -1,0 +1,21 @@
+﻿@model DiplomaDeleteFormModel
+
+@if (Model != null)
+{
+    <form asp-controller="@WebConstants.DiplomasController"
+          asp-action="@nameof(DiplomasController.Delete)"
+          asp-route-id="@Model.DiplomaId" method="post" class="mx-1">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input asp-for="DiplomaId" hidden />
+        <input asp-for="CurriculumId" hidden />
+
+        <button type="submit" data-toggle="tooltip" title="Delete diploma"
+                class="btn btn-sm btn-@FormActionEnum.Delete.ToStyle()">
+            <i class="fa fa-trash"></i>
+        </button>
+    </form>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

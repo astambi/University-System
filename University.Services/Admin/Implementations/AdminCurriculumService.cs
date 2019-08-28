@@ -8,6 +8,7 @@
     using University.Data;
     using University.Data.Models;
     using University.Services.Admin.Models.Curriculums;
+    using University.Services.Admin.Models.Users;
 
     public class AdminCurriculumService : IAdminCurriculumService
     {
@@ -82,6 +83,46 @@
                 this.db.Curriculums
                 .Where(c => c.Id == id))
             .FirstOrDefaultAsync();
+
+        public async Task<IEnumerable<AdminDiplomaGraduateServiceModel>> GetDiplomaGraduatesAsync(int id)
+        {
+            var curriculumDiplomas = this.db
+                .Diplomas
+                .Where(d => d.CurriculumId == id);
+
+            return await this.mapper
+                .ProjectTo<AdminDiplomaGraduateServiceModel>(curriculumDiplomas)
+                .OrderBy(u => u.Student.Name)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<AdminUserListingServiceModel>> GetEligibleCandidatesAsync(int id)
+        {
+            var curriculumCourseIds = await this.db
+                .Curriculums
+                .Where(c => c.Id == id)
+                .SelectMany(c => c.Courses)
+                .Select(c => c.CourseId)
+                .ToListAsync();
+
+            var candidates = this.db
+                .Certificates
+                .Where(c => curriculumCourseIds.Contains(c.CourseId))
+                .Where(c => c.Student
+                    .Certificates
+                    .Where(cert => curriculumCourseIds.Contains(cert.CourseId))
+                    .Select(cert => cert.CourseId)
+                    .Distinct()
+                    .Count() == curriculumCourseIds.Count)
+                .Select(c => c.Student)
+                .Where(c => !c.Diplomas.Any(d => d.CurriculumId == id)) // no diplomas
+                .Distinct();
+
+            return await this.mapper
+                .ProjectTo<AdminUserListingServiceModel>(candidates)
+                .OrderBy(u => u.Name)
+                .ToListAsync();
+        }
 
         public async Task<bool> RemoveAsync(int id)
         {

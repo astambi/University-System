@@ -1,0 +1,22 @@
+﻿@model DiplomaCreateFormModel
+
+@if (Model != null)
+{
+    <form asp-controller="@WebConstants.DiplomasController"
+          asp-action="@nameof(DiplomasController.Create)"
+          asp-route-id="@Model.CurriculumId" method="post" class="mx-1">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <input asp-for="StudentId" class="form-control" hidden />
+        <input asp-for="CurriculumId" class="form-control" hidden />
+
+        <button type="submit" data-toggle="tooltip" title="Create diploma"
+                class="btn btn-sm btn-@FormActionEnum.Create.ToStyle()">
+            <i class="fa fa-graduation-cap"></i>
+        </button>
+    </form>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -21,6 +21,8 @@
 
         Task<IEnumerable<CertificatesByCourseServiceModel>> GetCertificatesAsync(string id);
 
+        Task<IEnumerable<UserDiplomaListingServiceModel>> GetDiplomasAsync(string id);
+
         Task<IEnumerable<ExamsByCourseServiceModel>> GetExamsAsync(string id);
 
         Task<IEnumerable<ResourcesByCourseServiceModel>> GetResourcesAsync(string id);

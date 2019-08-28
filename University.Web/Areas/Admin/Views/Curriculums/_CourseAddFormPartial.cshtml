@@ -6,7 +6,7 @@
 
     <div class="form-group d-flex p-0 m-0">
         <select asp-for="CourseId" asp-items="Model.Courses" class="form-control" required>
-            <option value="-1" selected disabled>Choose course...</option>
+            <option value="-1" selected disabled>Choose...</option>
         </select>
         <span asp-validation-for="CourseId" class="text-danger"></span>
         <button type="submit" data-toggle="tooltip" title="Add to curriculum" class="btn btn-@FormActionEnum.Add.ToStyle() mx-1">

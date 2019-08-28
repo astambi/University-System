@@ -75,6 +75,13 @@
             return certificatesByCourse;
         }
 
+        public async Task<IEnumerable<UserDiplomaListingServiceModel>> GetDiplomasAsync(string id)
+            => await this.mapper.ProjectTo<UserDiplomaListingServiceModel>(
+                this.db.Diplomas
+                .Where(d => d.StudentId == id)
+                .OrderBy(d => d.Curriculum.Name))
+            .ToArrayAsync();
+
         public async Task<IEnumerable<ExamsByCourseServiceModel>> GetExamsAsync(string id)
         {
             var examsQueryable = this.mapper

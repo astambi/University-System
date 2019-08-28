@@ -40,6 +40,11 @@
                 <div class="card-footer d-flex justify-content-between align-items-center">
                     <partial name="_CourseAddFormPartial" model="addCourseModel" />
                     <partial name="_AdminCurriculumActionsPartial" model="curriculum.Id" />
+                    <a asp-action="@nameof(CurriculumsController.Graduates)"
+                       asp-route-id="@curriculum.Id" data-toggle="tooltip" title="Graduates"
+                       class="btn btn-outline-info">
+                        <i class="fa fa-graduation-cap"></i>
+                    </a>
                 </div>
             </div>
         </article>

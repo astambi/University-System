@@ -48,9 +48,13 @@
                 return this.RedirectToAction(nameof(HomeController.Index));
             }
 
-            var certificates = await this.userService.GetCertificatesAsync(user.Id);
+            var model = new UserCertificatesDiplomasViewModel
+            {
+                Certificates = await this.userService.GetCertificatesAsync(user.Id),
+                Diplomas = await this.userService.GetDiplomasAsync(user.Id)
+            };
 
-            return this.View(certificates);
+            return this.View(model);
         }
 
         public async Task<IActionResult> Exams()

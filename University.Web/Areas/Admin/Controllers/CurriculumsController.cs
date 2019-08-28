@@ -210,6 +210,25 @@
             return this.RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> Graduates(int id)
+        {
+            var curriculumExists = await this.adminCurriculumService.ExistsAsync(id);
+            if (!curriculumExists)
+            {
+                this.TempData.AddErrorMessage(WebConstants.CurriculumNotFoundMsg);
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            var model = new CurriculumGraduatesListingViewModel
+            {
+                Curriculum = await this.adminCurriculumService.GetByIdAsync(id),
+                Graduates = await this.adminCurriculumService.GetDiplomaGraduatesAsync(id),
+                Candidates = await this.adminCurriculumService.GetEligibleCandidatesAsync(id),
+            };
+
+            return this.View(model);
+        }
+
         private async Task<IEnumerable<SelectListItem>> GetCoursesSelectListItems()
             => (await this.adminCourseService.AllAsync())
             .Select(c => new SelectListItem

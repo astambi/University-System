@@ -1,9 +1,32 @@
-﻿@model IEnumerable<CertificatesByCourseServiceModel>
+﻿@model UserCertificatesDiplomasViewModel
 @{
     ViewData["Title"] = "Certificates";
-    var averageGrade = Model.Any()
-        ? Model.Select(c => c.Certificates.First()).Average(c => c.GradeBg)
+    var averageGrade = Model.Certificates.Any()
+        ? Model.Certificates.Select(c => c.Certificates.First()).Average(c => c.GradeBg)
         : 0;
+}
+
+@if (Model.Diplomas.Any())
+{
+    <h1>My diplomas</h1>
+    <section class="card-deck d-flex justify-content-start mb-5">
+        @foreach (var diploma in Model.Diplomas)
+        {
+            <article class="card-group">
+                <div class="card course-card border-info">
+                    <div class="card-header bg-info">
+                        <h5 class="card-title">@diploma.CurriculumName</h5>
+                    </div>
+                    <div class="card-body">
+                        @*<partial name="_CertificateDownloadFormPartial" model="@certificate.Id" />*@
+                    </div>
+                    <div class="card-footer">
+                        <p class="card-text text-muted">@diploma.IssueDate.ToDate()</p>
+                    </div>
+                </div>
+            </article>
+        }
+    </section>
 }
 
 <h1 class="d-flex justify-content-between flex-wrap">
@@ -14,11 +37,10 @@
     }
 </h1>
 
-@if (Model.Any())
+@if (Model.Certificates.Any())
 {
     <section class="card-columns">
-
-        @foreach (var group in Model)
+        @foreach (var group in Model.Certificates)
         {
             var courseInfoModel = new CourseBasicViewModel { Id = group.CourseId, Name = group.CourseName };
             <article class="card-group">

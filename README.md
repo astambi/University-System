@@ -25,8 +25,11 @@ Trainers can add and remove course resources, evaluate course exams and create a
 - Creating / Editing / Deleting Courses (Administrators only):
   Courses can be created by users in Administrator role only. Administrators can edit course details, delete a course, replace the course's trainer, update the course's start and end dates and pricing. Each course has a name, a description, start and end date, price, a single trainer, and a list of course resources.
 
-- Creating Curriculums & Adding / Removing courses to curriculums (Administrators only):
+- Creating / Editing / Deleting Curriculums & Adding / Removing courses to curriculums (Administrators only):
   Curriculums can be created by users in Administrator role only. Administrators can add and remove courses to multiple curriculums.
+
+- Issuing / Deleting Diplomas for successfully covered Curriculums (Administrators only):
+  Administrators can review eligible candidates for a diploma (per curriculum). To be considered as eligible for a diploma students, should successfully pass all courses, included in the respective curriculum (i.e. students should have all required course certificates). Administrators can issue curriculum diplomas, as well as revoke existing diplomas. Should a curriculum change and become more demanding (e.g. include more courses), the previously issued diplomas will remain valid unless an Administrator revokes the diplomas.
 
 - Creating / Deleting Roles & Adding / Removing Users to existing roles (Administrators only):
   Roles can be created by users in Administrator role only. Administrators can add and remove roles, as well as add and remove registered users to existing roles. Pre-defined roles: Administrator, Trainer, BlogAuthor.
@@ -102,11 +105,12 @@ The public part of the University is visible by any user with or without authent
 - Uploading Exams on exam day for courses they are enrolled in
 - Viewing / Downloading Exams by course and date
 - Viewing / Downloading Certificates for courses successfully passed
+- Viewing Diplomas for successfully covered curriculums
 - User's Profile with stats:
   - Collection of user's courses (free and purchased) with the option to upload exams on exam day
-  - Collection of user's resources by course
-  - Collection of user's exams by course
-  - Collection of user's certificates by course
+  - Collection of user's resources (by course)
+  - Collection of user's exams (by course)
+  - Collection of user's diplomas & certificates (by course)
   - Collection of user's payments
 - Updating Profile data (name, email, password, birthdate, phone number)
 - Adding / Removing multiple External logins (Google & Facebook)
@@ -117,8 +121,9 @@ The public part of the University is visible by any user with or without authent
 ### Administration Part (Logged in users in role Administrator)
 
 - Creating / Updating / Deleting Courses
-- Creating / Deleting Curriculums
+- Creating / Updating / Deleting Curriculums
 - Adding / Removing Courses to/from Curriculums
+- Creating / Deleting Diplomas for successfully covered curriculums
 - Creating / Deleting user Roles
 - Adding / Removing Users to/from existing Roles
 

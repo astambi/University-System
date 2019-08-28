@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using University.Services.Admin.Models.Curriculums;
+    using University.Services.Admin.Models.Users;
 
     public interface IAdminCurriculumService
     {
@@ -17,6 +18,10 @@
         Task<bool> ExistsCurriculumCourseAsync(int curriculumId, int courseId);
 
         Task<AdminCurriculumBasicServiceModel> GetByIdAsync(int id);
+
+        Task<IEnumerable<AdminUserListingServiceModel>> GetEligibleCandidatesAsync(int id);
+
+        Task<IEnumerable<AdminDiplomaGraduateServiceModel>> GetDiplomaGraduatesAsync(int id);
 
         Task<bool> RemoveAsync(int id);
 
