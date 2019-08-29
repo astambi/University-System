@@ -6,12 +6,9 @@
 
 <partial name="_WelcomePartial" />
 
-@if (Model.Courses.Any())
-{
-    <header class="d-flex flex-wrap justify-content-between align-items-center">
-        <h1>Courses</h1>
-        <partial name="_SearchPartial" for="Search" />
-    </header>
+<header class="d-flex flex-wrap justify-content-between align-items-center">
+    <h1>Courses</h1>
+    <partial name="_SearchPartial" for="Search" />
+</header>
 
-    <partial name="_CoursesListPartial" model="@Model" />
-}
+<partial name="_CoursesListPartial" model="@Model" />

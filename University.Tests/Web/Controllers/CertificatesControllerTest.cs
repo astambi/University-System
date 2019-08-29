@@ -22,16 +22,28 @@
         private const string Path = "/certificates/" + CertificateValidId;
         private const string DownloadUrl = Scheme + "://" + Host + Path;
 
+        // Attributes
         [Fact]
-        public void Details_ShouldAllowAnonymousUsers()
-            => this.AssertAttributeAllowAnonymous(nameof(CertificatesController.Details));
+        public void CertificatesController_ShouldBeAnonymousUsers()
+        {
+            // Arrange
+            var attributes = typeof(CertificatesController).GetCustomAttributes(true);
+
+            // Act
+            var allowAnonymousAttribute = attributes
+                .FirstOrDefault(a => a.GetType() == typeof(AllowAnonymousAttribute))
+                as AllowAnonymousAttribute;
+
+            // Assert
+            Assert.NotNull(allowAnonymousAttribute);
+        }
 
         [Fact]
-        public void Details_ShouldHaveCorrectRouteAttribute()
-            => this.AssertAttributeRouteWithId(nameof(CertificatesController.Details));
+        public void Certificate_ShouldHaveCorrectRouteAttribute()
+            => this.AssertAttributeRouteWithId(nameof(CertificatesController.Certificate));
 
         [Fact]
-        public async Task Details_ShouldRedirectToHome_GivenInvalidCertificate()
+        public async Task Certificate_ShouldRedirectToHome_GivenInvalidCertificate()
         {
             // Arrange
             var certificateService = CertificateServiceMock.GetMock;
@@ -39,13 +51,14 @@
 
             var controller = new CertificatesController(
                 certificateService.Object,
+                diplomaService: null,
                 pdfService: null)
             {
                 TempData = TempDataMock.GetMock
             };
 
             // Act
-            var result = await controller.Details(CertificateInvalidId);
+            var result = await controller.Certificate(CertificateInvalidId);
 
             // Assert
             controller.TempData.AssertErrorMsg(WebConstants.CertificateNotFoundMsg);
@@ -56,7 +69,7 @@
         }
 
         [Fact]
-        public async Task Details_ShouldReturnViewResultWithCorrectModel_GivenValidCertificate()
+        public async Task Certificate_ShouldReturnViewResultWithCorrectModel_GivenValidCertificate()
         {
             // Arrange
             var certificateService = CertificateServiceMock.GetMock;
@@ -64,6 +77,7 @@
 
             var controller = new CertificatesController(
                 certificateService.Object,
+                diplomaService: null,
                 pdfService: null)
             {
                 ControllerContext = ControllerContextMock.GetMock // HttpRequest Mock
@@ -71,7 +85,7 @@
             controller.ControllerContext.HttpRequest(Scheme, Host, Path); // HttpRequest Mock
 
             // Act
-            var result = await controller.Details(CertificateValidId);
+            var result = await controller.Certificate(CertificateValidId);
 
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
@@ -83,19 +97,15 @@
         }
 
         [Fact]
-        public void Download_ShouldAllowAnonymousUsers()
-            => this.AssertAttributeAllowAnonymous(nameof(CertificatesController.Download));
+        public void CertificateDownload_ShouldHaveCorrectRouteAttribute()
+            => this.AssertAttributeRouteWithId(nameof(CertificatesController.CertificateDownload));
 
         [Fact]
-        public void Download_ShouldHaveCorrectRouteAttribute()
-            => this.AssertAttributeRouteWithId(nameof(CertificatesController.Download));
-
-        [Fact]
-        public void Download_ShouldHaveHttpPostAttribute()
+        public void CertificateDownload_ShouldHaveHttpPostAttribute()
         {
             // Arrange
             var method = typeof(CertificatesController)
-                .GetMethod(nameof(CertificatesController.Download));
+                .GetMethod(nameof(CertificatesController.CertificateDownload));
 
             // Act
             var attributes = method.GetCustomAttributes(true);
@@ -105,7 +115,7 @@
         }
 
         [Fact]
-        public void Download_ShouldRedirectToHome_GivenInvalidPath()
+        public void CertificateDownload_ShouldRedirectToHome_GivenInvalidPath()
         {
             // Arrange
             var pdfService = PdfServiceMock.GetMock;
@@ -113,6 +123,7 @@
 
             var controller = new CertificatesController(
                 certificateService: null,
+                diplomaService: null,
                 pdfService.Object)
             {
                 TempData = TempDataMock.GetMock,
@@ -121,7 +132,7 @@
             controller.ControllerContext.HttpRequest(Scheme, Host, Path); // HttpRequest Mock
 
             // Act
-            var result = controller.Download(CertificateValidId);
+            var result = controller.CertificateDownload(CertificateValidId);
 
             // Assert
             controller.TempData.AssertErrorMsg(WebConstants.CertificateNotFoundMsg);
@@ -132,7 +143,7 @@
         }
 
         [Fact]
-        public void Download_ShouldReturnFileContentResultWithCorrectContent_GivenServiceSuccess()
+        public void CertificateDownload_ShouldReturnFileContentResultWithCorrectContent_GivenServiceSuccess()
         {
             // Arrange
             var pdfService = PdfServiceMock.GetMock;
@@ -140,6 +151,7 @@
 
             var controller = new CertificatesController(
                 certificateService: null,
+                diplomaService: null,
                 pdfService.Object)
             {
                 ControllerContext = ControllerContextMock.GetMock // HttpRequest Mock
@@ -147,7 +159,7 @@
             controller.ControllerContext.HttpRequest(Scheme, Host, Path); // HttpRequest Mock
 
             // Act
-            var result = controller.Download(CertificateValidId);
+            var result = controller.CertificateDownload(CertificateValidId);
 
             // Assert
             var fileContentResult = Assert.IsType<FileContentResult>(result);

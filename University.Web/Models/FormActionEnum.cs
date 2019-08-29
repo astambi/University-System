@@ -14,6 +14,7 @@
         Upload = 9,
         Download = 10,
         Certificate = 11,
+        Diploma = 12,
         Default = 99
     }
 }

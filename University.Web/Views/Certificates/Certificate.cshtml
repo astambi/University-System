@@ -7,13 +7,14 @@
 <section class="certificate-details">
     <header class="text-center p-5 m-auto">
         <h1 class="display-1 text-uppercase font-weight-bold py-5">Certificate</h1>
-        <p>This certificate is issued by <strong>Software University</strong> to acknowledge that</p>
-        <h2 class="p-5">@Model.StudentName</h2>
-        <p>has successfully completed a course</p>
-        <h2 class="pt-5 pb-3">@Model.CourseName</h2>
+        <h5 class="py-5 mx-auto w-75">This certificate is issued by <strong>Software University</strong> to acknowledge that</h5>
+        <h2 class="display-3 font-weight-bold p-5">@Model.StudentName</h2>
+        <h5>has successfully completed a course</h5>
+        <h3 class="display-4 font-weight-bold pt-5 pb-3">@Model.CourseName</h3>
         <h3>with <label>Grade @Model.GradeBg / @DataConstants.GradeBgMaxValue.ToNumberDecimal()</label></h3>
     </header>
-    <article class="py-5 my-5">
+
+    <article class="py-3">
         <h4 class="text-center pb-2">Course details:</h4>
         <div class="d-flex justify-content-around">
             <div>
@@ -23,13 +24,14 @@
             <h5>Trainer: @Model.CourseTrainerName</h5>
         </div>
     </article>
-    <footer class="d-flex justify-content-between p-5 mx-5 mt-5">
+
+    <footer class="d-flex justify-content-between p-5 mx-5 mt-2">
         <div>
             <p>Issue date: @Model.IssueDate.ToLongDateString()</p>
             <p class="small">Check the validity of this certificate here:</p>
             <p class="small">
                 <a asp-controller="@WebConstants.CertificatesController"
-                   asp-action="@nameof(CertificatesController.Details)"
+                   asp-action="@nameof(CertificatesController.Certificate)"
                    asp-route-id="@Model.Id" class="certificate-details">@Model.DownloadUrl</a>
             </p>
         </div>

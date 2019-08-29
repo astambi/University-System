@@ -9,16 +9,22 @@
 @if (Model.Diplomas.Any())
 {
     <h1>My diplomas</h1>
-    <section class="card-deck d-flex justify-content-start mb-5">
+    <section class="card-columns mb-5">
         @foreach (var diploma in Model.Diplomas)
         {
+            var diplomaDloadModel = new CertificateDownloadFormModel { Id = diploma.Id, Action = FormActionEnum.Diploma };
             <article class="card-group">
                 <div class="card course-card border-info">
                     <div class="card-header bg-info">
                         <h5 class="card-title">@diploma.CurriculumName</h5>
                     </div>
                     <div class="card-body">
-                        @*<partial name="_CertificateDownloadFormPartial" model="@certificate.Id" />*@
+                        <partial name="_CertificateDownloadFormPartial" model="diplomaDloadModel" />
+                        <a asp-controller="@WebConstants.CertificatesController"
+                           asp-action="@nameof(CertificatesController.Diploma)"
+                           asp-route-id="@diploma.Id" class="text-info">
+                            Diploma
+                        </a>
                     </div>
                     <div class="card-footer">
                         <p class="card-text text-muted">@diploma.IssueDate.ToDate()</p>
@@ -50,11 +56,12 @@
                     </div>
                     @foreach (var certificate in group.Certificates)
                     {
+                        var certificateDloadModel = new CertificateDownloadFormModel { Id = certificate.Id, Action = FormActionEnum.Certificate };
                         <div class="card-body">
-                            <partial name="_CertificateDownloadFormPartial" model="@certificate.Id" />
+                            <partial name="_CertificateDownloadFormPartial" model="certificateDloadModel" />
                             <h5 class="card-text font-weight-bold">
                                 <a asp-controller="@WebConstants.CertificatesController"
-                                   asp-action="@nameof(CertificatesController.Details)"
+                                   asp-action="@nameof(CertificatesController.Certificate)"
                                    asp-route-id="@certificate.Id" class="text-info">
                                     Grade @certificate.GradeBg
                                 </a>

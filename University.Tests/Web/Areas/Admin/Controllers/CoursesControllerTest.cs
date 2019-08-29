@@ -485,8 +485,6 @@
             adminCourseService.Verify();
         }
 
-        // TODO delete
-
         private void AssertAdminCourseForm(CourseFormModel model, FormActionEnum expectedAction)
         {
             var expectedCourse = this.GetAdminCourse();

@@ -1,0 +1,28 @@
+﻿@model DiplomaServiceModel
+@{
+    ViewData["Title"] = "Diploma";
+    Layout = "_LayoutCertificate"; // no header & footer
+}
+
+<section class="diploma-details">
+    <header class="text-center p-5 m-auto">
+        <h1 class="display-1 font-weight-bold text-uppercase py-5">Diploma</h1>
+        <h4 class="border-bottom border-white py-5 mx-auto w-50">of professional qualification</h4>
+        <h5 class="pt-5 mx-auto w-75">This diploma is issued by <strong>Software University</strong> to acknowledge that</h5>
+        <h2 class="display-3 font-weight-bold p-5">@Model.StudentName</h2>
+        <h5>has successfully completed their education for</h5>
+        <h3 class="display-4 font-weight-bold pt-5 pb-3">@Model.CurriculumName</h3>
+    </header>
+    <footer class="d-flex justify-content-between p-5 mx-5 mt-5">
+        <div>
+            <p>Issue date: @Model.IssueDate.ToLongDateString()</p>
+            <p class="small">Check the validity of this document here:</p>
+            <p class="small">
+                <a asp-controller="@WebConstants.CertificatesController"
+                   asp-action="@nameof(CertificatesController.Diploma)"
+                   asp-route-id="@Model.Id" class="diploma-details">@Model.DownloadUrl</a>
+            </p>
+        </div>
+        <div><p>Issuer: Software University</p></div>
+    </footer>
+</section>

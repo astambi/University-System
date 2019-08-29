@@ -1,12 +1,12 @@
-﻿@model string
+﻿@model CertificateDownloadFormModel
 
 @if (Model != null)
 {
     <form asp-area=""
           asp-controller="@WebConstants.CertificatesController"
-          asp-action="@nameof(CertificatesController.Download)"
-          asp-route-id="@Model" method="post">
-        <button type="submit" class="btn btn-lg certificate-dload text-info mb-2" data-toggle="tooltip" title="Download certificate">
+          asp-action="@Model.Action"
+          asp-route-id="@Model.Id" method="post">
+        <button type="submit" class="btn btn-lg certificate-dload text-info mb-2" data-toggle="tooltip" title="Download">
             <h1><i class="fa fa-certificate "></i></h1>
         </button>
     </form>

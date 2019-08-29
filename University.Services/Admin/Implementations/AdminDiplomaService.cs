@@ -30,6 +30,7 @@
 
             await this.db.Diplomas.AddAsync(new Diploma
             {
+                Id = Guid.NewGuid().ToString().Replace("-", string.Empty),
                 CurriculumId = curriculumId,
                 StudentId = studentId,
                 IssueDate = DateTime.UtcNow

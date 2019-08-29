@@ -63,6 +63,7 @@
         public const string ApplicationPdf = "application/pdf";
         public const string ApplicationZip = "application/zip";
         public const string CertificateFileName = "Certificate.pdf";
+        public const string DiplomaFileName = "Diploma.pdf";
 
         // Bootstrap Styles
         public const string DangerStyle = "danger";

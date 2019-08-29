@@ -66,23 +66,33 @@ a, a:hover {
 
 /*Certificate*/
 
-section.certificate-details {
+section.certificate-details,
+section.diploma-details {
     width: 100%;
-    padding-top: 170px;
+    padding-top: 150px;
 }
 
-.certificate-details, .certificate-details:hover {
+.certificate-details,
+.certificate-details:hover {
     color: #ffffff;
     background-color: #c47a23;
 }
 
-button.certificate-dload:hover {
-    /*box-shadow: 8px 8px 10px 0px rgba(0,0,0,0.4);*/
+.diploma-details,
+.diploma-details:hover {
+    color: #ffffff;
+    background-color: #234465;
 }
 
-    button.certificate-dload:hover i.fa {
-        color: #c47a23;
-    }
+button.certificate-dload:hover i.fa {
+    color: #c47a23;
+}
+
+
+button.diploma-dload:hover i.fa {
+    color: #234465;
+}
+
 
 /*Orders*/
 .order-item {
