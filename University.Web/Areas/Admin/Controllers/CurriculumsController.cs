@@ -223,7 +223,7 @@
             {
                 Curriculum = await this.adminCurriculumService.GetByIdAsync(id),
                 Graduates = await this.adminCurriculumService.GetDiplomaGraduatesAsync(id),
-                Candidates = await this.adminCurriculumService.GetEligibleCandidatesAsync(id),
+                Candidates = await this.adminCurriculumService.GetEligibleCandidatesWithoutDiplomasAsync(id),
             };
 
             return this.View(model);

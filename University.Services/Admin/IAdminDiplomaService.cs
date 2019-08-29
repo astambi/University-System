@@ -10,7 +10,7 @@
 
         Task<bool> ExistsForCurriculumStudentAsync(int curriculumId, string studentId);
 
-        Task<bool> IsEligibleForDiplomaAsync(int curriculumId, string studentId);
+        Task<bool> HasPassedAllCurriculumCoursesAsync(int curriculumId, string studentId);
 
         Task<bool> RemoveAsync(string id);
     }

@@ -10,6 +10,7 @@
     using University.Services.Admin.Implementations;
     using University.Services.Admin.Models.Courses;
     using University.Services.Admin.Models.Curriculums;
+    using University.Services.Admin.Models.Users;
     using Xunit;
 
     public class AdminCurriculumServiceTest
@@ -37,6 +38,10 @@
         private const int CurriculumValidId = 2;
         private const int CurriculumValidId2 = 22;
         private const int CurriculumInvalidId = 20;
+
+        private const string StudentNameA = "StudentName AAA";
+        private const string StudentNameB = "StudentName BBB";
+        private const string StudentNameC = "StudentName CCC";
 
         private readonly DateTime DateTime1 = new DateTime(2019, 8, 11);
         private readonly DateTime DateTime2 = new DateTime(2019, 8, 22);
@@ -69,20 +74,20 @@
             Assert.True(result);
         }
 
-        [Fact]
-        public async Task ExistsCurriculumCourseAsync_ShouldReturnFalse_GivenInvalidInput()
+        [Theory]
+        [InlineData(CurriculumInvalidId, CourseValidId)]
+        [InlineData(CurriculumValidId, CourseInvalidId)]
+        public async Task ExistsCurriculumCourseAsync_ShouldReturnFalse_GivenInvalidInput(int curriculumId, int courseId)
         {
             // Arrange
             var db = await this.PrepareCurriculumsWithCourses();
             var adminCurriculumService = this.InitializeCurriculumService(db);
 
             // Act
-            var resultInvalidCurriculum = await adminCurriculumService.ExistsCurriculumCourseAsync(CurriculumInvalidId, CourseValidId);
-            var resultInvalidCourse = await adminCurriculumService.ExistsCurriculumCourseAsync(CurriculumValidId, CourseInvalidId);
+            var resultInvalid = await adminCurriculumService.ExistsCurriculumCourseAsync(curriculumId, courseId);
 
             // Assert
-            Assert.False(resultInvalidCurriculum);
-            Assert.False(resultInvalidCourse);
+            Assert.False(resultInvalid);
         }
 
         [Fact]
@@ -162,20 +167,20 @@
             Assert.Null(curriculum);
         }
 
-        [Fact]
-        public async Task RemoveCourseAsync_ShouldReturnFalse_GivenInvalidInput()
+        [Theory]
+        [InlineData(CurriculumInvalidId, CourseValidId)]
+        [InlineData(CurriculumValidId, CourseInvalidId)]
+        public async Task RemoveCourseAsync_ShouldReturnFalse_GivenInvalidInput(int curriculumId, int courseId)
         {
             // Arrange
             var db = await this.PrepareCurriculumsWithCourses();
             var adminCurriculumService = this.InitializeCurriculumService(db);
 
             // Act
-            var resultInvalidCurriculum = await adminCurriculumService.RemoveCourseAsync(CurriculumInvalidId, CourseValidId);
-            var resultInvalidCourse = await adminCurriculumService.RemoveCourseAsync(CurriculumValidId, CourseInvalidId);
+            var resultInvalid = await adminCurriculumService.RemoveCourseAsync(curriculumId, courseId);
 
             // Assert
-            Assert.False(resultInvalidCurriculum);
-            Assert.False(resultInvalidCourse);
+            Assert.False(resultInvalid);
         }
 
         [Fact]
@@ -194,23 +199,21 @@
             Assert.Null(curriculumCourse);
         }
 
-        [Fact]
-        public async Task AddCourseAsync_ShouldReturnFalse_GivenInvalidCurriculumOrCourse()
+        [Theory]
+        [InlineData(CurriculumInvalidId, CourseValidId)]
+        [InlineData(CurriculumValidId, CourseInvalidId)]
+        public async Task AddCourseAsync_ShouldReturnFalse_GivenInvalidCurriculumOrCourse(int curriculumId, int courseId)
         {
             // Arrange
             var db = await this.PrepareCurriculumsWithCourses();
             var adminCurriculumService = this.InitializeCurriculumService(db);
 
             // Act
-            var resultInvalidCurriculum = await adminCurriculumService.AddCourseAsync(CurriculumInvalidId, CourseValidId);
-            var resultInvalidCourse = await adminCurriculumService.AddCourseAsync(CurriculumValidId, CourseInvalidId);
-
-            var curriculumCourse = db.Find<CurriculumCourse>(CurriculumInvalidId, CourseValidId);
+            var resultInvalid = await adminCurriculumService.AddCourseAsync(curriculumId, courseId);
+            var curriculumCourse = db.Find<CurriculumCourse>(curriculumId, courseId);
 
             // Assert
-            Assert.False(resultInvalidCurriculum);
-            Assert.False(resultInvalidCourse);
-
+            Assert.False(resultInvalid);
             Assert.Null(curriculumCourse);
         }
 
@@ -296,7 +299,6 @@
 
             // Act
             var result = await adminCurriculumService.UpdateAsync(CurriculumInvalidId, CurriculumNameForm, CurriculumDescriptionForm);
-            var resultEntity = db.Curriculums.Find(CurriculumValidId2);
 
             // Assert
             Assert.False(result);
@@ -381,6 +383,60 @@
             }
         }
 
+        [Fact]
+        public async Task GetDiplomaGraduatesAsync_ShouldReturnCorrectDataAndOrder()
+        {
+            // Arrange
+            var db = await this.PrepareCurriculumsWithDiplomas();
+            var adminCurriculumService = this.InitializeCurriculumService(db);
+
+            // Act
+            var result = await adminCurriculumService.GetDiplomaGraduatesAsync(CurriculumValidId);
+
+            // Assert
+            Assert.IsAssignableFrom<IEnumerable<AdminDiplomaGraduateServiceModel>>(result);
+
+            // Assert Correct order (student name ASC)
+            Assert.Equal(new[] { StudentNameA, StudentNameB, StudentNameC },
+                result.Select(d => d.Student.Name));
+
+            var resultList = result.ToList();
+            for (var i = 0; i < resultList.Count; i++)
+            {
+                var actual = resultList[i];
+                var expected = db.Diplomas.Find(actual.Id);
+
+                this.AssertDiplomaDetails(expected, actual);
+                this.AssertStudentDetails(expected.Student, actual.Student);
+            }
+        }
+
+        [Fact]
+        public async Task GetEligibleCandidatesWithoutDiplomasAsync_ShouldReturnCorrectDataAndOrder()
+        {
+            // Arrange
+            var db = await this.PrepareCurriculumsWithCertificatesAndDiplomas();
+            var adminCurriculumService = this.InitializeCurriculumService(db);
+
+            // Act
+            var result = await adminCurriculumService.GetEligibleCandidatesWithoutDiplomasAsync(CurriculumValidId);
+
+            // Assert
+            Assert.IsAssignableFrom<IEnumerable<AdminUserListingServiceModel>>(result);
+
+            //Assert Correct order(student name ASC)
+            Assert.Equal(new[] { StudentNameA, StudentNameB }, result.Select(u => u.Name));
+
+            var resultList = result.ToList();
+            for (var i = 0; i < resultList.Count; i++)
+            {
+                var actual = resultList[i];
+                var expected = db.Users.Find(actual.Id);
+
+                this.AssertStudentDetails(expected, actual);
+            }
+        }
+
         private void AssertCurriculumCourse(Course expected, AdminCourseBasicServiceModel actual)
         {
             Assert.Equal(expected.Id, actual.Id);
@@ -395,6 +451,21 @@
             Assert.Equal(expected.Description, actual.Description);
         }
 
+        private void AssertDiplomaDetails(Diploma expected, AdminDiplomaGraduateServiceModel actual)
+        {
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.Equal(expected.IssueDate, actual.IssueDate);
+            Assert.Equal(expected.CurriculumId, actual.CurriculumId);
+        }
+
+        private void AssertStudentDetails(User expected, AdminUserListingServiceModel actual)
+        {
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.Equal(expected.Name, actual.Name);
+            Assert.Equal(expected.UserName, actual.Username);
+            Assert.Equal(expected.Email, actual.Email);
+        }
+
         private async Task<UniversityDbContext> PrepareCurriculumsWithCourses()
         {
             var course1 = new Course { Id = CourseValidId, Name = CourseName2, StartDate = DateTime1 };
@@ -404,15 +475,85 @@
             var course4 = new Course { Id = CourseValidWithoutCurriculum };
 
             var curriculum1 = new Curriculum { Id = CurriculumValidId, Name = CurriculumName, Description = CurriculumDescription };
-            curriculum1.Courses.Add(new CurriculumCourse { CourseId = CourseValidId });
-            curriculum1.Courses.Add(new CurriculumCourse { CourseId = CourseValidId2 });
-            curriculum1.Courses.Add(new CurriculumCourse { CourseId = CourseValidId3 });
+            curriculum1.Courses.Add(new CurriculumCourse { CourseId = course1.Id });
+            curriculum1.Courses.Add(new CurriculumCourse { CourseId = course2.Id });
+            curriculum1.Courses.Add(new CurriculumCourse { CourseId = course3.Id });
 
             var curriculum2 = new Curriculum { Id = CurriculumValidId2, Name = CurriculumName2, Description = CurriculumDescription2 };
 
             var db = Tests.InitializeDatabase();
             await db.Courses.AddRangeAsync(course1, course2, course3, course4);
             await db.Curriculums.AddRangeAsync(curriculum2, curriculum1);
+            await db.SaveChangesAsync();
+
+            return db;
+        }
+
+        private async Task<UniversityDbContext> PrepareCurriculumsWithCertificatesAndDiplomas()
+        {
+            var course1 = new Course { Id = CourseValidId, Name = CourseName2, StartDate = DateTime1 };
+            var course2 = new Course { Id = CourseValidId2, Name = CourseName1, StartDate = DateTime1 };
+            var course3 = new Course { Id = CourseValidId3, Name = CourseName1, StartDate = DateTime2 };
+
+            var curriculum1 = new Curriculum { Id = CurriculumValidId };
+            curriculum1.Courses.Add(new CurriculumCourse { CourseId = course1.Id });
+            curriculum1.Courses.Add(new CurriculumCourse { CourseId = course2.Id });
+
+            var curriculum2 = new Curriculum { Id = CurriculumValidId2 };
+            curriculum2.Courses.Add(new CurriculumCourse { CourseId = course2.Id });
+            curriculum2.Courses.Add(new CurriculumCourse { CourseId = course3.Id });
+
+            // Not Candicate for Curriculum1 => Existing Diploma
+            var student1 = new User { Id = "1111", UserName = "username1", Name = StudentNameC, Email = "email1@gmail.com" };
+            var certificate1 = new Certificate { StudentId = student1.Id, CourseId = course1.Id, };
+            var certificate2 = new Certificate { StudentId = student1.Id, CourseId = course2.Id, };
+            var diploma1 = new Diploma { CurriculumId = curriculum1.Id, StudentId = student1.Id };
+
+            // Not Candidate for Curriculum1 => missing certificate 1
+            var student2 = new User { Id = "2222", UserName = "username2", Name = StudentNameC, Email = "email2@gmail.com" };
+            var certificate3 = new Certificate { StudentId = student2.Id, CourseId = course2.Id, };
+            var certificate4 = new Certificate { StudentId = student2.Id, CourseId = course3.Id, };
+            var diploma2 = new Diploma { CurriculumId = curriculum2.Id, StudentId = student2.Id };
+
+            // Student 3 & 4 are candidates for Curriculum1 => all certificates & no diplomas
+            var student3 = new User { Id = "3333", UserName = "UsernameBBB", Name = StudentNameB, Email = "email3@gmail.com" };
+            var certificate5 = new Certificate { StudentId = student3.Id, CourseId = course1.Id, };
+            var certificate6 = new Certificate { StudentId = student3.Id, CourseId = course2.Id, };
+
+            var student4 = new User { Id = "4444", UserName = "UsernameAAA", Name = StudentNameA, Email = "email4@gmail.com" };
+            var certificate7 = new Certificate { StudentId = student4.Id, CourseId = course1.Id, };
+            var certificate8 = new Certificate { StudentId = student4.Id, CourseId = course2.Id, };
+
+            var db = Tests.InitializeDatabase();
+            await db.Courses.AddRangeAsync(course1, course2, course3);
+            await db.Curriculums.AddRangeAsync(curriculum1, curriculum2);
+            await db.Certificates.AddRangeAsync(certificate1, certificate2, certificate3, certificate4, certificate5, certificate6, certificate7, certificate8);
+            await db.Diplomas.AddRangeAsync(diploma1, diploma2);
+            await db.Users.AddRangeAsync(student1, student2, student3, student4);
+            await db.SaveChangesAsync();
+
+            return db;
+        }
+
+        private async Task<UniversityDbContext> PrepareCurriculumsWithDiplomas()
+        {
+            var student1 = new User { Id = "1111", UserName = "username1", Name = StudentNameC, Email = "email1@gmail.com" };
+            var student2 = new User { Id = "2222", UserName = "username2", Name = StudentNameB, Email = "email2@gmail.com" };
+            var student3 = new User { Id = "3333", UserName = "username3", Name = StudentNameA, Email = "email3@gmail.com" };
+
+            var curriculum1 = new Curriculum { Id = CurriculumValidId };
+            var curriculum2 = new Curriculum { Id = CurriculumValidId2 };
+
+            var diploma1 = new Diploma { Id = "AAA", CurriculumId = curriculum1.Id, StudentId = student1.Id, IssueDate = new DateTime(2019, 8, 1) };
+            var diploma2 = new Diploma { Id = "BBB", CurriculumId = curriculum1.Id, StudentId = student2.Id, IssueDate = new DateTime(2019, 8, 11) };
+            var diploma3 = new Diploma { Id = "CCC", CurriculumId = curriculum1.Id, StudentId = student3.Id, IssueDate = new DateTime(2019, 8, 21) };
+
+            var diploma4 = new Diploma { Id = "DDD", CurriculumId = curriculum2.Id, StudentId = student1.Id, IssueDate = new DateTime(2019, 8, 21) };
+
+            var db = Tests.InitializeDatabase();
+            await db.Curriculums.AddRangeAsync(curriculum2, curriculum1);
+            await db.Diplomas.AddRangeAsync(diploma1, diploma2, diploma3, diploma4);
+            await db.Users.AddRangeAsync(student1, student2, student3);
             await db.SaveChangesAsync();
 
             return db;

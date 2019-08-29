@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using AutoMapper;
     using Microsoft.EntityFrameworkCore;
     using University.Data;
     using University.Data.Models;
@@ -12,23 +11,19 @@
     public class AdminDiplomaService : IAdminDiplomaService
     {
         private readonly UniversityDbContext db;
-        private readonly IMapper mapper;
 
-        public AdminDiplomaService(
-            UniversityDbContext db,
-            IMapper mapper)
+        public AdminDiplomaService(UniversityDbContext db)
         {
             this.db = db;
-            this.mapper = mapper;
         }
 
         public async Task<bool> CreateAsync(int curriculumId, string studentId)
         {
-            var isEligibleForDiploma = await this.IsEligibleForDiplomaAsync(curriculumId, studentId);
-            var diplomaExists = await this.ExistsForCurriculumStudentAsync(curriculumId, studentId);
+            var hasCoveredAllCurriculumCourses = await this.HasPassedAllCurriculumCoursesAsync(curriculumId, studentId);
+            var diplomaForCurriculumExists = await this.ExistsForCurriculumStudentAsync(curriculumId, studentId);
 
-            if (!isEligibleForDiploma
-                || diplomaExists)
+            if (!hasCoveredAllCurriculumCourses
+                || diplomaForCurriculumExists)
             {
                 return false;
             }
@@ -52,7 +47,7 @@
             .Diplomas
             .AnyAsync(d => d.StudentId == studentId && d.CurriculumId == curriculumId);
 
-        public async Task<bool> IsEligibleForDiplomaAsync(int curriculumId, string studentId)
+        public async Task<bool> HasPassedAllCurriculumCoursesAsync(int curriculumId, string studentId)
         {
             var curriculumExists = await this.db.Curriculums.AnyAsync(c => c.Id == curriculumId);
             var studentExists = await this.db.Users.AnyAsync(u => u.Id == studentId);

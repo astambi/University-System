@@ -36,8 +36,8 @@
                 return this.RedirectToCurriculumGraduates(id);
             }
 
-            var isEligibleForDiploma = await this.adminDiplomaService.IsEligibleForDiplomaAsync(model.CurriculumId, model.StudentId);
-            if (!isEligibleForDiploma)
+            var hasPassedAllCurriculumCourses = await this.adminDiplomaService.HasPassedAllCurriculumCoursesAsync(model.CurriculumId, model.StudentId);
+            if (!hasPassedAllCurriculumCourses)
             {
                 this.TempData.AddInfoMessage(WebConstants.StudentNotEligibleForDiplomaMsg);
                 return this.RedirectToCurriculumGraduates(id);

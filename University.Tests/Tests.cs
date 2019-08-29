@@ -65,6 +65,8 @@
                             .OrderBy(c => c.Name)
                             .ThenByDescending(c => c.StartDate)));
 
+                cfg.CreateMap<Diploma, AdminDiplomaGraduateServiceModel>();
+
                 cfg.CreateMap<ExamSubmission, ExamDownloadServiceModel>();
                 cfg.CreateMap<ExamSubmission, ExamSubmissionDetailsServiceModel>();
                 cfg.CreateMap<ExamSubmission, ExamSubmissionServiceModel>();

@@ -19,7 +19,7 @@
 
         Task<AdminCurriculumBasicServiceModel> GetByIdAsync(int id);
 
-        Task<IEnumerable<AdminUserListingServiceModel>> GetEligibleCandidatesAsync(int id);
+        Task<IEnumerable<AdminUserListingServiceModel>> GetEligibleCandidatesWithoutDiplomasAsync(int id);
 
         Task<IEnumerable<AdminDiplomaGraduateServiceModel>> GetDiplomaGraduatesAsync(int id);
 
