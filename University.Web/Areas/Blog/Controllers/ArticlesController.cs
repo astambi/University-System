@@ -15,6 +15,11 @@
     [Authorize]
     public class ArticlesController : Controller
     {
+        private const string ArticleFriendlyUrl = WebConstants.BlogArea
+            + "/" + WebConstants.ArticlesController
+            + "/" + WebConstants.WithId
+            + "/" + WebConstants.WithOptionalTitle;
+
         private readonly UserManager<User> userManager;
         private readonly IArticleService articleService;
 
@@ -48,10 +53,10 @@
             return this.View(model);
         }
 
-        [Authorize(Roles = WebConstants.BlogAuthorRole)]
+        [Authorize(Roles = WebConstants.BloggerRole)]
         public IActionResult Create() => this.View();
 
-        [Authorize(Roles = WebConstants.BlogAuthorRole)]
+        [Authorize(Roles = WebConstants.BloggerRole)]
         [HttpPost]
         [ValidateModelState] // attribute simple model validation
         public async Task<IActionResult> Create(ArticleFormModel model)
@@ -77,10 +82,7 @@
         }
 
         // SEO friendly URL
-        [Route(WebConstants.BlogArea
-            + "/" + WebConstants.ArticlesController
-            + "/" + WebConstants.WithId
-            + "/{title?}")]
+        [Route(ArticleFriendlyUrl)]
         public async Task<IActionResult> Details(int id)
         {
             var model = await this.articleService.GetByIdAsync(id);

@@ -340,7 +340,7 @@
 
             Assert.Equal(UserIdValid, resultOrderSaved.UserId);
             Assert.Equal(UserName, resultOrderSaved.UserName);
-            Assert.Equal(Status.Pending, resultOrderSaved.Status);
+            Assert.Equal(Status.Completed, resultOrderSaved.Status);
             Assert.Equal(PaymentMethod, resultOrderSaved.PaymentMethod);
             Assert.NotNull(resultOrderSaved.InvoiceId);
             Assert.Equal(cartTotalValid, resultOrderSaved.TotalPrice);

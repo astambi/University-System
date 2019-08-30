@@ -16,7 +16,7 @@
 
         public int CertificatesCount { get; set; }
 
-        public int OrdersCount { get; set; }
+        public int DiplomasCount { get; set; }
 
         public int ResourcesCount { get; set; }
 

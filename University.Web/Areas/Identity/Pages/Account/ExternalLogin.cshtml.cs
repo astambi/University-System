@@ -1,6 +1,7 @@
 ﻿namespace University.Web.Areas.Identity.Pages.Account
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using System.Security.Claims;
@@ -40,7 +41,7 @@
         [TempData]
         public string ErrorMessage { get; set; }
 
-        public class InputModel
+        public class InputModel : IValidatableObject
         {
             [Required]
             [EmailAddress]
@@ -63,6 +64,16 @@
             [Required]
             [DataType(DataType.Date)]
             public DateTime? Birthdate { get; set; }
+
+            public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+            {
+                var isFutureDate = DateTime.UtcNow.Date < this.Birthdate.Value.Date;
+                if (isFutureDate)
+                {
+                    yield return new ValidationResult(DataConstants.UserBirthdate,
+                        new[] { nameof(this.Birthdate) });
+                }
+            }
         }
 
         public IActionResult OnGetAsync() => this.RedirectToPage("./Login");

@@ -114,7 +114,7 @@
                 OrderItems = validOrderItems,
                 PaymentMethod = paymentMethod,
                 OrderDate = DateTime.UtcNow,
-                Status = Status.Pending,
+                Status = Status.Completed,
                 InvoiceId = Guid.NewGuid().ToString().Replace("-", string.Empty)
             };
 

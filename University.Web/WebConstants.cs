@@ -7,9 +7,8 @@
     {
         // Roles
         public const string AdministratorRole = "Administrator";
-        public const string BlogAuthorRole = "BlogAuthor";
+        public const string BloggerRole = "Blogger";
         public const string TrainerRole = "Trainer";
-        public const string StudentRole = "Student";
         // Student Role => default role for registered users
 
         // Admin
@@ -58,6 +57,7 @@
         // Routing
         public const string Id = "id";
         public const string WithId = "{id}";
+        public const string WithOptionalTitle = "{title?}";
 
         // ContentType
         public const string ApplicationPdf = "application/pdf";

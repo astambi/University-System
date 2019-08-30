@@ -3,6 +3,7 @@
 @if (Model != null)
 {
     var courseInfoModel = new CourseBasicViewModel { Id = Model.CourseId, Name = Model.CourseName };
+    var certificateDloadModel = new CertificateDownloadFormModel { Id = Model.CertificateId, Action = FormActionEnum.Certificate };
 
     <article class="card-group col-sm-6 col-lg-4 col-xl-3 my-2">
         <div class="card course-card border-info">
@@ -14,7 +15,8 @@
                 <h5 class="card-title">@Model.CourseName</h5>
             </div>
             <div class="card-footer">
-                <partial name="_CertificateDownloadFormPartial" for="CertificateId" />
+                <partial name="_CertificateDownloadFormPartial" model="certificateDloadModel" />
+
                 @if (Model.GradeBgMax != null)
                 {
                     <h5 class="card-subtitle">Grade @Model.GradeBgMax</h5>

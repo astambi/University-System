@@ -2,8 +2,7 @@
 {
     public enum Status
     {
-        Pending = 0,
-        Completed = 1,
-        Cancelled = 2,
+        Completed = 0,
+        Pending = 1
     }
 }

@@ -73,7 +73,7 @@
             var roles = new[]
             {
                 WebConstants.AdministratorRole,
-                WebConstants.BlogAuthorRole,
+                WebConstants.BloggerRole,
                 WebConstants.TrainerRole
             };
 

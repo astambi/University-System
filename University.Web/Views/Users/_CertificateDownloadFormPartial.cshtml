@@ -1,6 +1,6 @@
 ﻿@model CertificateDownloadFormModel
 
-@if (Model != null)
+@if (Model != null && Model.Id != null)
 {
     <form asp-area=""
           asp-controller="@WebConstants.CertificatesController"

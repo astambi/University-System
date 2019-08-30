@@ -4,15 +4,15 @@
         <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdownMenuLinkAdmin" role="button"
            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Admin</a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkAdmin">
-            <a class="dropdown-item text-dark"
+            <a class="dropdown-item"
                asp-area="@WebConstants.AdminArea"
                asp-controller="@WebConstants.UsersController"
                asp-action="@nameof(University.Web.Areas.Admin.Controllers.UsersController.Index)">Users</a>
-            <a class="dropdown-item text-dark"
+            <a class="dropdown-item"
                asp-area="@WebConstants.AdminArea"
                asp-controller="@WebConstants.CoursesController"
                asp-action="@nameof(University.Web.Areas.Admin.Controllers.CoursesController.Create)">Create course</a>
-            <a class="dropdown-item text-dark"
+            <a class="dropdown-item"
                asp-area="@WebConstants.AdminArea"
                asp-controller="@WebConstants.CurriculumsController"
                asp-action="@nameof(CurriculumsController.Index)">Curriculums</a>
