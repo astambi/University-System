@@ -8,18 +8,10 @@
             => Math.Max(1, (int)Math.Ceiling(itemsCount / (double)pageSize));
 
         public static int GetValidCurrentPage(int currentPage, int totalPages)
-        {
-            if (currentPage < 1)
-            {
-                currentPage = 1;
-            }
-
-            if (currentPage > totalPages)
-            {
-                currentPage = totalPages;
-            }
-
-            return currentPage;
-        }
+            => currentPage < 1
+            ? 1
+            : currentPage > totalPages
+                ? totalPages
+                : currentPage;
     }
 }

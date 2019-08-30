@@ -4,14 +4,16 @@
     ViewData["Title"] = "Blog Articles";
 }
 
-<h1 class="d-flex flex-wrap justify-content-between align-items-center">
-    Articles
+<section class="d-flex flex-wrap justify-content-between align-items-center">
+    <h1>Articles &amp; Tutorials</h1>
     <partial name="_SearchPartial" for="Search" />
     @if (User.IsInRole(WebConstants.BloggerRole))
     {
-        <a asp-action="Create" class="btn btn-outline-success">Publish article</a>
+        <a asp-action="Create" class="btn btn-outline-success">
+            Publish <i class="fa fa-feather-alt"></i>
+        </a>
     }
-</h1>
+</section>
 
 @if (Model.Articles.Any())
 {
@@ -25,7 +27,7 @@
                 <div class="article-card card border-success m-2">
                     <div class="card-body">
                         <h4 class="card-title">@article.Title</h4>
-                        <h6 class="card-subtitle text-muted mb-2">@article.AuthorName</h6>
+                        <h6 class="card-subtitle text-muted mb-2">by @article.AuthorName</h6>
                     </div>
                     <div class="card-footer">@article.PublishDate.ToLocalTime()</div>
                 </div>

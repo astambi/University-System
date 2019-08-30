@@ -83,12 +83,18 @@
 
         // Notifications
         public const string ArticleNotFoundMsg = "Article not found.";
-        public const string ArticlePublishedMsg = "Article published successfully.";
+        public const string ArticleNotFoundForAuthorMsg = "Article does not belong to this author.";
+        public const string ArticleCreateSuccessMsg = "Article published successfully.";
+        public const string ArticleCreateErrorMsg = "Could not create article.";
+        public const string ArticleDeleteSuccessMsg = "Article deleted successfully.";
+        public const string ArticleDeleteErrorMsg = "Could not delete article.";
+        public const string ArticleUpdateSuccessMsg = "Article updated successfully.";
+        public const string ArticleUpdateErrorMsg = "Article was not updated.";
 
         public const string CertificateIssuedMsg = "Course certificate issued successfully.";
         public const string CertificateNotFoundMsg = "Certificate not found.";
         public const string CertificateDownloadInProgressMsg = "Certificate download in progress. This could take a few more seconds.";
-        public const string CertificateDeletedErrorMsg = "Certificate was not deleted.";
+        public const string CertificateDeletedErrorMsg = "Could not delete certificate.";
         public const string CertificateDeletedSuccessMsg = "Certificate deleted successfully.";
         public const string CertificateDownloadSuccessMsg = "Certificate downloaded successfully.";
 
@@ -103,7 +109,7 @@
         public const string CourseCreateSuccessMsg = "Course created successfully.";
         public const string CourseDeleteErrorMsg = "Could not delete course.";
         public const string CourseDeleteSuccessMsg = "Course deleted successfully.";
-        public const string CourseUpdateErrorMsg = "Could not update course.";
+        public const string CourseUpdateErrorMsg = "Course was not updated.";
         public const string CourseUpdateSuccessMsg = "Course updated successfully.";
         public const string CourseEnrollmentCancellationErrorMsg = "Course enrollment cannot be cancelled after start date.";
         public const string CourseEnrollmentCancellationSuccessMsg = "Course enrollment cancelled successfully.";

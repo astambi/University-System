@@ -1,9 +1,0 @@
-﻿@if (User.Identity.IsAuthenticated)
-{
-    <li class="nav-item">
-        <a class="nav-link text-dark"
-           asp-area="@WebConstants.BlogArea"
-           asp-controller="@WebConstants.ArticlesController"
-           asp-action="@nameof(ArticlesController.Index)">Blog</a>
-    </li>
-}

@@ -1,0 +1,60 @@
+﻿@model ArticleFormModel
+
+@{
+    ViewData["Title"] = $"{Model.Action} Article";
+    var isDeleteDisabled = Model.Action == FormActionEnum.Delete;
+}
+
+<section class="d-flex flex-wrap justify-content-start align-items-center">
+    <h1>@Model.Action article</h1>
+    @if (Model.Action != FormActionEnum.Create)
+    {
+        <a asp-action="@nameof(ArticlesController.Details)" asp-route-id="@Model.Id"
+           data-toggle="tooltip" title="Back" class="btn btn-outline-info mx-1"><i class="fa fa-undo"></i></a>
+    }
+</section>
+
+@if (isDeleteDisabled)
+{
+    <h3 class="text-danger">Are you sure you want to delete this article?</h3>
+}
+
+<section class="col-lg-8">
+    <form asp-action="@Model.Action" asp-route-id="@Model.Id" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input asp-for="Id" hidden />
+
+        <div class="form-group">
+            <label asp-for="Title" class="control-label"></label>
+            <input asp-for="Title" class="form-control" readonly="@isDeleteDisabled" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Content" class="control-label"></label>
+            @if (isDeleteDisabled)
+            {
+                <div class="text-justify text-muted bg-light p-3">@Html.Raw(Model.Content)</div>
+            }
+            else
+            {
+                <textarea asp-for="Content" id="content" class="form-control" rows="15"></textarea>
+                <span asp-validation-for="Content" class="text-danger"></span>
+            }
+        </div>
+        <partial name="_FormSubmitPartial" for="Action" />
+    </form>
+</section>
+
+<div>
+    <a asp-area="@WebConstants.BlogArea"
+       asp-controller="@WebConstants.ArticlesController"
+       asp-action="@nameof(ArticlesController.Index)">Back to Articles</a>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    @*TinyMCE*@
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>tinymce.init({ selector: '#content' });</script>
+}

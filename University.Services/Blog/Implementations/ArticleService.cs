@@ -15,6 +15,8 @@
 
     public class ArticleService : IArticleService
     {
+        private const int InvalidId = int.MinValue;
+
         private readonly UniversityDbContext db;
         private readonly IHtmlService htmlService;
         private readonly IMapper mapper;
@@ -39,36 +41,89 @@
             .GetPageItems(page, pageSize)
             .ToListAsync();
 
-        public async Task CreateAsync(string title, string rawHtmlContent, string userId)
+        public async Task<int> CreateAsync(string title, string rawHtmlContent, string authorId)
         {
-            var userExists = this.db.Users.Any(u => u.Id == userId);
-            if (!userExists)
+            var userExists = this.db.Users.Any(u => u.Id == authorId);
+            if (!userExists
+                || string.IsNullOrWhiteSpace(title)
+                || string.IsNullOrWhiteSpace(rawHtmlContent))
             {
-                return;
+                return InvalidId;
             }
 
             var sanitizedContent = this.htmlService.Sanitize(rawHtmlContent); // sanitized html
 
             var article = new Article
             {
-                Title = title,
+                Title = title.Trim(),
                 Content = sanitizedContent,
-                AuthorId = userId,
+                AuthorId = authorId,
                 PublishDate = DateTime.UtcNow
             };
 
             await this.db.Articles.AddAsync(article);
-            await this.db.SaveChangesAsync();
+            var result = await this.db.SaveChangesAsync();
+
+            return article.Id;
         }
+
+        public async Task<bool> ExistsAsync(int id)
+            => await this.db.Articles.AnyAsync(a => a.Id == id);
+
+        public async Task<bool> ExistsForAuthorAsync(int articleId, string authorId)
+            => await this.db.Articles.AnyAsync(a => a.Id == articleId && a.AuthorId == authorId);
 
         public async Task<ArticleDetailsServiceModel> GetByIdAsync(int id)
             => await this.mapper
-            .ProjectTo<ArticleDetailsServiceModel>(this.db.Articles)
-            .Where(a => a.Id == id)
+            .ProjectTo<ArticleDetailsServiceModel>(
+                this.db.Articles
+                .Where(a => a.Id == id))
             .FirstOrDefaultAsync();
+
+        public async Task<ArticleEditServiceModel> GetByIdToEditAsync(int id, string authorId)
+            => await this.mapper
+            .ProjectTo<ArticleEditServiceModel>(
+                this.db.Articles
+                .Where(a => a.Id == id)
+                .Where(a => a.AuthorId == authorId))
+            .FirstOrDefaultAsync();
+
+        public async Task<bool> RemoveAsync(int id, string authorId)
+        {
+            var article = await this.db.Articles.FindAsync(id);
+            if (article == null
+                || article.AuthorId != authorId)
+            {
+                return false;
+            }
+
+            this.db.Articles.Remove(article);
+            var result = await this.db.SaveChangesAsync();
+
+            return result > 0;
+        }
 
         public async Task<int> TotalAsync(string search = null)
             => await this.GetQuerableBySearchKeyword(search).CountAsync();
+
+        public async Task<bool> UpdateAsync(int id, string title, string rawHtmlContent, string authorId)
+        {
+            var article = this.db.Articles.Find(id);
+            if (article == null
+                || article.AuthorId != authorId
+                || string.IsNullOrWhiteSpace(title)
+                || string.IsNullOrWhiteSpace(rawHtmlContent))
+            {
+                return false;
+            }
+
+            article.Title = title.Trim();
+            article.Content = this.htmlService.Sanitize(rawHtmlContent); // sanitized html
+
+            var result = await this.db.SaveChangesAsync();
+
+            return result > 0;
+        }
 
         private IQueryable<Article> GetQuerableBySearchKeyword(string search)
         {

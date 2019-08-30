@@ -11,6 +11,7 @@
     using University.Services.Admin;
     using University.Web.Areas.Admin.Models.Curriculums;
     using University.Web.Infrastructure.Extensions;
+    using University.Web.Infrastructure.Filters;
     using University.Web.Models;
 
     public class CurriculumsController : BaseAdminController
@@ -49,13 +50,9 @@
             => this.View(CurriculumFormView, new CurriculumFormModel());
 
         [HttpPost]
+        [ValidateModelState(CurriculumFormView)] // attribute simple model validation replaces: if (!this.ModelState.IsValid) etc.
         public async Task<IActionResult> Create(CurriculumFormModel model)
         {
-            if (!this.ModelState.IsValid)
-            {
-                return this.View(CurriculumFormView, model);
-            }
-
             var id = await this.adminCurriculumService.CreateAsync(model.Name, model.Description);
             if (id < 0)
             {
@@ -73,6 +70,7 @@
            => await this.LoadCurriculumForm(id, FormActionEnum.Edit);
 
         [HttpPost]
+        [ValidateModelState(CurriculumFormView)] // attribute simple model validation replaces: if (!this.ModelState.IsValid) etc.
         public async Task<IActionResult> Edit(int id, CurriculumFormModel model)
         {
             var exists = await this.adminCurriculumService.ExistsAsync(id);
@@ -81,11 +79,6 @@
             {
                 this.TempData.AddErrorMessage(WebConstants.CurriculumNotFoundMsg);
                 return this.RedirectToAction(nameof(Index));
-            }
-
-            if (!this.ModelState.IsValid)
-            {
-                return this.View(CurriculumFormView, model);
             }
 
             var success = await this.adminCurriculumService.UpdateAsync(id, model.Name, model.Description);

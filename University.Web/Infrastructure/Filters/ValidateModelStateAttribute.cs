@@ -24,6 +24,13 @@
     /// </summary>
     public class ValidateModelStateAttribute : ActionFilterAttribute
     {
+        private readonly string customView;
+
+        public ValidateModelStateAttribute(string customView = null)
+        {
+            this.customView = customView;
+        }
+
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             if (!context.ModelState.IsValid)
@@ -43,7 +50,9 @@
                     return;
                 }
 
-                context.Result = controller.View(model);
+                context.Result = this.customView == null
+                    ? controller.View(model)
+                    : controller.View(this.customView, model);
             }
         }
     }

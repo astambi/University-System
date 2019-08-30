@@ -4,3 +4,17 @@
        asp-controller="@WebConstants.CoursesController"
        asp-action="@nameof(University.Web.Controllers.CoursesController.Index)">Courses</a>
 </li>
+<li class="nav-item">
+    <a class="nav-link text-info" data-toggle="tooltip" title="Shopping cart"
+       asp-area=""
+       asp-controller="@WebConstants.ShoppingCartController"
+       asp-action="@nameof(ShoppingCartController.Index)">
+        <i class="fa fa-shopping-cart"></i>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link text-success" data-toggle="tooltip" title="Blog"
+       asp-area="@WebConstants.BlogArea"
+       asp-controller="@WebConstants.ArticlesController"
+       asp-action="@nameof(ArticlesController.Index)"><i class="fa fa-feather-alt"></i></a>
+</li>

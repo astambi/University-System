@@ -35,6 +35,10 @@ a, a:hover {
             color: #ffffff;
             background-color: #28a745;
         }
+/*Tiny MCE notifications*/
+div.tox-notifications-container {
+    display: none;
+}
 
 /*Courses*/
 .bg-gradient {

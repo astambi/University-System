@@ -11,9 +11,9 @@
         public const string RangeMinMaxValues = "The {0} must be between {2} and {1} incl.";
 
         public const int ArticleTitleMinLength = 3;
-        public const int ArticleTitleMaxLength = 50;
+        public const int ArticleTitleMaxLength = 100;
         public const int ArticleContentMinLength = 3;
-        public const int ArticleContentMaxLength = 5000;
+        public const int ArticleContentMaxLength = 15000;
         public const string ArticlePublishDate = "The Publish date cannot be in the future.";
 
         public const int CourseNameMaxLength = 50;
