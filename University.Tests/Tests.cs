@@ -10,8 +10,10 @@
     using University.Services.Admin.Models.Courses;
     using University.Services.Admin.Models.Curriculums;
     using University.Services.Admin.Models.Users;
+    using University.Services.Blog.Models;
     using University.Services.Models.Certificates;
     using University.Services.Models.Courses;
+    using University.Services.Models.Diplomas;
     using University.Services.Models.Exams;
     using University.Services.Models.Orders;
     using University.Services.Models.Resources;
@@ -38,6 +40,10 @@
                 //cfg.AddProfile<AutoMapperProfile>();
 
                 cfg.CreateMap<AdminCourseServiceModel, CourseFormModel>();
+
+                cfg.CreateMap<Article, ArticleDetailsServiceModel>();
+                cfg.CreateMap<Article, ArticleEditServiceModel>();
+                cfg.CreateMap<Article, ArticleListingServiceModel>();
 
                 cfg.CreateMap<Certificate, CertificateDetailsListingServiceModel>();
                 cfg.CreateMap<Certificate, CertificateListingServiceModel>();
@@ -66,6 +72,8 @@
                             .ThenByDescending(c => c.StartDate)));
 
                 cfg.CreateMap<Diploma, AdminDiplomaGraduateServiceModel>();
+                cfg.CreateMap<Diploma, DiplomaServiceModel>();
+                cfg.CreateMap<Diploma, UserDiplomaListingServiceModel>();
 
                 cfg.CreateMap<ExamSubmission, ExamDownloadServiceModel>();
                 cfg.CreateMap<ExamSubmission, ExamSubmissionDetailsServiceModel>();

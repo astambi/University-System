@@ -24,6 +24,12 @@
         private const string CourseNameFirst = "AAAAA";
         private const string CourseNameSecond = "BBBBB";
 
+        private const int CurriculumIdFirst = 1;
+        private const int CurriculumIdSecond = 2;
+
+        private const string CurriculumNameFirst = "AAAAA";
+        private const string CurriculumNameSecond = "BBBBB";
+
         private const string FileNameFirst = "AAAAA";
         private const string FileNameSecond = "BBBBB";
         private const string FileNameThird = "CCCCC";
@@ -325,6 +331,45 @@
         }
 
         [Fact]
+        public async Task GetDiplomasAsync_ShouldReturnEmptyCollection_GivenInvalidUser()
+        {
+            // Arrange
+            var db = Tests.InitializeDatabase();
+            var userService = this.InitializeUserService(db);
+
+            // Act
+            var result = await userService.GetDiplomasAsync(UserIdInvalid);
+
+            // Assert
+            Assert.Empty(result);
+            Assert.IsAssignableFrom<IEnumerable<UserDiplomaListingServiceModel>>(result);
+        }
+
+        [Fact]
+        public async Task GetDiplomasAsync_ShouldReturnCorrectDataAndOrder_GivenValidUser()
+        {
+            // Arrange
+            var db = await this.PrepareUserDiplomas();
+            var userService = this.InitializeUserService(db);
+
+            // Act
+            var result = await userService.GetDiplomasAsync(UserIdValid);
+
+            // Assert
+            Assert.IsAssignableFrom<IEnumerable<UserDiplomaListingServiceModel>>(result);
+
+            // Assert Order by Curriculum name ASC
+            Assert.Equal(new[] { CurriculumNameFirst, CurriculumNameSecond }, result.Select(d => d.CurriculumName).ToList());
+
+            var resultList = result.ToList();
+            foreach (var actual in result)
+            {
+                var expected = db.Diplomas.Find(actual.Id);
+                this.AssertDiplomaDetails(expected, actual);
+            }
+        }
+
+        [Fact]
         public async Task GetExamsAsync_ShouldReturnEmptyCollection_GivenInvalidUser()
         {
             // Arrange
@@ -449,6 +494,13 @@
             }
         }
 
+        private void AssertDiplomaDetails(Diploma expected, UserDiplomaListingServiceModel actual)
+        {
+            Assert.Equal(expected.IssueDate, actual.IssueDate);
+            Assert.Equal(expected.CurriculumId, actual.CurriculumId);
+            Assert.Equal(expected.Curriculum.Name, actual.CurriculumName);
+        }
+
         private void AssertExamsInGroup(IList<ExamSubmission> expectedGroup, IEnumerable<ExamSubmissionServiceModel> actualGroup)
         {
             var actualGroupList = actualGroup.ToList();
@@ -536,6 +588,27 @@
             await db.Courses.AddRangeAsync(course1, course2);
             await db.Certificates.AddRangeAsync(certificate1, certificate2, certificate3, certificateOther);
             await db.Users.AddRangeAsync(user, userOther);
+            await db.SaveChangesAsync();
+
+            return db;
+        }
+
+        private async Task<UniversityDbContext> PrepareUserDiplomas()
+        {
+            var studentWithDiploma = new User { Id = UserIdValid };
+            var userOther = new User { Id = "AnotherUser" };
+
+            var curriculum1 = new Curriculum { Id = CurriculumIdFirst, Name = CurriculumNameSecond };
+            var curriculum2 = new Curriculum { Id = CurriculumIdSecond, Name = CurriculumNameFirst };
+
+            var diploma1 = new Diploma { Id = "DiplomaAAA", IssueDate = DateFirst, CurriculumId = CurriculumIdFirst, StudentId = studentWithDiploma.Id };
+            var diploma2 = new Diploma { Id = "DiplomaBBB", IssueDate = DateSecond, CurriculumId = CurriculumIdSecond, StudentId = studentWithDiploma.Id };
+            var diplomaOther = new Diploma { Id = "DiplomaDDD", IssueDate = DateThird, CurriculumId = CurriculumIdFirst, StudentId = UserIdInvalid };
+
+            var db = Tests.InitializeDatabase();
+            await db.Curriculums.AddRangeAsync(curriculum1, curriculum2);
+            await db.Diplomas.AddRangeAsync(diploma1, diploma2, diplomaOther);
+            await db.Users.AddRangeAsync(studentWithDiploma, userOther);
             await db.SaveChangesAsync();
 
             return db;
