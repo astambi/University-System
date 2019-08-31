@@ -1,6 +1,6 @@
 # Online University
 
-[![Build status](https://ci.appveyor.com/api/projects/status/ybt84fefglkqn81v?svg=true)](https://ci.appveyor.com/project/astambi/university-system)
+[![Build status](https://ci.appveyor.com/api/projects/status/ybt84fefglkqn81v?svg=true)](https://ci.appveyor.com/project/astambi/university-system) [![Build Status](https://travis-ci.org/astambi/University-System.svg?branch=master)](https://travis-ci.org/astambi/University-System)
 
 ## Project Description
 
