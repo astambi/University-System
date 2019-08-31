@@ -32,7 +32,7 @@ Trainers can add and remove course resources, evaluate course exams and create a
   Administrators can review eligible candidates for a diploma (per curriculum). To be considered as eligible for a diploma students, should successfully pass all courses, included in the respective curriculum (i.e. students should have all required course certificates). Administrators can issue curriculum diplomas, as well as revoke existing diplomas. Should a curriculum change and become more demanding (e.g. include more courses), the previously issued diplomas will remain valid unless an Administrator revokes the diplomas.
 
 - Creating / Deleting Roles & Adding / Removing Users to existing roles (Administrators only):
-  Roles can be created by users in Administrator role only. Administrators can add and remove roles, as well as add and remove registered users to existing roles. Pre-defined roles: Administrator, Trainer, BlogAuthor.
+  Roles can be created by users in Administrator role only. Administrators can add and remove roles, as well as add and remove registered users to existing roles. Pre-defined roles: Administrator, Trainer, Blogger.
 
 - Uploading / Deleting Course Resources (Trainers only):
   Course resources can be uploaded by logged in users in Trainer role only and only for the courses they train. Trainers can delete uploaded resources from their own trainings.
@@ -85,56 +85,67 @@ Trainers can add and remove course resources, evaluate course exams and create a
 - Two-factor authentication:
   Registered users can configure an authenticator app and set-up a two-factor authentication.
 
+- University Blog:
+  The Online University maintains a tech blog with tech articles and tutorials for the students. Anyone can view the blog articles, however reading the full articles requires user authentication. Publishing articles is delegated to the logged in user in role Blogger (set by the Univesity Administrators). Article authors can update or delete the articles they have published at any time.
+
 ### Public Part (Any user: Authenticated or Anonymous)
 
 The public part of the University is visible by any user with or without authentication:
 
-- Login / Register (anonymous users only)
-- Home Page listing only the active and upcoming courses selection with pagination & search
-- All courses (active & upcoming and archived courses) with search by course name and pagination
-- Course Details Page listing all course details (name, description, start-end dates, price, trainer, number of students enrolled) and buttons for Enroll/ Cancell enrollment, Add/Remove course to/from Shopping Cart, link to trainer's other trainings
-- Shopping Cart with added courses, functionality to add/remove course, as well as to empty the shopping cart
+- Login / Register (anonymous users only);
+- Home Page listing only the active and upcoming courses selection with pagination & search;
+- All courses (active & upcoming and archived courses) with search by course name and pagination;
+- Course Details Page listing all course details (name, description, start-end dates, price, trainer, number of students enrolled) and buttons for Enroll/ Cancell enrollment, Add/Remove course to/from Shopping Cart, link to trainer's other trainings;
+- Shopping Cart with added courses, functionality to add/remove course, as well as to empty the shopping cart;
+- Viewing the latest Univesity blog articles & tutorials (titles only, no access to the full article).
 
 ### Private Part (Logged in users only)
 
-- Enrolling in free courses
-- Buying courses in the shopping cart, provided the user is not yet enrolled in the respective course
-- Viewing Payments made (Orders) with an option for payment cancellation prior to the course start date. After the course starts the payment can no longer be cancelled.
-- Payment Details, including links to the courses purchased
-- Viewing / Downloading resources for courses they are enrolled in
-- Uploading Exams on exam day for courses they are enrolled in
-- Viewing / Downloading Exams by course and date
-- Viewing / Downloading Certificates for courses successfully passed
-- Viewing Diplomas for successfully covered curriculums
+- Enrolling in free courses;
+- Buying courses in the shopping cart, provided the user is not yet enrolled in the respective course;
+- Viewing Payments made (Orders) with an option for payment cancellation prior to the course start date. After the course starts the payment can no longer be cancelled;
+- Payment Details, including links to the courses purchased;
+- Viewing / Downloading resources for courses they are enrolled in;
+- Uploading Exams on exam day for courses they are enrolled in;
+- Viewing / Downloading Exams by course and date;
+- Viewing / Downloading Certificates for courses successfully passed;
+- Viewing Diplomas for successfully covered curriculums;
 - User's Profile with stats:
-  - Collection of user's courses (free and purchased) with the option to upload exams on exam day
-  - Collection of user's resources (by course)
-  - Collection of user's exams (by course)
-  - Collection of user's diplomas & certificates (by course)
-  - Collection of user's payments
-- Updating Profile data (name, email, password, birthdate, phone number)
-- Adding / Removing multiple External logins (Google & Facebook)
-- Adding / Removing Two-factor authentication with configuration of authenticator app
-- Deleting the user Profile, providing the user is not listed as the single trainer for a course
-- Logout
+  - Collection of user's courses (free and purchased) with the option to upload exams on exam day;
+  - Collection of user's resources (by course);
+  - Collection of user's exams (by course);
+  - Collection of user's diplomas & certificates (by course);
+  - Collection of user's payments;
+- Updating Profile data (name, email, password, birthdate, phone number);
+- Adding / Removing multiple External logins (Google & Facebook);
+- Adding / Removing Two-factor authentication with configuration of authenticator app;
+- Deleting the user Profile, providing the user is not listed as the single trainer for a course;
+- Reading the blog articles & tutorials;
+- Logout.
 
-### Administration Part (Logged in users in role Administrator)
+### Administration Area (Logged in users in role Administrator)
 
-- Creating / Updating / Deleting Courses
-- Creating / Updating / Deleting Curriculums
-- Adding / Removing Courses to/from Curriculums
-- Creating / Deleting Diplomas for successfully covered curriculums
-- Creating / Deleting user Roles
-- Adding / Removing Users to/from existing Roles
+- Creating / Updating / Deleting Courses;
+- Creating / Updating / Deleting Curriculums;
+- Adding / Removing Courses to/from Curriculums;
+- Creating / Deleting Diplomas for successfully covered curriculums;
+- Creating / Deleting user Roles;
+- Adding / Removing Users to/from existing Roles.
 
 ### Trainers Part (Logged in users in role Trainer)
 
-- Viewing their own trainings
-- Adding / Removing / Viewing Resources to their own trainings
-- Downloading students' exams for their own trainings
-- Evaluating students' exams for their own trainings
-- Viewing students' certificates for their own trainings
-- Removing students' certificates for their own trainings
+- Viewing their own trainings;
+- Adding / Removing / Viewing Resources to their own trainings;
+- Downloading students' exams for their own trainings;
+- Evaluating students' exams for their own trainings;
+- Viewing students' certificates for their own trainings;
+- Removing students' certificates for their own trainings.
+
+### Blogger Area
+
+- Viewing blog article titles without access to the full articles (anonymous users);
+- Reading blog articles (any logged in user);
+- Creating / Editing / Deleting their own blog articles & tutorials (logged in users in role Blogger). Roles are set by an Administrator.
 
 ## Back-end: ASP.NET Core
 
