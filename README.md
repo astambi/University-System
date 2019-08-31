@@ -1,5 +1,7 @@
 # Online University
 
+[![Build status](https://ci.appveyor.com/api/projects/status/ybt84fefglkqn81v?svg=true)](https://ci.appveyor.com/project/astambi/university-system)
+
 ## Project Description
 
 The University system provides online courses for students.
