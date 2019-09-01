@@ -23,7 +23,7 @@
             <a asp-action="@nameof(ArticlesController.Details)"
                asp-route-id="@article.Id"
                asp-route-title="@article.Title.ToFriendlyUrl()"
-               class="article-card-link d-flex col-sm-6 col-lg-4 col-xl-3 text-decoration-none">
+               class="article-card-link d-flex col-sm-6 col-lg-4 text-decoration-none">
                 <div class="article-card card border-success m-2">
                     <div class="card-body">
                         <h4 class="card-title">@article.Title</h4>

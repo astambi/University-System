@@ -14,10 +14,6 @@
             </div>
             <div class="card-footer d-flex justify-content-between align-items-center">
                 <partial name="_AdminCurriculumActionsPartial" model="Model.Curriculum.Id" />
-                <a asp-action="@nameof(CurriculumsController.Graduates)"
-                   asp-route-id="@Model.Curriculum.Id" class="btn btn-outline-info">
-                    <i class="fa fa-graduation-cap"></i>
-                </a>
             </div>
         </div>
     </section>

@@ -26,16 +26,16 @@
                     <h5 class="card-subtitle font-weight-light">No grade</h5>
                 }
             </div>
-            @if (Model.CourseStartDate.IsUpcoming())
-            {
-                <div class="card-footer text-uppercase shadow">
-                    <div class="bg-info text-white shadow py-2">Upcoming</div>
-                </div>
-            }
-            else if (Model.CourseEndDate.IsToday())
+            @if (Model.CourseEndDate.IsToday())
             {
                 <div class="card-footer shadow">
                     <partial name="_ExamUploadFormPartial" for="CourseId" />
+                </div>
+            }
+            else if (Model.CourseStartDate.IsUpcoming())
+            {
+                <div class="card-footer text-uppercase shadow">
+                    <div class="bg-info text-white shadow py-2">Upcoming</div>
                 </div>
             }
             else if (!Model.CourseEndDate.HasEnded())
