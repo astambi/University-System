@@ -2,6 +2,7 @@
 {
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Caching.Memory;
     using University.Services.Admin;
     using University.Web.Areas.Admin.Models.Diplomas;
     using University.Web.Infrastructure.Extensions;
@@ -10,13 +11,16 @@
     {
         private readonly IAdminCurriculumService adminCurriculumService;
         private readonly IAdminDiplomaService adminDiplomaService;
+        private readonly IMemoryCache cache;
 
         public DiplomasController(
             IAdminCurriculumService adminCurriculumService,
-            IAdminDiplomaService adminDiplomaService)
+            IAdminDiplomaService adminDiplomaService,
+            IMemoryCache cache)
         {
             this.adminCurriculumService = adminCurriculumService;
             this.adminDiplomaService = adminDiplomaService;
+            this.cache = cache;
         }
 
         [HttpPost]
@@ -57,6 +61,9 @@
             }
             else
             {
+                // Clear curriculum cache (candidate & graduates)
+                this.cache.Clear(model.CurriculumId);
+
                 this.TempData.AddSuccessMessage(WebConstants.DiplomaCreateSuccessMsg);
             }
 
@@ -87,6 +94,9 @@
             }
             else
             {
+                // Clear curriculum cache (candidate & graduates)
+                this.cache.Clear(model.CurriculumId);
+
                 this.TempData.AddSuccessMessage(WebConstants.DiplomaDeleteSuccessMsg);
             }
 

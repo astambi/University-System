@@ -54,6 +54,11 @@
         // Session
         public const string ShoppingCartKey = "ShoppingCartId";
 
+        // Cache
+        public const string CacheCandidatesKey = "Cache_Curriculum_Candidates_Key-";
+        public const string CacheGraduatesKey = "Cache_Curriculum_Graduates_Key-";
+        public const int CacheExpirationInMinutes = 15;
+
         // Routing
         public const string Id = "id";
         public const string WithId = "{id}";

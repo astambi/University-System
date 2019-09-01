@@ -1,14 +1,18 @@
 ﻿namespace University.Web.Areas.Admin.Controllers
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
+    using Microsoft.Extensions.Caching.Memory;
     using University.Common.Infrastructure.Extensions;
     using University.Services;
     using University.Services.Admin;
+    using University.Services.Admin.Models.Curriculums;
+    using University.Services.Admin.Models.Users;
     using University.Web.Areas.Admin.Models.Curriculums;
     using University.Web.Infrastructure.Extensions;
     using University.Web.Infrastructure.Filters;
@@ -22,17 +26,20 @@
         private readonly IAdminCurriculumService adminCurriculumService;
         private readonly ICourseService courseService;
         private readonly IMapper mapper;
+        private readonly IMemoryCache cache;
 
         public CurriculumsController(
             IAdminCourseService adminCourseService,
             IAdminCurriculumService adminCurriculumService,
             ICourseService courseService,
-            IMapper mapper)
+            IMapper mapper,
+            IMemoryCache cache)
         {
             this.adminCourseService = adminCourseService;
             this.adminCurriculumService = adminCurriculumService;
             this.courseService = courseService;
             this.mapper = mapper;
+            this.cache = cache;
         }
 
         public async Task<IActionResult> Index()
@@ -215,11 +222,35 @@
             var model = new CurriculumGraduatesListingViewModel
             {
                 Curriculum = await this.adminCurriculumService.GetByIdAsync(id),
-                Graduates = await this.adminCurriculumService.GetDiplomaGraduatesAsync(id),
-                Candidates = await this.adminCurriculumService.GetEligibleCandidatesWithoutDiplomasAsync(id),
+                Graduates = await this.GetGraduatesCache(id),
+                Candidates = await this.GetCandidatesCache(id)
             };
 
             return this.View(model);
+        }
+
+        private async Task<IEnumerable<AdminUserListingServiceModel>> GetCandidatesCache(int id)
+        {
+            var candidates = this.cache.GetCandidates(id);
+            if (candidates == null)
+            {
+                candidates = await this.adminCurriculumService.GetEligibleCandidatesWithoutDiplomasAsync(id);
+                this.cache.SetCandidates(id, candidates);
+            }
+
+            return candidates;
+        }
+
+        private async Task<IEnumerable<AdminDiplomaGraduateServiceModel>> GetGraduatesCache(int id)
+        {
+            var graduates = this.cache.GetGraduates(id);
+            if (graduates == null)
+            {
+                graduates = await this.adminCurriculumService.GetDiplomaGraduatesAsync(id);
+                this.cache.SetGraduates(id, graduates);
+            }
+
+            return graduates;
         }
 
         private async Task<IEnumerable<SelectListItem>> GetCoursesSelectListItems()

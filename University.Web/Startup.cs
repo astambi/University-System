@@ -71,6 +71,9 @@
             // App Services
             services.AddDomainServices();
 
+            // Cache
+            services.AddMemoryCache();
+
             // Session
             services.AddSession();
 
