@@ -8,5 +8,7 @@
         public string DiplomaId { get; set; }
 
         public int CurriculumId { get; set; }
+
+        public string Username { get; set; } // friendly delete confirmation dialog
     }
 }

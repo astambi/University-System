@@ -1,12 +1,32 @@
 ﻿@model int
 
-<form asp-controller="@WebConstants.CoursesController"
-      asp-action="@nameof(University.Web.Controllers.CoursesController.Cancel)"
-      asp-route-id="@Model" method="post">
-    <div class="form-group m-0">
-        <button type="submit" data-toggle="tooltip" title="@FormActionEnum.CancelEnrollment.ToFriendlyName()"
-                class="btn btn-@FormActionEnum.CancelEnrollment.ToStyle()">
-            <i class="fa fa-trash"></i>
-        </button>
+@{ var modalId = $"modal-cancel-enrollment-{Model}";}
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-@FormActionEnum.CancelEnrollment.ToStyle()" data-toggle="modal" data-target="#@modalId">
+    <i class="fa fa-trash"></i>
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="@modalId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm cancellation</h5>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel enrollment in this course?</p>
+            </div>
+            <div>
+                <form asp-controller="@WebConstants.CoursesController"
+                      asp-action="@nameof(University.Web.Controllers.CoursesController.Cancel)"
+                      asp-route-id="@Model" method="post">
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-info" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-@FormActionEnum.CancelEnrollment.ToStyle()">Cancell</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-</form>
+</div>

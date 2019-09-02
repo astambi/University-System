@@ -2,14 +2,42 @@
 
 @if (Model != null)
 {
-<form asp-controller="@WebConstants.ResourcesController"
-      asp-action="@nameof(ResourcesController.Delete)"
-      asp-route-id="@Model.Id" method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <input hidden name="@nameof(Model.Id)" value="@Model.Id" />
-    <input hidden name="@nameof(Model.CourseId)" value="@Model.CourseId" />
-    <button type="submit" class="btn btn-@FormActionEnum.Delete.ToStyle() mx-1"><i class="fa fa-trash"></i></button>
-</form>
+    var modalId = $"modal-delete-resource-{Model.ResourceId}";
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-@FormActionEnum.Delete.ToStyle()" data-toggle="modal" data-target="#@modalId">
+        <i class="fa fa-trash"></i>
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="@modalId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm delete</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete resource <strong>@(Model.ResourceName ?? string.Empty)</strong> from this course?</p>
+                </div>
+                <div>
+                    <form asp-controller="@WebConstants.ResourcesController"
+                          asp-action="@nameof(ResourcesController.Delete)"
+                          asp-route-id="@Model.ResourceId" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input asp-for="ResourceId" hidden />
+                        <input asp-for="CourseId" hidden />
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-info" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-@FormActionEnum.Delete.ToStyle()">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 }
 
 @section Scripts {

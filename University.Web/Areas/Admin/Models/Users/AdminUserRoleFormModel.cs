@@ -12,8 +12,10 @@
         [HiddenInput]
         public string UserId { get; set; }
 
+        public string Username { get; set; } // friendly delete confirmation dialog
+
         [Required]
-        public string Role { get; set; }
+        public string Role { get; set; } // friendly delete confirmation dialog
 
         public IEnumerable<SelectListItem> Roles { get; set; }
 

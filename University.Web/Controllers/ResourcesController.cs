@@ -106,7 +106,8 @@
             }
 
             var resourceExists = this.resourceService.Exists(id);
-            if (!resourceExists)
+            if (!resourceExists
+                || id != model.ResourceId)
             {
                 this.TempData.AddErrorMessage(WebConstants.ResourceNotFoundMsg);
                 return this.RedirectToTrainersResources(courseId);

@@ -30,7 +30,7 @@
                             <partial name="_EmailPartial" model="@student.StudentEmail" />
                             @foreach (var certificate in student.Certificates)
                             {
-                                var certificateDeleteModel = new CertificateDeleteFormModel { CertificateId = certificate.Id, CourseId = Model.Course.Id };
+                                var certificateDeleteModel = new CertificateDeleteFormModel { CertificateId = certificate.Id, CourseId = Model.Course.Id, StudentUsername = student.StudentUserName, Grade = certificate.GradeBg };
                                 <div class="d-flex justify-content-start align-items-center">
                                     <span class="mr-1">
                                         <i class="fa fa-certificate btn text-info"></i>

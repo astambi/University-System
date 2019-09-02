@@ -24,7 +24,7 @@
                 <tbody>
                     @foreach (var resource in Model.Resources)
                     {
-                        var resourceModel = new ResourceFormModel { Id = resource.Id, CourseId = Model.Id };
+                        var resourceModel = new ResourceFormModel { ResourceId = resource.Id, CourseId = Model.Id, ResourceName = resource.FileName };
                         <tr>
                             <td>@resource.FileName</td>
                             <td class="d-flex justify-content-around m-auto">

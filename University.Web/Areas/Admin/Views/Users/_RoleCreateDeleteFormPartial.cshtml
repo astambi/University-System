@@ -1,23 +1,49 @@
 ﻿@model AdminRoleFormModel
 @{
     var isDeleteDisabled = Model.Action == FormActionEnum.Delete;
+    var modalId = $"modal-role-{Guid.NewGuid().ToString()}";
 }
 
-@if (isDeleteDisabled)
+@if (Model != null)
 {
-    <p class="text-danger">Are you sure you want to delete this role?</p>
-}
+    @*Button trigger modal*@
+    <button type="button" class="btn btn-sm btn-@Model.Action.ToStyle()" data-toggle="modal" data-target="#@modalId">
+        @switch (Model.Action)
+        {
+            case FormActionEnum.Create:<i class="fa fa-plus"></i> break;
+            case FormActionEnum.Delete:<i class="fa fa-trash"></i>break;
+            default: break;
+        }
+    </button>
 
-<form asp-action="@Model.Action.ToFriendlyName()" method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="form-group">
-        <input asp-for="Name" class="form-control" placeholder="Role name" readonly="@isDeleteDisabled" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+    @*Modal*@
+    <div class="modal fade text-left" id="@modalId" tabindex="-1" role="dialog" aria-labelledby="roleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Model.Action.ToFriendlyName() role</h5>
+                </div>
+                <div class="modal-body">
+                    @if (isDeleteDisabled)
+                    {
+                        <p>Are you sure you want to delete this role?</p>
+                    }
+                    <form asp-action="@Model.Action.ToFriendlyName()" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <input asp-for="Name" class="form-control" placeholder="Role name" readonly="@isDeleteDisabled" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-info" data-dismiss="modal">Close</button>
+                            <input type="submit" value="@Model.Action.ToFriendlyName()" class="btn btn-@Model.Action.ToStyle()" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="form-group mr-0">
-        <input type="submit" value="@Model.Action.ToFriendlyName()" class="btn btn-@Model.Action.ToStyle()" />
-    </div>
-</form>
+}
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

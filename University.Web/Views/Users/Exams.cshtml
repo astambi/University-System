@@ -19,7 +19,7 @@
                     <div class="card-body">
                         @foreach (var exam in group.Exams)
                         {
-                            var resourceDloadModel = new ResourceFormModel { Id = exam.Id, CourseId = group.CourseId };
+                            var resourceDloadModel = new ResourceFormModel { ResourceId = exam.Id, CourseId = group.CourseId };
                             <p class="card-text">
                                 <partial name="_ExamDownloadButtonPartial" model="@exam.Id" />
                                 @exam.SubmissionDate

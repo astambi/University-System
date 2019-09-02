@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
-    public class CurriculumAddRemoveCourseFormModel
+    public class CurriculumCourseAddFormModel
     {
         public int CurriculumId { get; set; }
 

@@ -1,16 +1,16 @@
-﻿@model DiplomaDeleteFormModel
+﻿@model AdminUserRoleFormModel
 
 @if (Model != null)
 {
-    var modalId = $"remove-diploma{Model.DiplomaId}-modal";
+    var modalId = $"modal-remove-user-role-{Guid.NewGuid().ToString()}";
 
-    <!-- Button trigger modal -->
+    @*Button trigger modal*@
     <button type="button" class="btn btn-sm btn-@FormActionEnum.Remove.ToStyle()" data-toggle="modal" data-target="#@modalId">
-        <i class="fa fa-trash"></i>
+        <i class="fa fa-times"></i>
     </button>
 
-    <!-- Modal -->
-    <div class="modal fade" id="@modalId" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    @*Modal*@
+    <div class="modal fade text-left" id=@modalId tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -18,20 +18,20 @@
                 </div>
                 <div class="modal-body">
                     <p>
-                        Are you sure you want to delete
-                        <strong>@(Model.Username ?? "this student")</strong>'s diploma for this curriculum?
+                        Are you sure you want to remove
+                        user <strong>@(Model.Username ?? string.Empty)</strong>
+                        from role <strong>@(Model.Role ?? string.Empty)</strong>?
                     </p>
                 </div>
                 <div>
-                    <form asp-controller="@WebConstants.DiplomasController"
-                          asp-action="@nameof(DiplomasController.Delete)"
-                          asp-route-id="@Model.DiplomaId" method="post" class="mx-1">
+                    <form asp-action="@nameof(UsersController.RoleAddRemoveUserAsync)" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <input asp-for="DiplomaId" hidden />
-                        <input asp-for="CurriculumId" hidden />
+                        <input asp-for="Action" value="@FormActionEnum.Remove" hidden />
+                        <input asp-for="UserId" hidden />
+                        <input asp-for="Role" hidden />
                         <div class="modal-footer">
                             <button type="button" class="btn btn-outline-info" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-@FormActionEnum.Delete.ToStyle()">Delete</button>
+                            <button type="submit" class="btn btn-@StyleHelpers.ToStyle(FormActionEnum.Remove)">Remove</button>
                         </div>
                     </form>
                 </div>

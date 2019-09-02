@@ -127,7 +127,7 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCourse(CurriculumAddRemoveCourseFormModel model)
+        public async Task<IActionResult> AddCourse(CurriculumCourseAddFormModel model)
         {
             if (!this.ModelState.IsValid)
             {
@@ -169,7 +169,7 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> RemoveCourse(CurriculumAddRemoveCourseFormModel model)
+        public async Task<IActionResult> RemoveCourse(CurriculumCourseRemoveFormModel model)
         {
             if (!this.ModelState.IsValid)
             {

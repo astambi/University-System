@@ -1,14 +1,45 @@
-﻿@model CurriculumAddRemoveCourseFormModel
+﻿@model CurriculumCourseRemoveFormModel
 
-    <form asp-action="@nameof(CurriculumsController.RemoveCourse)" method="post">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <input asp-for="CurriculumId" hidden />
-        <input asp-for="CourseId" hidden />
+@{
+    var modalId = $"remove-curriculum{Model.CurriculumId}-course{Model.CourseId}-modal";
+}
 
-        <button type="submit" data-toggle="tooltip" title="Remove from curriculum" class="btn btn-@FormActionEnum.Remove.ToStyle() mx-1">
-            <i class="fa fa-times"></i>
-        </button>
-    </form>
+@if (Model != null)
+{
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-@FormActionEnum.Remove.ToStyle()" data-toggle="modal" data-target="#@modalId">
+        <i class="fa fa-times"></i>
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="@modalId" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm delete</h5>
+                </div>
+                <div class="modal-header">
+                    <p class="text-left">
+                        Are you sure you want to remove
+                        course <strong>@(Model.CourseName ?? string.Empty)</strong>
+                        from curriculum <strong>@(Model.CurriculumName ?? string.Empty)</strong>?
+                    </p>
+                </div>
+                <div>
+                    <form asp-action="@nameof(CurriculumsController.RemoveCourse)" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input asp-for="CurriculumId" hidden />
+                        <input asp-for="CourseId" hidden />
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-info" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-@FormActionEnum.Remove.ToStyle()">Remove</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

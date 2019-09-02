@@ -55,7 +55,8 @@
                     }
                 }
 
-                @if (User.IsInRole(WebConstants.TrainerRole))
+                @if (User.IsInRole(WebConstants.TrainerRole)
+                   && User.Identity.Name == Model.TrainerUserName)
                 {
                     <a asp-controller="@WebConstants.TrainersController"
                        asp-action="@nameof(TrainersController.Students)"

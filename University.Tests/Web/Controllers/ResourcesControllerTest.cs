@@ -358,7 +358,7 @@
             using (controller)
             {
                 // Act
-                var result = await controller.Delete(TestCourseId, testModel);
+                var result = await controller.Delete(TestResourceId, testModel);
 
                 // Assert
                 controller.TempData.AssertErrorMsg(WebConstants.NotTrainerForCourseMsg);
@@ -397,7 +397,47 @@
             using (controller)
             {
                 // Act
-                var result = await controller.Delete(TestCourseId, testModel);
+                var result = await controller.Delete(TestResourceId, testModel);
+
+                // Assert
+                controller.TempData.AssertErrorMsg(WebConstants.ResourceNotFoundMsg);
+
+                this.AssertRedirectToTrainersResourcesWithRouteId(result);
+
+                userManager.Verify();
+                trainerService.Verify();
+                resourceService.Verify();
+            }
+        }
+
+        [Fact]
+        public async Task Delete_ShouldRedirectToTrainersResources_GivenMisMatchingResourceId()
+        {
+            // Arrange
+            var testModel = this.GetResource();
+
+            var userManager = UserManagerMock.GetMock;
+            userManager.GetUserId(TestUserId);
+
+            var trainerService = TrainerServiceMock.GetMock;
+            trainerService.IsTrainerForCourseAsync(true);
+
+            var resourceService = ResourceServiceMock.GetMock;
+            resourceService.Exists(false);
+
+            var controller = new ResourcesController(
+                userManager.Object,
+                courseService: null,
+                resourceService.Object,
+                trainerService.Object)
+            {
+                TempData = TempDataMock.GetMock
+            };
+
+            using (controller)
+            {
+                // Act
+                var result = await controller.Delete(TestResourceId + 10, testModel);
 
                 // Assert
                 controller.TempData.AssertErrorMsg(WebConstants.ResourceNotFoundMsg);
@@ -439,7 +479,7 @@
             using (controller)
             {
                 // Act
-                var result = await controller.Delete(TestCourseId, testModel);
+                var result = await controller.Delete(TestResourceId, testModel);
 
                 // Assert
                 controller.TempData.AssertErrorMsg(WebConstants.ResourceNotDeletedMsg);
@@ -481,7 +521,7 @@
             using (controller)
             {
                 // Act
-                var result = await controller.Delete(TestCourseId, testModel);
+                var result = await controller.Delete(TestResourceId, testModel);
 
                 // Assert
                 controller.TempData.AssertSuccessMsg(WebConstants.ResourceDeletedMsg);
@@ -737,7 +777,7 @@
         private byte[] GetFileBytes() => new byte[] { 158, 201, 3, 7 };
 
         private ResourceFormModel GetResource()
-            => new ResourceFormModel { Id = TestResourceId, CourseId = TestCourseId };
+            => new ResourceFormModel { ResourceId = TestResourceId, CourseId = TestCourseId };
 
         private static ResourceCreateFormModel GetResourceCreateModel()
             => new ResourceCreateFormModel

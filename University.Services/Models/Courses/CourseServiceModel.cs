@@ -24,6 +24,8 @@
 
         public string TrainerName { get; set; }
 
+        public string TrainerUserName { get; set; }
+
         public int Duration
             => this.StartDate.DaysTo(this.EndDate);
 

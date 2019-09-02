@@ -59,7 +59,7 @@
                 {
                     @foreach (var resource in Model.Resources)
                     {
-                        var resourceModel = new ResourceFormModel { Id = resource.Id, CourseId = Model.Id };
+                        var resourceModel = new ResourceFormModel { ResourceId = resource.Id, CourseId = Model.Id, ResourceName = resource.FileName };
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             @resource.FileName
                             <div class="d-flex">
