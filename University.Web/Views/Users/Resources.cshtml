@@ -20,7 +20,7 @@
                         @foreach (var resource in group.Resources)
                         {
                             <p class="card-text">
-                                <partial name="_ResourceDownloadButtonPartial" model="@resource.Id" />
+                                <partial name="_FileDownloadLinkPartial" model="resource.FileUrl" />
                                 @resource.FileName
                             </p>
                         }

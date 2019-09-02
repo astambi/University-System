@@ -1,0 +1,8 @@
+﻿@model string
+
+@if (!string.IsNullOrWhiteSpace(Model))
+{
+    <a href="@Model" data-toggle="tooltip" title="Download file from cloud" class="btn btn-info">
+        <i class="fa fa-download"></i>
+    </a>
+}

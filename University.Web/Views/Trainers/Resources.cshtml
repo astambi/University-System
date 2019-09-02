@@ -28,7 +28,7 @@
                         <tr>
                             <td>@resource.FileName</td>
                             <td class="d-flex justify-content-around m-auto">
-                                <partial name="_ResourceDownloadButtonPartial" model="@resource.Id" />
+                                <partial name="_FileDownloadLinkPartial" model="resource.FileUrl" />
                                 <partial name="_ResourceDeleteFormPartial" model="@resourceModel" />
                             </td>
                         </tr>

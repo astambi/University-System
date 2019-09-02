@@ -4,7 +4,6 @@
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using University.Services.Models.Resources;
     using University.Tests.Mocks;
     using University.Web;
     using University.Web.Controllers;
@@ -16,8 +15,7 @@
         private const int TestCourseId = 1;
         private const int TestResourceId = 10;
         private const string TestUserId = "TestUserId";
-        private const string TestContentType = "application/zip";
-        private const string TestFileName = "TestFileName";
+        private const string FileUrl = "https://res.cloudinary.com/filename.pptx";
 
         [Fact]
         public void ResourcesController_ShouldBeForAuthorizedUsersOnly()
@@ -46,6 +44,7 @@
             // Arrange
             var controller = new ResourcesController(
                 userManager: null,
+                cloudinaryService: null,
                 courseService: null,
                 resourceService: null,
                 trainerService: null)
@@ -77,6 +76,7 @@
 
             var controller = new ResourcesController(
                 userManager: null,
+                cloudinaryService: null,
                 courseService.Object,
                 resourceService: null,
                 trainerService: null)
@@ -109,6 +109,7 @@
 
             var controller = new ResourcesController(
                 userManager: null,
+                cloudinaryService: null,
                 courseService.Object,
                 resourceService: null,
                 trainerService: null)
@@ -144,6 +145,7 @@
 
             var controller = new ResourcesController(
                 userManager.Object,
+                cloudinaryService: null,
                 courseService.Object,
                 resourceService: null,
                 trainerService: null)
@@ -183,6 +185,7 @@
 
             var controller = new ResourcesController(
                 userManager.Object,
+                cloudinaryService: null,
                 courseService.Object,
                 resourceService: null,
                 trainerService.Object)
@@ -221,11 +224,15 @@
             var trainerService = TrainerServiceMock.GetMock;
             trainerService.IsTrainerForCourseAsync(true);
 
+            var cloudinaryService = CloudinaryServiceMock.GetMock;
+            cloudinaryService.UploadFile(string.Empty);
+
             var resourceService = ResourceServiceMock.GetMock;
             resourceService.CreateAsync(false);
 
             var controller = new ResourcesController(
                 userManager.Object,
+                cloudinaryService.Object,
                 courseService.Object,
                 resourceService.Object,
                 trainerService.Object)
@@ -243,6 +250,7 @@
 
                 this.AssertRedirectToTrainersResourcesWithRouteId(result);
 
+                cloudinaryService.Verify();
                 courseService.Verify();
                 userManager.Verify();
                 trainerService.Verify();
@@ -265,11 +273,15 @@
             var trainerService = TrainerServiceMock.GetMock;
             trainerService.IsTrainerForCourseAsync(true);
 
+            var cloudinaryService = CloudinaryServiceMock.GetMock;
+            cloudinaryService.UploadFile(FileUrl);
+
             var resourceService = ResourceServiceMock.GetMock;
             resourceService.CreateAsync(true);
 
             var controller = new ResourcesController(
                 userManager.Object,
+                cloudinaryService.Object,
                 courseService.Object,
                 resourceService.Object,
                 trainerService.Object)
@@ -287,6 +299,7 @@
 
                 this.AssertRedirectToTrainersResourcesWithRouteId(result);
 
+                cloudinaryService.Verify();
                 courseService.Verify();
                 userManager.Verify();
                 trainerService.Verify();
@@ -313,6 +326,7 @@
 
             var controller = new ResourcesController(
                 userManager.Object,
+                cloudinaryService: null,
                 courseService: null,
                 resourceService: null,
                 trainerService: null)
@@ -348,6 +362,7 @@
 
             var controller = new ResourcesController(
                 userManager.Object,
+                cloudinaryService: null,
                 courseService: null,
                 resourceService: null,
                 trainerService.Object)
@@ -387,6 +402,7 @@
 
             var controller = new ResourcesController(
                 userManager.Object,
+                cloudinaryService: null,
                 courseService: null,
                 resourceService.Object,
                 trainerService.Object)
@@ -427,6 +443,7 @@
 
             var controller = new ResourcesController(
                 userManager.Object,
+                cloudinaryService: null,
                 courseService: null,
                 resourceService.Object,
                 trainerService.Object)
@@ -469,6 +486,7 @@
 
             var controller = new ResourcesController(
                 userManager.Object,
+                cloudinaryService: null,
                 courseService: null,
                 resourceService.Object,
                 trainerService.Object)
@@ -511,6 +529,7 @@
 
             var controller = new ResourcesController(
                 userManager.Object,
+                cloudinaryService: null,
                 courseService: null,
                 resourceService.Object,
                 trainerService.Object)
@@ -530,177 +549,6 @@
 
                 userManager.Verify();
                 trainerService.Verify();
-                resourceService.Verify();
-            }
-        }
-
-        [Fact]
-        public async Task Download_ShouldRedirectToCourseIndex_GivenInvalidUser()
-        {
-            // Arrange
-            var userManager = UserManagerMock.GetMock;
-            userManager.GetUserId(null);
-
-            var controller = new ResourcesController(
-                userManager.Object,
-                courseService: null,
-                resourceService: null,
-                trainerService: null)
-            {
-                TempData = TempDataMock.GetMock
-            };
-
-            using (controller)
-            {
-                // Act
-                var result = await controller.Download(TestResourceId);
-
-                // Assert
-                controller.TempData.AssertErrorMsg(WebConstants.InvalidUserMsg);
-
-                this.AssertRedirectToCoursesIndex(result);
-
-                userManager.Verify();
-            }
-        }
-
-        [Fact]
-        public async Task Download_ShouldRedirectToCourseIndex_GivenInvalidResource()
-        {
-            // Arrange
-            var userManager = UserManagerMock.GetMock;
-            userManager.GetUserId(TestUserId);
-
-            var resourceService = ResourceServiceMock.GetMock;
-            resourceService.Exists(false);
-
-            var controller = new ResourcesController(
-                userManager.Object,
-                courseService: null,
-                resourceService.Object,
-                trainerService: null)
-            {
-                TempData = TempDataMock.GetMock
-            };
-
-            using (controller)
-            {
-                // Act
-                var result = await controller.Download(TestResourceId);
-
-                // Assert
-                controller.TempData.AssertErrorMsg(WebConstants.ResourceNotFoundMsg);
-
-                this.AssertRedirectToCoursesIndex(result);
-
-                userManager.Verify();
-                resourceService.Verify();
-            }
-        }
-
-        [Fact]
-        public async Task Download_ShouldRedirectToCourseIndex_GivenInvalidTrainerOrStudent()
-        {
-            // Arrange
-            var userManager = UserManagerMock.GetMock;
-            userManager.GetUserId(TestUserId);
-
-            var resourceService = ResourceServiceMock.GetMock;
-            resourceService
-                .Exists(true)
-                .CanBeDownloadedByUser(false);
-
-            var controller = new ResourcesController(
-                userManager.Object,
-                courseService: null,
-                resourceService.Object,
-                trainerService: null)
-            {
-                TempData = TempDataMock.GetMock
-            };
-
-            using (controller)
-            {
-                // Act
-                var result = await controller.Download(TestResourceId);
-
-                // Assert
-                controller.TempData.AssertErrorMsg(WebConstants.ResourceDownloadUnauthorizedMsg);
-
-                this.AssertRedirectToCoursesIndex(result);
-
-                userManager.Verify();
-                resourceService.Verify();
-            }
-        }
-
-        [Fact]
-        public async Task Download_ShouldRedirectToCourseIndexWithErrorMsg_GivenDownloadError()
-        {
-            // Arrange
-            var userManager = UserManagerMock.GetMock;
-            userManager.GetUserId(TestUserId);
-
-            var resourceService = ResourceServiceMock.GetMock;
-            resourceService
-                .Exists(true)
-                .CanBeDownloadedByUser(true)
-                .DownloadAsync(null);
-
-            var controller = new ResourcesController(
-                userManager.Object,
-                courseService: null,
-                resourceService.Object,
-                trainerService: null)
-            {
-                TempData = TempDataMock.GetMock
-            };
-
-            using (controller)
-            {
-                // Act
-                var result = await controller.Download(TestResourceId);
-
-                // Assert
-                controller.TempData.AssertErrorMsg(WebConstants.ResourceDownloadErrorMsg);
-
-                this.AssertRedirectToCoursesIndex(result);
-
-                userManager.Verify();
-                resourceService.Verify();
-            }
-        }
-
-        [Fact]
-        public async Task Download_ShouldRedirectToCourseDetailsWithSuccessMsg_GivenDownloadSuccess()
-        {
-            // Arrange
-            var testResourceDload = this.GetResourceDownload();
-
-            var userManager = UserManagerMock.GetMock;
-            userManager.GetUserId(TestUserId);
-
-            var resourceService = ResourceServiceMock.GetMock;
-            resourceService
-                .Exists(true)
-                .CanBeDownloadedByUser(true)
-                .DownloadAsync(testResourceDload);
-
-            var controller = new ResourcesController(
-                userManager.Object,
-                courseService: null,
-                resourceService.Object,
-                trainerService: null);
-
-            using (controller)
-            {
-                // Act
-                var result = await controller.Download(TestResourceId);
-
-                // Assert
-                this.AssertResourceDownload(result);
-
-                userManager.Verify();
                 resourceService.Verify();
             }
         }
@@ -737,13 +585,6 @@
         private RedirectToActionResult AssertRedirectToAction(IActionResult result)
             => Assert.IsType<RedirectToActionResult>(result);
 
-        private void AssertRedirectToCoursesIndex(IActionResult result)
-        {
-            var redirectToActionResult = this.AssertRedirectToAction(result);
-            Assert.Equal(nameof(CoursesController.Index), redirectToActionResult.ActionName);
-            Assert.Equal(WebConstants.CoursesController, redirectToActionResult.ControllerName);
-        }
-
         private void AssertRedirectToTrainersIndex(IActionResult result)
         {
             var redirectToActionResult = this.AssertRedirectToAction(result);
@@ -763,19 +604,6 @@
             Assert.Equal(TestCourseId, redirectToActionResult.RouteValues[WebConstants.Id]);
         }
 
-        private void AssertResourceDownload(IActionResult result)
-        {
-            var expected = this.GetResourceDownload();
-
-            var fileContentResult = Assert.IsType<FileContentResult>(result);
-
-            Assert.Equal(expected.FileBytes, fileContentResult.FileContents);
-            Assert.Equal(expected.ContentType, fileContentResult.ContentType);
-            Assert.Equal(expected.FileName, fileContentResult.FileDownloadName);
-        }
-
-        private byte[] GetFileBytes() => new byte[] { 158, 201, 3, 7 };
-
         private ResourceFormModel GetResource()
             => new ResourceFormModel { ResourceId = TestResourceId, CourseId = TestCourseId };
 
@@ -784,14 +612,6 @@
             {
                 CourseId = TestCourseId,
                 ResourceFile = IFormFileMock.GetMock.Object
-            };
-
-        private ResourceDownloadServiceModel GetResourceDownload()
-            => new ResourceDownloadServiceModel
-            {
-                FileName = TestFileName,
-                ContentType = TestContentType,
-                FileBytes = this.GetFileBytes()
             };
     }
 }

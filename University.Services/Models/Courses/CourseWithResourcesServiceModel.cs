@@ -17,7 +17,7 @@
             .ForMember(dest => dest.Resources,
                 opt => opt.MapFrom(c => c.Resources
                 .OrderBy(r => r.FileName)
-                .Select(r => new ResourceServiceModel { Id = r.Id, FileName = r.FileName })
+                .Select(r => new ResourceServiceModel { Id = r.Id, FileName = r.FileName, FileUrl = r.FileUrl })
                 .ToList()));
     }
 }

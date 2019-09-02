@@ -4,5 +4,8 @@
     {
         // Pagination
         public const int PageSize = 12;
+
+        // Cloudinary
+        public const string CloudProjectFolder = "UniversitySystem";
     }
 }

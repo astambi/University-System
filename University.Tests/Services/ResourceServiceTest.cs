@@ -26,9 +26,7 @@
         private const string TrainerValid = "TrainerValid";
 
         private const string FileName = "   Resource name  ";
-        private const string ContentType = "ContentType";
-
-        private readonly byte[] FileBytes = new byte[] { 100, 11, 127 };
+        private const string FileUrl = "https://res.cloudinary.com/filename.pptx";
 
         [Fact]
         public async Task AllByCourseAsync_ShouldReturnEmptyList_GivenInvalidCourse()
@@ -104,7 +102,7 @@
 
             // Act
             // Invalid Course
-            var result = await resourseService.CreateAsync(CourseInvalid, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<byte[]>());
+            var result = await resourseService.CreateAsync(CourseInvalid, It.IsAny<string>(), It.IsAny<string>());
             var resultCount = db.Resources.Count();
 
             // Assert
@@ -113,30 +111,24 @@
             Assert.Equal(0, resultCount);
         }
 
-        [Fact]
-        public async Task CreateAsync_ShouldNotSaveInDb_GivenInvalidFile()
+        [Theory]
+        [InlineData("  ", FileUrl)]
+        [InlineData(null, FileUrl)]
+        [InlineData(FileName, "  ")]
+        [InlineData(FileName, null)]
+        public async Task CreateAsync_ShouldNotSaveInDb_GivenInvalidFile(string fileName, string fileUrl)
         {
             // Arrange
             var db = await this.PrepareCourse();
             var resourseService = this.InitializeResourceService(db);
 
             // Act
-            // Invalid FileName
-            var result1 = await resourseService.CreateAsync(CourseValid, "  ", It.IsAny<string>(), It.IsAny<byte[]>());
-            var result2 = await resourseService.CreateAsync(CourseValid, null, It.IsAny<string>(), It.IsAny<byte[]>());
-
-            // Invalid ContentType
-            var result3 = await resourseService.CreateAsync(CourseValid, It.IsAny<string>(), "  ", It.IsAny<byte[]>());
-            var result4 = await resourseService.CreateAsync(CourseValid, It.IsAny<string>(), null, It.IsAny<byte[]>());
+            var result = await resourseService.CreateAsync(CourseValid, fileName, fileUrl);
 
             var resultCount = db.Resources.Count();
 
             // Assert
-            Assert.False(result1);
-            Assert.False(result2);
-            Assert.False(result3);
-            Assert.False(result4);
-
+            Assert.False(result);
             Assert.Equal(0, resultCount);
         }
 
@@ -148,7 +140,7 @@
             var resourseService = this.InitializeResourceService(db);
 
             // Act
-            var result = await resourseService.CreateAsync(CourseValid, FileName, ContentType, this.FileBytes);
+            var result = await resourseService.CreateAsync(CourseValid, FileName, FileUrl);
             var resultCount = db.Resources.Count();
             var resultResource = await db.Resources.FirstOrDefaultAsync();
 
@@ -160,40 +152,7 @@
             Assert.NotNull(resultResource);
             Assert.Equal(CourseValid, resultResource.CourseId);
             Assert.Equal(FileName.Trim(), resultResource.FileName);
-            Assert.Equal(ContentType, resultResource.ContentType);
-            Assert.Equal(this.FileBytes, resultResource.FileBytes);
-        }
-
-        [Fact]
-        public async Task DownloadAsync_ShouldReturnNull_GivenInvalidInput()
-        {
-            // Arrange
-            var db = Tests.InitializeDatabase();
-            var resourseService = this.InitializeResourceService(db);
-
-            // Act
-            var result = await resourseService.DownloadAsync(ResourceInvalid);
-
-            // Assert
-            Assert.Null(result);
-        }
-
-        [Fact]
-        public async Task DownloadAsync_ShouldReturnCorrectData_GivenValidInput()
-        {
-            // Arrange
-            var db = await this.PrepareResource();
-            var resourseService = this.InitializeResourceService(db);
-
-            // Act
-            var result = await resourseService.DownloadAsync(ResourceValid);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.IsType<ResourceDownloadServiceModel>(result);
-            Assert.Equal(FileName, result.FileName);
-            Assert.Equal(ContentType, result.ContentType);
-            Assert.Equal(this.FileBytes, result.FileBytes);
+            Assert.Equal(FileUrl, resultResource.FileUrl);
         }
 
         [Fact]
@@ -300,8 +259,6 @@
                 Id = ResourceValid,
                 CourseId = CourseValid,
                 FileName = FileName,
-                ContentType = ContentType,
-                FileBytes = FileBytes,
             };
 
             await db.Resources.AddAsync(testResource);
@@ -344,8 +301,6 @@
                 Id = 1,
                 CourseId = CourseValid,
                 FileName = "Resource B",
-                ContentType = ContentType,
-                FileBytes = FileBytes,
             };
 
             var testResource2 = new Resource
@@ -353,8 +308,6 @@
                 Id = 2,
                 CourseId = CourseValid,
                 FileName = "Resource A",
-                ContentType = ContentType,
-                FileBytes = FileBytes,
             };
 
             await db.Resources.AddRangeAsync(testResource1, testResource2);

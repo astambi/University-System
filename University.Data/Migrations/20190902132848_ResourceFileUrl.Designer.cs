@@ -5,13 +5,15 @@ namespace University.Data.Migrations
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Infrastructure;
     using Microsoft.EntityFrameworkCore.Metadata;
+    using Microsoft.EntityFrameworkCore.Migrations;
     using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
     using University.Data;
 
     [DbContext(typeof(UniversityDbContext))]
-    partial class UniversityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190902132848_ResourceFileUrl")]
+    partial class ResourceFileUrl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -349,7 +351,14 @@ namespace University.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(100);
+
                     b.Property<int>("CourseId");
+
+                    b.Property<byte[]>("FileBytes")
+                        .HasMaxLength(7340032);
 
                     b.Property<string>("FileName")
                         .IsRequired()

@@ -13,13 +13,7 @@
         public string FileName { get; set; }
 
         [Required]
-        [StringLength(DataConstants.ContentTypeMaxLength,
-            ErrorMessage = DataConstants.StringMaxLength)]
-        public string ContentType { get; set; }
-
-        [StringLength(DataConstants.ResourceMaxLengthInBytes,
-            ErrorMessage = DataConstants.FileMaxLength)]
-        public byte[] FileBytes { get; set; }
+        public string FileUrl { get; set; }
 
         public int CourseId { get; set; }
 

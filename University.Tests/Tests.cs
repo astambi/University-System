@@ -83,7 +83,6 @@
                 cfg.CreateMap<OrderItem, OrderItemServiceModel>();
 
                 cfg.CreateMap<Resource, ResourceDetailsServiceModel>();
-                cfg.CreateMap<Resource, ResourceDownloadServiceModel>();
                 cfg.CreateMap<Resource, ResourceServiceModel>();
 
                 cfg.CreateMap<StudentCourse, CourseProfileServiceModel>()

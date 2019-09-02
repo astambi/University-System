@@ -38,22 +38,21 @@
                 && (r.Course.TrainerId == userId // trainers or enrolled students only
                 || r.Course.Students.Any(sc => sc.StudentId == userId)));
 
-        public async Task<bool> CreateAsync(int courseId, string fileName, string contentType, byte[] fileBytes)
+        public async Task<bool> CreateAsync(int courseId, string fileName, string fileUrl)
         {
             var courseExists = this.db.Courses.Any(c => c.Id == courseId);
             if (!courseExists
                 || string.IsNullOrWhiteSpace(fileName)
-                || string.IsNullOrWhiteSpace(contentType))
+                || string.IsNullOrWhiteSpace(fileUrl))
             {
                 return false;
             }
 
             var resource = new Resource
             {
-                CourseId = courseId,
                 FileName = fileName.Trim(),
-                ContentType = contentType,
-                FileBytes = fileBytes,
+                CourseId = courseId,
+                FileUrl = fileUrl
             };
 
             await this.db.Resources.AddAsync(resource);
@@ -63,16 +62,15 @@
             return success;
         }
 
-        public async Task<ResourceDownloadServiceModel> DownloadAsync(int id)
-            => await this.mapper
-            .ProjectTo<ResourceDownloadServiceModel>(
-                this.db
-                .Resources
-                .Where(r => r.Id == id))
-            .FirstOrDefaultAsync();
-
         public bool Exists(int id)
             => this.db.Resources.Any(r => r.Id == id);
+
+        public async Task<string> GetDownloadUrlAsync(int id)
+            => await this.db
+            .Resources
+            .Where(r => r.Id == id)
+            .Select(r => r.FileUrl)
+            .FirstOrDefaultAsync();
 
         public async Task<bool> RemoveAsync(int id)
         {

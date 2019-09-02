@@ -2,7 +2,6 @@
 {
     using Moq;
     using University.Services;
-    using University.Services.Models.Resources;
 
     public static class ResourceServiceMock
     {
@@ -22,18 +21,8 @@
         public static Mock<IResourceService> CreateAsync(this Mock<IResourceService> mock, bool result)
         {
             mock
-                .Setup(s => s.CreateAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<byte[]>()))
+                .Setup(s => s.CreateAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(result)
-                .Verifiable();
-
-            return mock;
-        }
-
-        public static Mock<IResourceService> DownloadAsync(this Mock<IResourceService> mock, ResourceDownloadServiceModel resource)
-        {
-            mock
-                .Setup(s => s.DownloadAsync(It.IsAny<int>()))
-                .ReturnsAsync(resource)
                 .Verifiable();
 
             return mock;

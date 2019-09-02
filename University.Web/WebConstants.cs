@@ -17,8 +17,14 @@
 
         // Secret Manager Keys
         public const string AdminPassword = "AdminPassword";
+
+        public const string AuthCloudinaryCloudName = "Authentication:Cloudinary:CloudName";
+        public const string AuthCloudinaryApiKey = "Authentication:Cloudinary:ApiKey";
+        public const string AuthCloudinaryApiSecret = "Authentication:Cloudinary:ApiSecret";
+
         public const string AuthFacebookAppId = "Authentication:Facebook:AppId";
         public const string AuthFacebookAppSecret = "Authentication:Facebook:AppSecret";
+
         public const string AuthGoogleClientId = "Authentication:Google:ClientId";
         public const string AuthGoogleClientSecret = "Authentication:Google:ClientSecret";
 
@@ -69,6 +75,11 @@
         public const string ApplicationZip = "application/zip";
         public const string CertificateFileName = "Certificate.pdf";
         public const string DiplomaFileName = "Diploma.pdf";
+
+        // Cloudinary
+        public const string CloudProjectFolder = "UniversitySystem";
+        public const string CloudExamsFolder = "Exams";
+        public const string CloudResourcesFolder = "Resources";
 
         // Bootstrap Styles
         public const string DangerStyle = "danger";

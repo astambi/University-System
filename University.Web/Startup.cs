@@ -2,6 +2,7 @@
 {
     using System;
     using AutoMapper;
+    using CloudinaryDotNet;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
@@ -68,8 +69,16 @@
                     options.ClientSecret = this.Configuration[WebConstants.AuthGoogleClientSecret];
                 });
 
+            // Cloudinary
+            var cloudinaryCredentials = new Account(
+                this.Configuration[WebConstants.AuthCloudinaryCloudName],
+                this.Configuration[WebConstants.AuthCloudinaryApiKey],
+                this.Configuration[WebConstants.AuthCloudinaryApiSecret]);
+            var cloudinary = new Cloudinary(cloudinaryCredentials);
+
             // App Services
             services.AddDomainServices();
+            services.AddSingleton(cloudinary); // Singleton
 
             // Cache
             services.AddMemoryCache();

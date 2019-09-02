@@ -10,9 +10,9 @@
 
         Task<bool> CanBeDownloadedByUserAsync(int id, string userId);
 
-        Task<bool> CreateAsync(int courseId, string fileName, string contentType, byte[] fileBytes);
+        Task<bool> CreateAsync(int courseId, string fileName, string fileUrl);
 
-        Task<ResourceDownloadServiceModel> DownloadAsync(int id);
+        Task<string> GetDownloadUrlAsync(int id);
 
         bool Exists(int id);
 
