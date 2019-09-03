@@ -118,7 +118,7 @@
             }
 
             var fileBytes = await examFile.ToByteArrayAsync();
-            var fileName = $"{this.User.Identity.Name}-{DateTime.UtcNow}-{examFile.FileName}";
+            var fileName = $"{this.User.Identity.Name}-{examFile.FileName}";
 
             var fileUrl = this.cloudinaryService.UploadFile(fileBytes, fileName, WebConstants.CloudExamsFolder);
 

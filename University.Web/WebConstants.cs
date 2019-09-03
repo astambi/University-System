@@ -72,12 +72,13 @@
 
         // ContentType
         public const string ApplicationPdf = "application/pdf";
-        public const string ApplicationZip = "application/zip";
-        public const string CertificateFileName = "Certificate.pdf";
-        public const string DiplomaFileName = "Diploma.pdf";
+
+        // Azure deployment
+        public const string AzureWeb = "azurewebsites";
 
         // Cloudinary
         public const string CloudProjectFolder = "UniversitySystem";
+        public const string CloudCertificatesFolder = "Certificates";
         public const string CloudExamsFolder = "Exams";
         public const string CloudResourcesFolder = "Resources";
 

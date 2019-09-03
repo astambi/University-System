@@ -16,11 +16,13 @@
     {
         private const string CertificateValidId = "CertificateValidId";
         private const string CertificateInvalidId = "CertificateInvalidId";
+        private const string CertificateName = "Certificate.pdf";
 
         private const string Scheme = "https";
         private const string Host = "mysite.com";
         private const string Path = "/certificates/" + CertificateValidId;
         private const string DownloadUrl = Scheme + "://" + Host + Path;
+        private const string DownloadUrlAzure = Scheme + "://" + WebConstants.AzureWeb + Path;
 
         // Attributes
         [Fact]
@@ -143,6 +145,27 @@
         }
 
         [Fact]
+        public void CertificateDownload_ShouldRedirectToView_GivenAzureDeployment()
+        {
+            // Arrange
+            var controller = new CertificatesController(
+                certificateService: null,
+                diplomaService: null,
+                pdfService: null)
+            {
+                ControllerContext = ControllerContextMock.GetMock // HttpRequest Mock
+            };
+            controller.ControllerContext.HttpRequest(Scheme, WebConstants.AzureWeb, Path); // HttpRequest Mock
+
+            // Act
+            var result = controller.CertificateDownload(CertificateValidId);
+
+            // Assert
+            var redirectResult = Assert.IsType<RedirectResult>(result);
+            Assert.Equal(DownloadUrlAzure, redirectResult.Url);
+        }
+
+        [Fact]
         public void CertificateDownload_ShouldReturnFileContentResultWithCorrectContent_GivenServiceSuccess()
         {
             // Arrange
@@ -218,7 +241,7 @@
         {
             Assert.Equal(this.GetCertificateFileBytes(), fileContentResult.FileContents);
             Assert.Equal(WebConstants.ApplicationPdf, fileContentResult.ContentType);
-            Assert.Equal(WebConstants.CertificateFileName, fileContentResult.FileDownloadName);
+            Assert.Equal(CertificateName, fileContentResult.FileDownloadName);
         }
 
         private void AssertRedirectToHomeControllerIndex(IActionResult result)
