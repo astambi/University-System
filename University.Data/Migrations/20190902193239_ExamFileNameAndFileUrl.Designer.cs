@@ -5,13 +5,15 @@ namespace University.Data.Migrations
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Infrastructure;
     using Microsoft.EntityFrameworkCore.Metadata;
+    using Microsoft.EntityFrameworkCore.Migrations;
     using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
     using University.Data;
 
     [DbContext(typeof(UniversityDbContext))]
-    partial class UniversityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190902193239_ExamFileNameAndFileUrl")]
+    partial class ExamFileNameAndFileUrl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -272,6 +274,9 @@ namespace University.Data.Migrations
 
                     b.Property<string>("FileName")
                         .IsRequired();
+
+                    b.Property<byte[]>("FileSubmission")
+                        .HasMaxLength(2097152);
 
                     b.Property<string>("FileUrl")
                         .IsRequired();

@@ -2,7 +2,6 @@
 {
     using Moq;
     using University.Services;
-    using University.Services.Models.Exams;
 
     public static class ExamServiceMock
     {
@@ -14,16 +13,6 @@
             mock
                 .Setup(s => s.EvaluateAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<decimal>()))
                 .ReturnsAsync(result)
-                .Verifiable();
-
-            return mock;
-        }
-
-        public static Mock<IExamService> DownloadForTrainerAsync(this Mock<IExamService> mock, ExamDownloadServiceModel exam)
-        {
-            mock
-                .Setup(s => s.DownloadForTrainerAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>()))
-                .ReturnsAsync(exam)
                 .Verifiable();
 
             return mock;

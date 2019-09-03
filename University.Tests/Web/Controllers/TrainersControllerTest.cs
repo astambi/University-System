@@ -9,12 +9,10 @@
     using Moq;
     using University.Data;
     using University.Services;
-    using University.Services.Models.Exams;
     using University.Services.Models.Users;
     using University.Tests.Mocks;
     using University.Web;
     using University.Web.Controllers;
-    using University.Web.Infrastructure.Helpers;
     using University.Web.Models;
     using University.Web.Models.Courses;
     using University.Web.Models.Trainers;
@@ -45,10 +43,6 @@
         [Fact]
         public void Courses_ShouldHaveAuthorizeAttribute_ForTrainerRole()
            => this.AssertAuthorizeAttributeForTrainerRole(nameof(TrainersController.Courses));
-
-        [Fact]
-        public void DownloadExam_ShouldHaveAuthorizeAttribute_ForTrainerRole()
-            => this.AssertAuthorizeAttributeForTrainerRole(nameof(TrainersController.DownloadExam));
 
         [Fact]
         public void EvaluateExam_ShouldHaveAuthorizeAttribute_ForTrainerRole()
@@ -646,235 +640,6 @@
             userManager.Verify();
         }
 
-        [Fact]
-        public async Task DownloadExam_ShouldReturnRedirectToAction_GivenInvalidCourse()
-        {
-            // Arrange
-            var courseService = CourseServiceMock.GetMock;
-            courseService.Exists(false);
-
-            var controller = new TrainersController(
-                userManager: null,
-                certificateService: null,
-                courseService.Object,
-                examService: null,
-                trainerService: null)
-            {
-                TempData = TempDataMock.GetMock
-            };
-
-            // Act
-            var result = await controller.DownloadExam(It.IsAny<int>(), It.IsAny<string>());
-
-            // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.CourseNotFoundMsg);
-
-            this.AssertRedirectToTrainersControllerIndex(result);
-
-            courseService.Verify();
-        }
-
-        [Fact]
-        public async Task DownloadExam_ShouldReturnRedirectToAction_GivenInvalidUser()
-        {
-            // Arrange
-            var courseService = CourseServiceMock.GetMock;
-            courseService.Exists(true);
-
-            var userManager = UserManagerMock.GetMock;
-            userManager.GetUserId(null);
-
-            var controller = new TrainersController(
-                userManager.Object,
-                certificateService: null,
-                courseService.Object,
-                examService: null,
-                trainerService: null)
-            {
-                TempData = TempDataMock.GetMock
-            };
-
-            // Act
-            var result = await controller.DownloadExam(It.IsAny<int>(), It.IsAny<string>());
-
-            // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.InvalidUserMsg);
-
-            this.AssertRedirectToTrainersControllerIndex(result);
-
-            courseService.Verify();
-            userManager.Verify();
-        }
-
-        [Fact]
-        public async Task DownloadExam_ShouldReturnRedirectToAction_GivenInvalidTrainer()
-        {
-            // Arrange
-            var courseService = CourseServiceMock.GetMock;
-            courseService.Exists(true);
-
-            var userManager = UserManagerMock.GetMock;
-            userManager.GetUserId(TestUserId);
-
-            var trainerService = TrainerServiceMock.GetMock;
-            trainerService.IsTrainerForCourseAsync(false);
-
-            var controller = new TrainersController(
-                userManager.Object,
-                certificateService: null,
-                courseService.Object,
-                examService: null,
-                trainerService.Object)
-            {
-                TempData = TempDataMock.GetMock
-            };
-
-            // Act
-            var result = await controller.DownloadExam(It.IsAny<int>(), It.IsAny<string>());
-
-            // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.NotTrainerForCourseMsg);
-
-            this.AssertRedirectToTrainersControllerIndex(result);
-
-            courseService.Verify();
-            trainerService.Verify();
-            userManager.Verify();
-        }
-
-        [Fact]
-        public async Task DownloadExam_ShouldReturnRedirectToAction_BeforeCourseEndDate()
-        {
-            // Arrange
-            var courseService = CourseServiceMock.GetMock;
-            courseService.Exists(true);
-
-            var userManager = UserManagerMock.GetMock;
-            userManager.GetUserId(TestUserId);
-
-            var trainerService = TrainerServiceMock.GetMock;
-            trainerService
-                .IsTrainerForCourseAsync(true)
-                .CourseHasEndedAsync(false);
-
-            var controller = new TrainersController(
-                userManager.Object,
-                certificateService: null,
-                courseService.Object,
-                examService: null,
-                trainerService.Object)
-            {
-                TempData = TempDataMock.GetMock
-            };
-
-            // Act
-            var result = await controller.DownloadExam(It.IsAny<int>(), It.IsAny<string>());
-
-            // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.CourseHasNotEndedMsg);
-
-            this.AssertRedirectToTrainersControllerStudents(result);
-
-            courseService.Verify();
-            trainerService.Verify();
-            userManager.Verify();
-        }
-
-        [Fact]
-        public async Task DownloadExam_ShouldReturnRedirectToAction_GivenInvalidExam()
-        {
-            // Arrange
-            var courseService = CourseServiceMock.GetMock;
-            courseService.Exists(true);
-
-            var userManager = UserManagerMock.GetMock;
-            userManager.GetUserId(TestUserId);
-
-            var trainerService = TrainerServiceMock.GetMock;
-            trainerService
-                .IsTrainerForCourseAsync(true)
-                .CourseHasEndedAsync(true);
-
-            var examService = ExamServiceMock.GetMock;
-            examService.DownloadForTrainerAsync(null);
-
-            var controller = new TrainersController(
-                userManager.Object,
-                certificateService: null,
-                courseService.Object,
-                examService.Object,
-                trainerService.Object)
-            {
-                TempData = TempDataMock.GetMock
-            };
-
-            // Act
-            var result = await controller.DownloadExam(It.IsAny<int>(), It.IsAny<string>());
-
-            // Assert
-            controller.TempData.AssertErrorMsg(WebConstants.StudentHasNotSubmittedExamMsg);
-
-            this.AssertRedirectToTrainersControllerStudents(result);
-
-            courseService.Verify();
-            examService.Verify();
-            trainerService.Verify();
-            userManager.Verify();
-        }
-
-        [Fact]
-        public async Task DownloadExam_ShouldReturnFileContentResultWithCorrectContent_GivenDownloadSuccess()
-        {
-            // Arrange
-            var courseService = CourseServiceMock.GetMock;
-            courseService.Exists(true);
-
-            var userManager = UserManagerMock.GetMock;
-            userManager.GetUserId(TestUserId);
-
-            var trainerService = TrainerServiceMock.GetMock;
-            trainerService
-                .IsTrainerForCourseAsync(true)
-                .CourseHasEndedAsync(true);
-
-            var examService = ExamServiceMock.GetMock;
-            examService.DownloadForTrainerAsync(this.GetExamDownload());
-
-            var controller = new TrainersController(
-                userManager.Object,
-                certificateService: null,
-                courseService.Object,
-                examService.Object,
-                trainerService.Object);
-
-            // Act
-            var result = await controller.DownloadExam(TestCourseId, TestUserId);
-
-            // Assert
-            var fileContentResult = Assert.IsType<FileContentResult>(result);
-
-            this.AssertExamDownloadFile(fileContentResult);
-
-            courseService.Verify();
-            trainerService.Verify();
-            userManager.Verify();
-        }
-
-        private void AssertAuthorizeAttribute(string methodName)
-        {
-            // Arrange
-            var method = typeof(TrainersController).GetMethod(methodName);
-
-            // Act 
-            var authorizeAttribute = method
-                .GetCustomAttributes(true)
-                .FirstOrDefault(a => a.GetType() == typeof(AuthorizeAttribute))
-                as AuthorizeAttribute;
-
-            // Assert
-            Assert.NotNull(authorizeAttribute);
-        }
-
         private void AssertAuthorizeAttributeForTrainerRole(string methodName)
         {
             // Arrange
@@ -889,18 +654,6 @@
             // Assert
             Assert.NotNull(authorizeAttribute);
             Assert.Equal(WebConstants.TrainerRole, authorizeAttribute.Roles);
-        }
-
-        private void AssertExamDownloadFile(FileContentResult fileContentResult)
-        {
-            var expectedExam = this.GetExamDownload();
-            var expectedFileName = FileHelpers.ExamFileName(expectedExam.CourseName, expectedExam.StudentUserName, expectedExam.SubmissionDate);
-
-            Assert.NotNull(fileContentResult);
-
-            Assert.Equal(expectedExam.FileSubmission, fileContentResult.FileContents);
-            Assert.Equal(WebConstants.ApplicationZip, fileContentResult.ContentType);
-            Assert.Equal(expectedFileName, fileContentResult.FileDownloadName);
         }
 
         private void AssertCoursePage(PaginationViewModel testPagination, CoursePageListingViewModel model)
@@ -964,22 +717,13 @@
             }
         }
 
-        private ExamDownloadServiceModel GetExamDownload()
-            => new ExamDownloadServiceModel
-            {
-                FileSubmission = new byte[] { 111, 17, 11, 37, 55, 23, 8 },
-                SubmissionDate = new DateTime(2019, 7, 18),
-                StudentUserName = "TestStudent",
-                CourseName = "TestCourse"
-            };
-
         private IEnumerable<StudentInCourseServiceModel> GetStudentInCourseServiceModelCollection()
             => new List<StudentInCourseServiceModel>
             {
-                new StudentInCourseServiceModel { StudentId = "1", StudentName = "Name1", StudentUserName = "Username1", StudentEmail = "email.1@email.com", GradeBg = DataConstants.GradeBgMaxValue, HasExamSubmission = true },
-                new StudentInCourseServiceModel { StudentId = "2", StudentName = "Name2", StudentUserName = "Username2", StudentEmail = "email.2@email.com", GradeBg = DataConstants.GradeBgCertificateMinValue, HasExamSubmission = true },
-                new StudentInCourseServiceModel { StudentId = "3", StudentName = "Name3", StudentUserName = "Username3", StudentEmail = "email.3@email.com", GradeBg = null, HasExamSubmission = true},
-                new StudentInCourseServiceModel { StudentId = "4", StudentName = "Name4", StudentUserName = "Username4", StudentEmail = "email.4@email.com", GradeBg = null, HasExamSubmission = false},
+                new StudentInCourseServiceModel { StudentId = "1", StudentName = "Name1", StudentUserName = "Username1", StudentEmail = "email.1@email.com", GradeBg = DataConstants.GradeBgMaxValue, ExamFileUrl = "examfile1.zip" },
+                new StudentInCourseServiceModel { StudentId = "2", StudentName = "Name2", StudentUserName = "Username2", StudentEmail = "email.2@email.com", GradeBg = DataConstants.GradeBgCertificateMinValue, ExamFileUrl = "examfile2.zip" },
+                new StudentInCourseServiceModel { StudentId = "3", StudentName = "Name3", StudentUserName = "Username3", StudentEmail = "email.3@email.com", GradeBg = null, ExamFileUrl = "examfile3.zip"},
+                new StudentInCourseServiceModel { StudentId = "4", StudentName = "Name4", StudentUserName = "Username4", StudentEmail = "email.4@email.com", GradeBg = null, ExamFileUrl = null},
             };
 
         private StudentCourseGradeFormModel GetStudentInCourseWithGrade()

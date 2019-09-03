@@ -9,8 +9,11 @@
 
         public DateTime SubmissionDate { get; set; } = DateTime.UtcNow;
 
-        [MaxLength(DataConstants.FileMaxLengthInBytes)]
-        public byte[] FileSubmission { get; set; }
+        [Required]
+        public string FileName { get; set; }
+
+        [Required]
+        public string FileUrl { get; set; }
 
         [Required]
         public string StudentId { get; set; }

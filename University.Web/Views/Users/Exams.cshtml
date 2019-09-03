@@ -21,8 +21,8 @@
                         {
                             var resourceDloadModel = new ResourceFormModel { ResourceId = exam.Id, CourseId = group.CourseId };
                             <p class="card-text">
-                                <partial name="_ExamDownloadButtonPartial" model="@exam.Id" />
-                                @exam.SubmissionDate
+                                <partial name="_FileDownloadLinkPartial" model="exam.FileUrl" />
+                                @exam.SubmissionDate.ToLocalTime()
                             </p>
                         }
                     </div>

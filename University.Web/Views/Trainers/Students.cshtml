@@ -47,10 +47,7 @@
                             <td class="align-top text-center">
                                 @if (student.HasExamSubmission)
                                 {
-                                    <a asp-action="@nameof(TrainersController.DownloadExam)"
-                                       asp-route-id="@Model.Course.Id"
-                                       asp-route-studentId="@student.StudentId"
-                                       class="btn btn-@StyleHelpers.ToStyle(FormActionEnum.Download)"><i class="fa fa-download"></i></a>
+                                    <partial name="_FileDownloadLinkPartial" model="student.ExamFileUrl" />
                                 }
                                 else
                                 {

@@ -437,17 +437,23 @@
                 Assert.Equal(expectedUser.Name, resultUser.StudentName);
                 Assert.Equal(expectedUser.UserName, resultUser.StudentUserName);
                 Assert.Equal(expectedUser.Email, resultUser.StudentEmail);
+
                 var exprectedGrade = expectedUser
                     .Courses
                     .Where(sc => sc.CourseId == CourseValid)
                     .Select(s => s.GradeBg)
                     .FirstOrDefault();
 
-                var expectedHasExamSubmissions = expectedUser
+                var expectedExamFileUrl = expectedUser
                     .ExamSubmissions
-                    .Any(e => e.CourseId == CourseValid);
+                    .Where(e => e.StudentId == expectedUser.Id)
+                    .Select(e => e.FileUrl)
+                    .FirstOrDefault();
+
+                var expectedHasExamSubmissions = !string.IsNullOrWhiteSpace(expectedExamFileUrl);
 
                 Assert.Equal(exprectedGrade, resultUser.GradeBg);
+                Assert.Equal(expectedExamFileUrl, resultUser.ExamFileUrl);
                 Assert.Equal(expectedHasExamSubmissions, resultUser.HasExamSubmission);
             }
         }

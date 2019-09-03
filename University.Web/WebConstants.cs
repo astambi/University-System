@@ -164,6 +164,7 @@
         public const string ExamAssessedMsg = "Exam was assessed successfully.";
         public const string ExamAssessmentErrorMsg = "Exam was not assessed.";
         public const string ExamSubmittedMsg = "Exam file submitted successfully.";
+        public const string ExamSubmitErrorMsg = "Could not submit exam file.";
 
         public const string FileFormatInvalidMsg = "File format should be {0}.";
         public const string FileSubmittionDateMsg = "File can only be submitted on exam date.";

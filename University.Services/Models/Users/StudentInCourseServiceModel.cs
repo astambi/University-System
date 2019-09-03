@@ -19,7 +19,10 @@
 
         public decimal? GradeBg { get; set; }
 
-        public bool HasExamSubmission { get; set; }
+        public string ExamFileUrl { get; set; }
+
+        public bool HasExamSubmission
+            => !string.IsNullOrEmpty(this.ExamFileUrl);
 
         public IEnumerable<CertificateListingServiceModel> Certificates { get; set; }
 
@@ -27,11 +30,14 @@
             => mapper
             .CreateMap<StudentCourse, StudentInCourseServiceModel>()
             .ForMember(
-                dest => dest.HasExamSubmission,
+                dest => dest.ExamFileUrl,
                 opt => opt.MapFrom(src => src
                     .Student
                     .ExamSubmissions
-                    .Any(e => e.CourseId == src.CourseId)))
+                    .Where(e => e.CourseId == src.CourseId)
+                    .OrderByDescending(e => e.SubmissionDate)
+                    .Select(e => e.FileUrl)
+                    .FirstOrDefault()))
             .ForMember(
                 dest => dest.Certificates,
                 opt => opt.MapFrom(src => src

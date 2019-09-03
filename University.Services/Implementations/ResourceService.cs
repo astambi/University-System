@@ -65,13 +65,6 @@
         public bool Exists(int id)
             => this.db.Resources.Any(r => r.Id == id);
 
-        public async Task<string> GetDownloadUrlAsync(int id)
-            => await this.db
-            .Resources
-            .Where(r => r.Id == id)
-            .Select(r => r.FileUrl)
-            .FirstOrDefaultAsync();
-
         public async Task<bool> RemoveAsync(int id)
         {
             var resource = await this.db.Resources.FindAsync(id);

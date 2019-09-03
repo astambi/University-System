@@ -27,6 +27,8 @@
 
         private const string StudentEnrolled = "StudentEnrolled";
         private const string StudentNotEnrolled = "StudentNotEnrolled";
+        private const string FileName = "FileName.zip";
+        private const string FileUrl = "https://res.cloudinary.com/filename.zip";
 
         private const string TrainerValid = "TrainerValid";
         private const string TrainerInvalid = "TrainerInvalid";
@@ -95,34 +97,30 @@
             }
         }
 
-        [Fact]
-        public async Task CreateAsync_ShouldNotSaveEntry_GivenStudentNotEnrolledInCourse()
+        [Theory]
+        [InlineData(CourseValid, StudentNotEnrolled)]
+        [InlineData(CourseInvalid, StudentEnrolled)]
+        public async Task CreateAsync_ShouldNotSaveEntry_GivenStudentNotEnrolledInCourse(int courseId, string studentId)
         {
             // Arrange
             var db = await this.PrepareStudentInCourse();
             var examService = this.InitializeExamService(db);
 
             // Act
-            // Invalid student
-            var resultInvalidStudent = await examService.CreateAsync(CourseValid, StudentNotEnrolled, It.IsAny<byte[]>());
-            var examsCountInvalidStudent = db.ExamSubmissions.Count();
-
-            // Invalid course
-            var resultInvalidCourse = await examService.CreateAsync(CourseInvalid, StudentEnrolled, It.IsAny<byte[]>());
-            var examsCountInvalidCourse = db.ExamSubmissions.Count();
+            var result = await examService.CreateAsync(courseId, studentId, It.IsAny<string>(), It.IsAny<string>());
+            var examsCount = db.ExamSubmissions.Count();
 
             // Assert
-            Assert.False(resultInvalidCourse);
-            Assert.False(resultInvalidStudent);
-
-            Assert.Equal(0, examsCountInvalidCourse);
-            Assert.Equal(0, examsCountInvalidStudent);
+            Assert.False(result);
+            Assert.Equal(0, examsCount);
         }
 
         [Theory]
-        [InlineData(null)]
-        [InlineData(new byte[0])]
-        public async Task CreateAsync_ShouldNotSaveEntry_GivenInvalidExamFile(byte[] exam)
+        [InlineData(null, FileUrl)]
+        [InlineData("  ", FileUrl)]
+        [InlineData(FileName, null)]
+        [InlineData(FileName, "  ")]
+        public async Task CreateAsync_ShouldNotSaveEntry_GivenInvalidFileNameOrFileUrl(string fileName, string fileUrl)
         {
             // Arrange
             var db = await this.PrepareStudentInCourse();
@@ -130,7 +128,7 @@
 
             // Act
             // Invalid student
-            var result = await examService.CreateAsync(CourseValid, StudentEnrolled, exam);
+            var result = await examService.CreateAsync(CourseValid, StudentEnrolled, fileName, fileUrl);
             var examsCount = db.ExamSubmissions.Count();
 
             // Assert
@@ -148,7 +146,7 @@
             var exam = new byte[] { 1, 1, 1 };
 
             // Act
-            var result = await examService.CreateAsync(CourseValid, StudentEnrolled, exam);
+            var result = await examService.CreateAsync(CourseValid, StudentEnrolled, FileName, FileUrl);
 
             var examsCount = db.ExamSubmissions.Count();
             var examSaved = db.ExamSubmissions
@@ -163,131 +161,12 @@
 
             Assert.Equal(CourseValid, examSaved.CourseId);
             Assert.Equal(StudentEnrolled, examSaved.StudentId);
-            Assert.Same(exam, examSaved.FileSubmission);
+            Assert.Equal(FileName, examSaved.FileName);
+            Assert.Equal(FileUrl, examSaved.FileUrl);
 
             examSaved.SubmissionDate
                 .Should()
                 .BeCloseTo(DateTime.UtcNow, Precision);
-        }
-
-        [Fact]
-        public async Task DownloadForStudentAsync_ShouldReturnNull_GivenInvalidExam()
-        {
-            // Arrange
-            var db = await this.PrepareStudentInCourseExamSubmissions();
-            var examService = this.InitializeExamService(db);
-
-            // Act
-            var result = await examService.DownloadForStudentAsync(ExamInvalid, StudentEnrolled);
-
-            // Assert
-            Assert.Null(result);
-        }
-
-        [Fact]
-        public async Task DownloadForStudentAsync_ShouldReturnNull_GivenInvalidStudent()
-        {
-            // Arrange
-            var db = await this.PrepareStudentInCourseExamSubmissions();
-            var examService = this.InitializeExamService(db);
-
-            // Act
-            var result = await examService.DownloadForStudentAsync(ExamValid, StudentNotEnrolled);
-
-            // Assert
-            Assert.Null(result);
-        }
-
-        [Fact]
-        public async Task DownloadForStudentAsync_ShouldReturnCorrectData_GivenValidInput()
-        {
-            // Arrange
-            var db = await this.PrepareStudentInCourseExamSubmissions();
-            var examService = this.InitializeExamService(db);
-
-            var examExpected = db.ExamSubmissions.Find(ExamValid);
-
-            // Act
-            var result = await examService.DownloadForStudentAsync(ExamValid, StudentEnrolled);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.IsType<ExamDownloadServiceModel>(result);
-            AssertExamDownload(examExpected, result);
-        }
-
-        [Fact]
-        public async Task DownloadForTrainerAsync_ShouldReturnNull_GivenInvalidCourse()
-        {
-            // Arrange
-            var db = await this.PrepareStudentInCourseExamSubmissions();
-            var examService = this.InitializeExamService(db);
-
-            // Act
-            var result = await examService.DownloadForTrainerAsync(TrainerValid, CourseInvalid, StudentEnrolled);
-
-            // Assert
-            Assert.Null(result);
-        }
-
-        [Fact]
-        public async Task DownloadForTrainerAsync_ShouldReturnNull_GivenStudentNotEnrolled()
-        {
-            // Arrange
-            var db = await this.PrepareStudentInCourseExamSubmissions();
-            var examService = this.InitializeExamService(db);
-
-            // Act
-            var result = await examService.DownloadForTrainerAsync(TrainerValid, CourseValid, StudentNotEnrolled);
-
-            // Assert
-            Assert.Null(result);
-        }
-
-        [Fact]
-        public async Task DownloadForTrainerAsync_ShouldReturnNull_GivenInvalidTrainer()
-        {
-            // Arrange
-            var db = await this.PrepareStudentInCourseExamSubmissions();
-            var examService = this.InitializeExamService(db);
-
-            // Act
-            var result = await examService.DownloadForTrainerAsync(TrainerInvalid, CourseValid, StudentEnrolled);
-
-            // Assert
-            Assert.Null(result);
-        }
-
-        [Fact]
-        public async Task DownloadForTrainerAsync_ShouldReturnNull_GivenCourseHasNotEnded()
-        {
-            // Arrange
-            var db = await this.PrepareStudentInCourseExamSubmissions();
-            var examService = this.InitializeExamService(db);
-
-            // Act
-            var result = await examService.DownloadForTrainerAsync(TrainerValid, CourseCurrent, StudentEnrolled);
-
-            // Assert
-            Assert.Null(result);
-        }
-
-        [Fact]
-        public async Task DownloadForTrainerAsync_ShouldReturnCorrectData_GivenValidInput()
-        {
-            // Arrange
-            var db = await this.PrepareStudentInCourseExamSubmissions();
-            var examService = this.InitializeExamService(db);
-
-            var latestExam = db.ExamSubmissions.Find(ExamValid);
-
-            // Act
-            var result = await examService.DownloadForTrainerAsync(TrainerValid, CourseValid, StudentEnrolled);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.IsType<ExamDownloadServiceModel>(result);
-            AssertExamDownload(latestExam, result);
         }
 
         [Fact]
@@ -436,14 +315,6 @@
             Assert.Equal(ExamGradeBg, studentCourse.GradeBg.Value);
         }
 
-        private static void AssertExamDownload(ExamSubmission expected, ExamDownloadServiceModel result)
-        {
-            Assert.Equal(expected.SubmissionDate, result.SubmissionDate);
-            Assert.Equal(expected.FileSubmission, result.FileSubmission);
-            Assert.Equal(expected.Course.Name, result.CourseName);
-            Assert.Equal(expected.Student.UserName, result.StudentUserName);
-        }
-
         private async Task<UniversityDbContext> PrepareStudentInCourse()
         {
             var student = new User { Id = StudentEnrolled };
@@ -501,7 +372,6 @@
                 CourseId = CourseValid,
                 StudentId = StudentEnrolled,
                 SubmissionDate = new DateTime(2019, 7, 10, 14, 15, 00), // latest
-                FileSubmission = new byte[] { 1, 2, 3 }
             };
             var exam2 = new ExamSubmission
             {
@@ -509,7 +379,6 @@
                 CourseId = CourseValid,
                 StudentId = StudentEnrolled,
                 SubmissionDate = new DateTime(2019, 7, 1, 14, 18, 00),
-                FileSubmission = new byte[] { 3, 4, 5 }
             };
             var exam3 = new ExamSubmission
             {
@@ -517,7 +386,6 @@
                 CourseId = CourseCurrent,
                 StudentId = StudentEnrolled,
                 SubmissionDate = new DateTime(2019, 7, 1, 14, 20, 50),
-                FileSubmission = new byte[] { 6, 7, 8 }
             };
 
             var db = Tests.InitializeDatabase();

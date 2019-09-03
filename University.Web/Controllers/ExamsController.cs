@@ -1,5 +1,6 @@
 ﻿namespace University.Web.Controllers
 {
+    using System;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
@@ -9,22 +10,24 @@
     using University.Data.Models;
     using University.Services;
     using University.Web.Infrastructure.Extensions;
-    using University.Web.Infrastructure.Helpers;
     using University.Web.Models.Exams;
 
     [Authorize]
     public class ExamsController : Controller
     {
         private readonly UserManager<User> userManager;
+        private readonly ICloudinaryService cloudinaryService;
         private readonly ICourseService courseService;
         private readonly IExamService examService;
 
         public ExamsController(
             UserManager<User> userManager,
+            ICloudinaryService cloudinaryService,
             ICourseService courseService,
             IExamService examService)
         {
             this.userManager = userManager;
+            this.cloudinaryService = cloudinaryService;
             this.courseService = courseService;
             this.examService = examService;
         }
@@ -115,42 +118,21 @@
             }
 
             var fileBytes = await examFile.ToByteArrayAsync();
-            await this.examService.CreateAsync(id, userId, fileBytes);
+            var fileName = $"{this.User.Identity.Name}-{DateTime.UtcNow}-{examFile.FileName}";
 
-            this.TempData.AddSuccessMessage(WebConstants.ExamSubmittedMsg);
+            var fileUrl = this.cloudinaryService.UploadFile(fileBytes, fileName, WebConstants.CloudExamsFolder);
+
+            var success = await this.examService.CreateAsync(id, userId, fileName, fileUrl);
+            if (!success)
+            {
+                this.TempData.AddErrorMessage(WebConstants.ExamSubmitErrorMsg);
+            }
+            else
+            {
+                this.TempData.AddSuccessMessage(WebConstants.ExamSubmittedMsg);
+            }
 
             return this.RedirectToAction(nameof(Course), new { id });
-        }
-
-        public async Task<IActionResult> Download(int id)
-        {
-            var userId = this.userManager.GetUserId(this.User);
-            if (userId == null)
-            {
-                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RedirectToCoursesIndex();
-            }
-
-            var existsForStudent = await this.examService.ExistsForStudentAsync(id, userId);
-            if (!existsForStudent)
-            {
-                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RedirectToCoursesIndex();
-            }
-
-            var exam = await this.examService.DownloadForStudentAsync(id, userId);
-            if (exam == null)
-            {
-                this.TempData.AddErrorMessage(WebConstants.StudentHasNotSubmittedExamMsg);
-                return this.RedirectToCoursesIndex();
-            }
-
-            var fileName = FileHelpers.ExamFileName(
-                exam.CourseName,
-                exam.StudentUserName,
-                exam.SubmissionDate);
-
-            return this.File(exam.FileSubmission, WebConstants.ApplicationZip, fileName);
         }
 
         private IActionResult RedirectToCourseDetails(int id)

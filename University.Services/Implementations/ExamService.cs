@@ -34,18 +34,17 @@
             .OrderByDescending(e => e.SubmissionDate)
             .ToListAsync();
 
-        public async Task<bool> CreateAsync(int courseId, string userId, byte[] examFileBytes)
+        public async Task<bool> CreateAsync(int courseId, string userId, string fileName, string fileUrl)
         {
             var studentCourseFound = await this.db
-                .Courses
-                .Where(c => c.Id == courseId)
-                .Where(c => c.Students.Any(sc => sc.StudentId == userId))
-                .AnyAsync();
+               .Courses
+               .Where(c => c.Id == courseId)
+               .Where(c => c.Students.Any(sc => sc.StudentId == userId))
+               .AnyAsync();
 
             if (!studentCourseFound
-                || examFileBytes == null
-                || examFileBytes.Length == 0
-                || examFileBytes.Length > DataConstants.FileMaxLengthInBytes)
+                || string.IsNullOrWhiteSpace(fileName)
+                || string.IsNullOrWhiteSpace(fileUrl))
             {
                 return false;
             }
@@ -54,7 +53,8 @@
             {
                 CourseId = courseId,
                 StudentId = userId,
-                FileSubmission = examFileBytes,
+                FileName = fileName,
+                FileUrl = fileUrl,
                 SubmissionDate = DateTime.UtcNow
             };
 
@@ -64,23 +64,6 @@
 
             return success;
         }
-
-        public async Task<ExamDownloadServiceModel> DownloadForStudentAsync(int id, string userId)
-            => await this.mapper
-            .ProjectTo<ExamDownloadServiceModel>(this.GetForStudentById(id, userId))
-            .FirstOrDefaultAsync();
-
-        public async Task<ExamDownloadServiceModel> DownloadForTrainerAsync(string trainerId, int courseId, string studentId)
-            => await this.mapper
-            .ProjectTo<ExamDownloadServiceModel>(
-                this.db
-                .ExamSubmissions
-                .Where(e => e.CourseId == courseId)
-                .Where(e => e.StudentId == studentId)
-                .Where(e => e.Course.TrainerId == trainerId)
-                .Where(e => e.Course.EndDate.HasEnded()))
-            .OrderByDescending(e => e.SubmissionDate) // latest submission
-            .FirstOrDefaultAsync();
 
         public async Task<bool> ExistsForStudentAsync(int id, string userId)
             => await this.GetForStudentById(id, userId)

@@ -12,8 +12,6 @@
 
         Task<bool> CreateAsync(int courseId, string fileName, string fileUrl);
 
-        Task<string> GetDownloadUrlAsync(int id);
-
         bool Exists(int id);
 
         Task<bool> RemoveAsync(int id);

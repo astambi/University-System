@@ -75,7 +75,6 @@
                 cfg.CreateMap<Diploma, DiplomaServiceModel>();
                 cfg.CreateMap<Diploma, UserDiplomaListingServiceModel>();
 
-                cfg.CreateMap<ExamSubmission, ExamDownloadServiceModel>();
                 cfg.CreateMap<ExamSubmission, ExamSubmissionDetailsServiceModel>();
                 cfg.CreateMap<ExamSubmission, ExamSubmissionServiceModel>();
 

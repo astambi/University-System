@@ -9,7 +9,6 @@
     using University.Data.Models;
     using University.Services;
     using University.Web.Infrastructure.Extensions;
-    using University.Web.Infrastructure.Helpers;
     using University.Web.Models;
     using University.Web.Models.Courses;
     using University.Web.Models.Trainers;
@@ -190,49 +189,6 @@
             await this.CreateCertificate(id, userId, model);
 
             return this.RedirectToTrainerStudentsForCourse(id);
-        }
-
-        [Authorize(Roles = WebConstants.TrainerRole)]
-        public async Task<IActionResult> DownloadExam(int id, string studentId)
-        {
-            var courseExists = this.courseService.Exists(id);
-            if (!courseExists)
-            {
-                this.TempData.AddErrorMessage(WebConstants.CourseNotFoundMsg);
-                return this.RedirectToAction(nameof(Courses));
-            }
-
-            var userId = this.userManager.GetUserId(this.User);
-            if (userId == null)
-            {
-                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RedirectToAction(nameof(Courses));
-            }
-
-            var isTrainer = await this.trainerService.IsTrainerForCourseAsync(userId, id);
-            if (!isTrainer)
-            {
-                this.TempData.AddErrorMessage(WebConstants.NotTrainerForCourseMsg);
-                return this.RedirectToAction(nameof(Courses));
-            }
-
-            var courseHasEnded = await this.trainerService.CourseHasEndedAsync(id);
-            if (!courseHasEnded)
-            {
-                this.TempData.AddErrorMessage(WebConstants.CourseHasNotEndedMsg);
-                return this.RedirectToTrainerStudentsForCourse(id);
-            }
-
-            var exam = await this.examService.DownloadForTrainerAsync(userId, id, studentId);
-            if (exam == null)
-            {
-                this.TempData.AddErrorMessage(WebConstants.StudentHasNotSubmittedExamMsg);
-                return this.RedirectToTrainerStudentsForCourse(id);
-            }
-
-            var fileName = FileHelpers.ExamFileName(exam.CourseName, exam.StudentUserName, exam.SubmissionDate);
-
-            return this.File(exam.FileSubmission, WebConstants.ApplicationZip, fileName);
         }
 
         [Authorize(Roles = WebConstants.TrainerRole)]
