@@ -151,7 +151,16 @@
         [Route(nameof(OrdersController.Invoice) + "/" + WebConstants.WithId)]
         public IActionResult DownloadInvoice(string id)
         {
+            /// NB! SelectPdf Html To Pdf Converter for .NET – Community Edition (FREE) is used for the convertion of certificates & diplomas for the project.
+            /// Community Edition works on Azure Web Apps, on Windows, starting with the Basic plan but it does NOT work with Free/Shared plans. 
+            /// Therefore the option to convert a certificate / diploma / invoice with SelectPdf is disabled on for projects deployed on Azure. 
+            /// Instead the user is redirected to the certificate / diploma view
+            /// Read more about Deployment to Microsoft Azure here https://selectpdf.com/html-to-pdf/docs/html/Deployment-Microsoft-Azure.htm
             var downloadUrl = this.HttpContext.Request.GetRequestUrl();
+            if (downloadUrl.Contains(WebConstants.AzureWeb))
+            {
+                return this.Redirect(downloadUrl);
+            }
 
             var pdf = this.pdfService.ConvertToPdf(downloadUrl);
             if (pdf == null)
