@@ -184,6 +184,34 @@
         }
 
         [Fact]
+        public async Task GetDownloadUrlAsync_ShouldReturnNull_GivenInvalidResource()
+        {
+            // Arrange
+            var db = await this.PrepareResource();
+            var resourceService = this.InitializeResourceService(db);
+
+            // Act
+            var result = await resourceService.GetDownloadUrlAsync(ResourceInvalid);
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task GetDownloadUrlAsync_ShouldReturnCorrectData_GivenValidResource()
+        {
+            // Arrange
+            var db = await this.PrepareResource();
+            var resourceService = this.InitializeResourceService(db);
+
+            // Act
+            var result = await resourceService.GetDownloadUrlAsync(ResourceValid);
+
+            // Assert
+            Assert.Equal(FileUrl, result);
+        }
+
+        [Fact]
         public async Task RemoveAsync_ShouldNotChangeDb_GivenInvalidInput()
         {
             // Arrange
@@ -259,6 +287,7 @@
                 Id = ResourceValid,
                 CourseId = CourseValid,
                 FileName = FileName,
+                FileUrl = FileUrl
             };
 
             await db.Resources.AddAsync(testResource);
