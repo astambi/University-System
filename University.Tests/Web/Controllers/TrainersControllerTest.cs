@@ -720,10 +720,10 @@
         private IEnumerable<StudentInCourseServiceModel> GetStudentInCourseServiceModelCollection()
             => new List<StudentInCourseServiceModel>
             {
-                new StudentInCourseServiceModel { StudentId = "1", StudentName = "Name1", StudentUserName = "Username1", StudentEmail = "email.1@email.com", GradeBg = DataConstants.GradeBgMaxValue, ExamFileUrl = "examfile1.zip" },
-                new StudentInCourseServiceModel { StudentId = "2", StudentName = "Name2", StudentUserName = "Username2", StudentEmail = "email.2@email.com", GradeBg = DataConstants.GradeBgCertificateMinValue, ExamFileUrl = "examfile2.zip" },
-                new StudentInCourseServiceModel { StudentId = "3", StudentName = "Name3", StudentUserName = "Username3", StudentEmail = "email.3@email.com", GradeBg = null, ExamFileUrl = "examfile3.zip"},
-                new StudentInCourseServiceModel { StudentId = "4", StudentName = "Name4", StudentUserName = "Username4", StudentEmail = "email.4@email.com", GradeBg = null, ExamFileUrl = null},
+                new StudentInCourseServiceModel { StudentId = "1", StudentName = "Name1", StudentUserName = "Username1", StudentEmail = "email.1@email.com", GradeBg = DataConstants.GradeBgMaxValue, ExamId = 1 },
+                new StudentInCourseServiceModel { StudentId = "2", StudentName = "Name2", StudentUserName = "Username2", StudentEmail = "email.2@email.com", GradeBg = DataConstants.GradeBgCertificateMinValue, ExamId = 2 },
+                new StudentInCourseServiceModel { StudentId = "3", StudentName = "Name3", StudentUserName = "Username3", StudentEmail = "email.3@email.com", GradeBg = null, ExamId = 3 },
+                new StudentInCourseServiceModel { StudentId = "4", StudentName = "Name4", StudentUserName = "Username4", StudentEmail = "email.4@email.com", GradeBg = null, ExamId = 0 },
             };
 
         private StudentCourseGradeFormModel GetStudentInCourseWithGrade()

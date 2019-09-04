@@ -14,6 +14,8 @@
 
         bool Exists(int id);
 
+        Task<string> GetDownloadUrlAsync(int id);
+
         Task<bool> RemoveAsync(int id);
     }
 }

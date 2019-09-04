@@ -7,7 +7,7 @@
 <section class="certificate-details">
     <header class="text-center p-5 m-auto">
         <h1 class="display-1 text-uppercase font-weight-bold py-5">Certificate</h1>
-        <h5 class="py-5 mx-auto w-75">This certificate is issued by <strong>Software University</strong> to acknowledge that</h5>
+        <h5 class="py-5 mx-auto w-75">This certificate is issued by <strong>@WebConstants.University</strong> to acknowledge that</h5>
         <h2 class="display-3 font-weight-bold p-5">@Model.StudentName</h2>
         <h5>has successfully completed a course</h5>
         <h3 class="display-4 font-weight-bold pt-5 pb-3">@Model.CourseName</h3>
@@ -35,6 +35,6 @@
                    asp-route-id="@Model.Id" class="certificate-details">@Model.DownloadUrl</a>
             </p>
         </div>
-        <div><p>Issuer: Software University</p></div>
+        <div><p>Issuer: @WebConstants.University</p></div>
     </footer>
 </section>

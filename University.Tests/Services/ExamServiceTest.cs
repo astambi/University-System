@@ -27,6 +27,7 @@
 
         private const string StudentEnrolled = "StudentEnrolled";
         private const string StudentNotEnrolled = "StudentNotEnrolled";
+
         private const string FileName = "FileName.zip";
         private const string FileUrl = "https://res.cloudinary.com/filename.zip";
 
@@ -95,6 +96,39 @@
                 Assert.Equal(actual.Id, expected.Id);
                 Assert.Equal(actual.SubmissionDate, expected.SubmissionDate);
             }
+        }
+
+
+        [Fact]
+        public async Task CanBeDownloadedByUserAsync_ShouldReturnFalse_GivenInvalidExam()
+        {
+            // Arrange
+            var db = await this.PrepareStudentInCourseExamSubmissions();
+            var examService = this.InitializeExamService(db);
+
+            // Act
+            var result = await examService.CanBeDownloadedByUserAsync(ExamInvalid, It.IsAny<string>());
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Theory]
+        [InlineData(TrainerInvalid, false)]
+        [InlineData(StudentNotEnrolled, false)]
+        [InlineData(TrainerValid, true)]
+        [InlineData(StudentEnrolled, true)]
+        public async Task CanBeDownloadedByUserAsync_ShouldReturnCorrectResult_GivenValidExam(string userId, bool expectedResult)
+        {
+            // Arrange
+            var db = await this.PrepareStudentInCourseExamSubmissions();
+            var examService = this.InitializeExamService(db);
+
+            // Act
+            var result = await examService.CanBeDownloadedByUserAsync(ExamValid, userId);
+
+            // Assert
+            Assert.Equal(expectedResult, result);
         }
 
         [Theory]
@@ -315,6 +349,34 @@
             Assert.Equal(ExamGradeBg, studentCourse.GradeBg.Value);
         }
 
+        [Fact]
+        public async Task GetDownloadUrlAsync_ShouldReturnNull_GivenInvalidExam()
+        {
+            // Arrange
+            var db = await this.PrepareStudentInCourseExamSubmissions();
+            var examService = this.InitializeExamService(db);
+
+            // Act
+            var result = await examService.GetDownloadUrlAsync(ExamInvalid);
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task GetDownloadUrlAsync_ShouldReturnCorrectData_GivenValidExam()
+        {
+            // Arrange
+            var db = await this.PrepareStudentInCourseExamSubmissions();
+            var examService = this.InitializeExamService(db);
+
+            // Act
+            var result = await examService.GetDownloadUrlAsync(ExamValid);
+
+            // Assert
+            Assert.Equal(FileUrl, result);
+        }
+
         private async Task<UniversityDbContext> PrepareStudentInCourse()
         {
             var student = new User { Id = StudentEnrolled };
@@ -372,6 +434,7 @@
                 CourseId = CourseValid,
                 StudentId = StudentEnrolled,
                 SubmissionDate = new DateTime(2019, 7, 10, 14, 15, 00), // latest
+                FileUrl = FileUrl
             };
             var exam2 = new ExamSubmission
             {
@@ -379,6 +442,7 @@
                 CourseId = CourseValid,
                 StudentId = StudentEnrolled,
                 SubmissionDate = new DateTime(2019, 7, 1, 14, 18, 00),
+                FileUrl = $"{FileUrl}-2"
             };
             var exam3 = new ExamSubmission
             {
@@ -386,6 +450,7 @@
                 CourseId = CourseCurrent,
                 StudentId = StudentEnrolled,
                 SubmissionDate = new DateTime(2019, 7, 1, 14, 20, 50),
+                FileUrl = $"{FileUrl}-3"
             };
 
             var db = Tests.InitializeDatabase();

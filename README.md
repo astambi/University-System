@@ -153,6 +153,13 @@ The public part of the University is visible by any user with or without authent
 
 ## Database: MS SQL Server
 
+## Cloud Storage: Cloudinary https://github.com/cloudinary/CloudinaryDotNet
+
+## Dependencies:
+
+- SelectPdf Html To Pdf Converter for .NET - Free Community Edition https://github.com/selectpdf/selectpdf-free-html-to-pdf-converter
+- HtmlSanitizer https://github.com/mganss/HtmlSanitizer
+
 ## Unit tests:
 
 - All services, including the Shopping Cart Manager & the Shopping Cart are tested

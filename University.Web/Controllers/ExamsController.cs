@@ -1,6 +1,5 @@
 ﻿namespace University.Web.Controllers
 {
-    using System;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
@@ -133,6 +132,32 @@
             }
 
             return this.RedirectToAction(nameof(Course), new { id });
+        }
+
+        public async Task<IActionResult> Download(int id)
+        {
+            var userId = this.userManager.GetUserId(this.User);
+            if (userId == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
+                return this.RedirectToCoursesIndex();
+            }
+
+            var canBeDownloadedByUser = await this.examService.CanBeDownloadedByUserAsync(id, userId);
+            if (!canBeDownloadedByUser)
+            {
+                this.TempData.AddErrorMessage(WebConstants.ExamDownloadUnauthorizedMsg);
+                return this.RedirectToCoursesIndex();
+            }
+
+            var examUrl = await this.examService.GetDownloadUrlAsync(id);
+            if (examUrl == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.ExamNotFoundMsg);
+                return this.RedirectToCoursesIndex();
+            }
+
+            return this.Redirect(examUrl);
         }
 
         private IActionResult RedirectToCourseDetails(int id)

@@ -1,6 +1,8 @@
 ﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 // for details on configuring this project to bundle and minify static web assets.
 
+/*NB Minify js on change*/
+
 // Custom File Upload form (upload Exam & upload resource) => Displays file name on select
 const customFileUpload = inputSelector => {
     const customFileInput = ".custom-file-input";

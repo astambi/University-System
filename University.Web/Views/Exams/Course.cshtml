@@ -31,7 +31,7 @@
                         <tr>
                             <td>@exam.SubmissionDate.ToLocalTime()</td>
                             <td>
-                                <partial name="_FileDownloadLinkPartial" model="exam.FileUrl" />
+                                <partial name="_ExamDownloadButtonPartial" model="exam.Id" />
                             </td>
                         </tr>
                     }

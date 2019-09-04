@@ -27,8 +27,8 @@
                         var resourceModel = new ResourceFormModel { ResourceId = resource.Id, CourseId = Model.Id, ResourceName = resource.FileName };
                         <tr>
                             <td>@resource.FileName</td>
-                            <td class="d-flex justify-content-around m-auto">
-                                <partial name="_FileDownloadLinkPartial" model="resource.FileUrl" />
+                            <td class="d-flex flex-wrap justify-content-around m-auto">
+                                <partial name="_ResourceDownloadButtonPartial" model="resource.Id" />
                                 <partial name="_ResourceDeleteFormPartial" model="@resourceModel" />
                             </td>
                         </tr>

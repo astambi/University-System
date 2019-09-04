@@ -124,6 +124,35 @@
             return this.RedirectToTrainersResources(courseId);
         }
 
+        public async Task<IActionResult> Download(int id)
+        {
+            var userId = this.userManager.GetUserId(this.User);
+            if (userId == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
+                return this.RedirectToCoursesIndex();
+            }
+
+            var canBeDownloadedByUser = await this.resourceService.CanBeDownloadedByUserAsync(id, userId);
+            if (!canBeDownloadedByUser)
+            {
+                this.TempData.AddErrorMessage(WebConstants.ResourceDownloadUnauthorizedMsg);
+                return this.RedirectToCoursesIndex();
+            }
+
+            var resourceUrl = await this.resourceService.GetDownloadUrlAsync(id);
+            if (resourceUrl == null)
+            {
+                this.TempData.AddErrorMessage(WebConstants.ResourceNotFoundMsg);
+                return this.RedirectToCoursesIndex();
+            }
+
+            return this.Redirect(resourceUrl);
+        }
+
+        private IActionResult RedirectToCoursesIndex()
+            => this.RedirectToAction(nameof(CoursesController.Index), WebConstants.CoursesController);
+
         private IActionResult RedirectToTrainersIndex()
             => this.RedirectToAction(nameof(TrainersController.Courses), WebConstants.TrainersController);
 

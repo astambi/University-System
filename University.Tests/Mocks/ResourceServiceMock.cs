@@ -38,6 +38,16 @@
             return mock;
         }
 
+        public static Mock<IResourceService> GetDownloadUrlAsync(this Mock<IResourceService> mock, string result)
+        {
+            mock
+                .Setup(s => s.GetDownloadUrlAsync(It.IsAny<int>()))
+                .ReturnsAsync(result)
+                .Verifiable();
+
+            return mock;
+        }
+
         public static Mock<IResourceService> RemoveAsync(this Mock<IResourceService> mock, bool result)
         {
             mock

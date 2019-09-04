@@ -60,10 +60,10 @@
                     @foreach (var resource in Model.Resources)
                     {
                         var resourceModel = new ResourceFormModel { ResourceId = resource.Id, CourseId = Model.Id, ResourceName = resource.FileName };
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center">
                             @resource.FileName
-                            <div class="d-flex">
-                                <partial name="_FileDownloadLinkPartial" model="resource.FileUrl" />
+                            <div>
+                                <partial name="_ResourceDownloadButtonPartial" model="resource.Id" />
                                 @if (Model.IsTrainer)
                                 {
                                     <partial name="_ResourceDeleteFormPartial" model="@resourceModel" />

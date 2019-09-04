@@ -44,16 +44,16 @@
 
                         @if (Model.Course.CanBeEvaluated)
                         {
-                            <td class="align-top text-center">
-                                @if (student.HasExamSubmission)
-                                {
-                                    <partial name="_FileDownloadLinkPartial" model="student.ExamFileUrl" />
-                                }
-                                else
-                                {
-                                    <i class="fa fa-user-slash"></i>
-                                }
-                            </td>
+                    <td class="align-top text-center">
+                        @if (student.HasExamSubmission)
+                        {
+                            <partial name="_ExamDownloadButtonPartial" model="student.ExamId" />
+                        }
+                        else
+                        {
+                            <i class="fa fa-user-slash"></i>
+                        }
+                    </td>
                             <td class="align-top">
                                 @if (student.HasExamSubmission)
                                 {

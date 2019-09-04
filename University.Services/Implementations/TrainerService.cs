@@ -76,7 +76,8 @@
                 this.db
                 .Courses
                 .Where(c => c.Id == courseId)
-                .SelectMany(c => c.Students))
+                .SelectMany(c => c.Students)
+                .OrderBy(sc => sc.Student.UserName))
             .ToListAsync();
 
         public async Task<int> TotalCoursesAsync(string trainerId, string search = null)

@@ -9,7 +9,5 @@
         public int Id { get; set; }
 
         public DateTime SubmissionDate { get; set; }
-
-        public string FileUrl { get; set; }
     }
 }

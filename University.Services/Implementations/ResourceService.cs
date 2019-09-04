@@ -34,9 +34,9 @@
         public async Task<bool> CanBeDownloadedByUserAsync(int id, string userId)
             => await this.db
             .Resources
-            .AnyAsync(r => r.Id == id
-                && (r.Course.TrainerId == userId // trainers or enrolled students only
-                || r.Course.Students.Any(sc => sc.StudentId == userId)));
+            .Where(r => r.Id == id)
+            .AnyAsync(r => r.Course.TrainerId == userId // course trainer
+                || r.Course.Students.Any(sc => sc.StudentId == userId)); // enrolled student
 
         public async Task<bool> CreateAsync(int courseId, string fileName, string fileUrl)
         {
@@ -64,6 +64,13 @@
 
         public bool Exists(int id)
             => this.db.Resources.Any(r => r.Id == id);
+
+        public async Task<string> GetDownloadUrlAsync(int id)
+            => await this.db
+            .Resources
+            .Where(r => r.Id == id)
+            .Select(r => r.FileUrl)
+            .FirstOrDefaultAsync();
 
         public async Task<bool> RemoveAsync(int id)
         {

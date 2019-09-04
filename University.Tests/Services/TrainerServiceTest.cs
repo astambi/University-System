@@ -23,6 +23,10 @@
 
         private const string SearchTerm = "T";
 
+        private const string Student1 = "Student1";
+        private const string Student2 = "Student2";
+        private const string Student3 = "Student3";
+
         private const string TrainerValid = "TrainerValid";
         private const string TrainerInvalid = "TrainerInvalid";
         private const string TrainerInvalid2 = "TrainerInvalid2";
@@ -123,7 +127,7 @@
             Assert.NotNull(result);
             Assert.IsType<CourseServiceModel>(result);
 
-            AssertCourseServiceModel(expected, result);
+            this.AssertCourseServiceModel(expected, result);
         }
 
         [Fact]
@@ -157,7 +161,7 @@
             // Assert
             Assert.NotNull(result);
             Assert.IsType<CourseWithResourcesServiceModel>(result);
-            AssertCourseServiceModel(expected, result);
+            this.AssertCourseServiceModel(expected, result);
 
             var expectedResources = expected.Resources.ToList();
 
@@ -206,7 +210,12 @@
             // Assert
             Assert.IsAssignableFrom<IEnumerable<StudentInCourseServiceModel>>(result);
 
-            AssertStudentsInCourse(expected, resultList);
+            Assert.Equal(new[] { Student3, Student2, Student1 }, resultList.Select(s => s.StudentId));
+
+            this.AssertStudentsInCourse(expected, resultList);
+            this.AssertHasExamSubmission(resultList);
+            this.AssertGrade(resultList);
+            this.AssertExamId(resultList);
         }
 
         [Fact]
@@ -277,7 +286,7 @@
                 var expectedItem = expected[i];
                 var resultItem = resultList[i];
 
-                AssertCourseServiceModel(expectedItem, resultItem);
+                this.AssertCourseServiceModel(expectedItem, resultItem);
             }
         }
 
@@ -371,7 +380,7 @@
                 var expectedItem = expected[i];
                 var resultItem = resultList[i];
 
-                AssertCourseServiceModel(expectedItem, resultItem);
+                this.AssertCourseServiceModel(expectedItem, resultItem);
             }
         }
 
@@ -407,7 +416,7 @@
             Assert.Equal(TrainerEmail, result.Email);
         }
 
-        private static void AssertCourseServiceModel(Course expected, CourseServiceModel result)
+        private void AssertCourseServiceModel(Course expected, CourseServiceModel result)
         {
             Assert.Equal(expected.Id, result.Id);
             Assert.Equal(expected.Name, result.Name);
@@ -424,38 +433,44 @@
                 .BeCloseTo(expected.StartDate.RemainingTimeTillStart(), Precision);
         }
 
-        private static void AssertStudentsInCourse(List<User> expected, List<StudentInCourseServiceModel> resultList)
+        private void AssertExamId(List<StudentInCourseServiceModel> resultList)
+        {
+            Assert.Equal(0, resultList.First().ExamId);
+            Assert.Equal(3, resultList.Skip(1).First().ExamId);
+            Assert.Equal(2, resultList.Last().ExamId);
+        }
+
+        private void AssertGrade(List<StudentInCourseServiceModel> resultList)
+        {
+            Assert.Null(resultList.First().GradeBg);
+            Assert.Equal(DataConstants.GradeBgCertificateMinValue, resultList.Skip(1).First().GradeBg);
+            Assert.Equal(DataConstants.GradeBgMaxValue, resultList.Last().GradeBg);
+        }
+
+        private void AssertHasExamSubmission(List<StudentInCourseServiceModel> resultList)
+        {
+            Assert.False(resultList.First().HasExamSubmission);
+            Assert.True(resultList.Skip(1).First().HasExamSubmission);
+            Assert.True(resultList.Last().HasExamSubmission);
+        }
+
+        private void AssertStudentsInCourse(List<User> expected, List<StudentInCourseServiceModel> resultList)
         {
             Assert.Equal(expected.Count, resultList.Count);
-
             for (var i = 0; i < resultList.Count; i++)
             {
-                var expectedUser = expected[i];
                 var resultUser = resultList[i];
-
-                Assert.Equal(expectedUser.Id, resultUser.StudentId);
-                Assert.Equal(expectedUser.Name, resultUser.StudentName);
-                Assert.Equal(expectedUser.UserName, resultUser.StudentUserName);
-                Assert.Equal(expectedUser.Email, resultUser.StudentEmail);
-
-                var exprectedGrade = expectedUser
-                    .Courses
-                    .Where(sc => sc.CourseId == CourseValid)
-                    .Select(s => s.GradeBg)
-                    .FirstOrDefault();
-
-                var expectedExamFileUrl = expectedUser
-                    .ExamSubmissions
-                    .Where(e => e.StudentId == expectedUser.Id)
-                    .Select(e => e.FileUrl)
-                    .FirstOrDefault();
-
-                var expectedHasExamSubmissions = !string.IsNullOrWhiteSpace(expectedExamFileUrl);
-
-                Assert.Equal(exprectedGrade, resultUser.GradeBg);
-                Assert.Equal(expectedExamFileUrl, resultUser.ExamFileUrl);
-                Assert.Equal(expectedHasExamSubmissions, resultUser.HasExamSubmission);
+                var expectedUser = expected.FirstOrDefault(u => u.Id == resultUser.StudentId);
+                this.AssertUser(expectedUser, resultUser);
             }
+        }
+
+        private void AssertUser(User expectedUser, StudentInCourseServiceModel resultUser)
+        {
+            Assert.Equal(expectedUser.Id, resultUser.StudentId);
+            Assert.Equal(expectedUser.Name, resultUser.StudentName);
+            Assert.Equal(expectedUser.UserName, resultUser.StudentUserName);
+            Assert.Equal(expectedUser.Email, resultUser.StudentEmail);
         }
 
         private Course GetTrainerCourse(UniversityDbContext db, string trainerId, int courseId)
@@ -547,23 +562,26 @@
             var trainer1 = new User { Id = TrainerValid };
             var trainer2 = new User { Id = TrainerInvalid };
 
-            var student1 = new User { Id = "1", Name = "Student 1", UserName = "Username 1", Email = "email1@gmail.com" };
-            var student2 = new User { Id = "2", Name = "Student 2", UserName = "Username 2", Email = "email2@gmail.com" };
+            var student1 = new User { Id = Student1, Name = "Student 1", UserName = "UsernameCCC", Email = "email1@gmail.com" };
+            var student2 = new User { Id = Student2, Name = "Student 2", UserName = "UsernameBBB", Email = "email2@gmail.com" };
+            var student3 = new User { Id = Student3, Name = "Student 3", UserName = "UsernameAAA", Email = "email3@gmail.com" };
 
             var course1 = new Course { Id = CourseValid, TrainerId = TrainerValid };
             var course2 = new Course { Id = CourseInvalid };
             var course3 = new Course { Id = CourseEnded, EndDate = DateTime.UtcNow.AddDays(-1) }; // past
             var course4 = new Course { Id = CourseNotEnded, EndDate = DateTime.UtcNow.AddDays(1) }; // future
 
-            course1.Students.Add(new StudentCourse { StudentId = "1", GradeBg = DataConstants.GradeBgMaxValue });
-            course1.Students.Add(new StudentCourse { StudentId = "2", GradeBg = DataConstants.GradeBgCertificateMinValue });
+            course1.Students.Add(new StudentCourse { StudentId = student1.Id, CourseId = CourseValid, GradeBg = DataConstants.GradeBgMaxValue });
+            course1.Students.Add(new StudentCourse { StudentId = student2.Id, CourseId = CourseValid, GradeBg = DataConstants.GradeBgCertificateMinValue });
+            course1.Students.Add(new StudentCourse { StudentId = student3.Id, CourseId = CourseValid });
 
-            student1.ExamSubmissions.Add(new ExamSubmission { Id = 1, CourseId = CourseValid });
-            student1.ExamSubmissions.Add(new ExamSubmission { Id = 2, CourseId = CourseValid });
+            student1.ExamSubmissions.Add(new ExamSubmission { Id = 1, CourseId = CourseValid, SubmissionDate = new DateTime(2019, 8, 1) });
+            student1.ExamSubmissions.Add(new ExamSubmission { Id = 2, CourseId = CourseValid, SubmissionDate = new DateTime(2019, 8, 10) });
+            student2.ExamSubmissions.Add(new ExamSubmission { Id = 3, CourseId = CourseValid, SubmissionDate = new DateTime(2019, 8, 10) });
 
             var db = Tests.InitializeDatabase();
             await db.Courses.AddRangeAsync(course1, course2, course3, course4);
-            await db.Users.AddRangeAsync(trainer1, trainer2, student1, student2);
+            await db.Users.AddRangeAsync(trainer1, trainer2, student1, student2, student3);
             await db.SaveChangesAsync();
 
             return db;

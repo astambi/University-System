@@ -102,12 +102,23 @@
                             .Select(c => c.GradeBg)
                             .FirstOrDefault())); // 0
                 cfg.CreateMap<StudentCourse, StudentInCourseServiceModel>()
-                    .ForMember(dest => dest.HasExamSubmission,
+                    .ForMember(
+                        dest => dest.ExamId,
+                        opt => opt.MapFrom(src => src
+                            .Student
+                            .ExamSubmissions
+                            .Where(e => e.CourseId == src.CourseId)
+                            .OrderByDescending(e => e.SubmissionDate)
+                            .Select(e => e.Id)
+                            .FirstOrDefault())) // default 0
+                    .ForMember(
+                        dest => dest.HasExamSubmission,
                         opt => opt.MapFrom(src => src
                             .Student
                             .ExamSubmissions
                             .Any(e => e.CourseId == src.CourseId)))
-                    .ForMember(dest => dest.Certificates,
+                    .ForMember(
+                        dest => dest.Certificates,
                         opt => opt.MapFrom(src => src
                             .Student
                             .Certificates

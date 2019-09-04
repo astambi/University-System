@@ -34,6 +34,13 @@
             .OrderByDescending(e => e.SubmissionDate)
             .ToListAsync();
 
+        public async Task<bool> CanBeDownloadedByUserAsync(int id, string userId)
+            => await this.db
+            .ExamSubmissions
+            .Where(e => e.Id == id)
+            .AnyAsync(e => e.StudentId == userId // exam student
+                || e.Course.TrainerId == userId); // course trainer
+
         public async Task<bool> CreateAsync(int courseId, string userId, string fileName, string fileUrl)
         {
             var studentCourseFound = await this.db
@@ -110,6 +117,13 @@
 
             return result > 0;
         }
+
+        public async Task<string> GetDownloadUrlAsync(int id)
+            => await this.db
+            .ExamSubmissions
+            .Where(e => e.Id == id)
+            .Select(e => e.FileUrl)
+            .FirstOrDefaultAsync();
 
         private IQueryable<ExamSubmission> GetForStudentById(int id, string userId)
             => this.db

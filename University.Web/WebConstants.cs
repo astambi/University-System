@@ -5,6 +5,9 @@
 
     public class WebConstants
     {
+        // Project
+        public const string University = "Online University";
+
         // Roles
         public const string AdministratorRole = "Administrator";
         public const string BloggerRole = "Blogger";
@@ -164,6 +167,8 @@
 
         public const string ExamAssessedMsg = "Exam was assessed successfully.";
         public const string ExamAssessmentErrorMsg = "Exam was not assessed.";
+        public const string ExamDownloadUnauthorizedMsg = "Exam download not allowed.";
+        public const string ExamNotFoundMsg = "Exam not found.";
         public const string ExamSubmittedMsg = "Exam file submitted successfully.";
         public const string ExamSubmitErrorMsg = "Could not submit exam file.";
 

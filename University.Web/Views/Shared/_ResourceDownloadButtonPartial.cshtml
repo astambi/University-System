@@ -1,0 +1,7 @@
+﻿@model int
+
+<a asp-controller="@WebConstants.ResourcesController"
+   asp-action="@nameof(ResourcesController.Download)"
+   asp-route-id="@Model" data-toggle="tooltip" title="Download from cloud" class="btn btn-@StyleHelpers.ToStyle(FormActionEnum.Download)">
+    <i class="fa fa-download"></i>
+</a>
