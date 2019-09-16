@@ -2,6 +2,7 @@
 {
     using System.Linq;
     using System.Reflection;
+    using CloudinaryDotNet;
     using Microsoft.Extensions.DependencyInjection;
     using University.Services;
 
@@ -33,6 +34,23 @@
                     services.AddTransient(service.Interface, service.Implementation);
                 }
             }
+
+            return services;
+        }
+
+        public static IServiceCollection AddCloudinaryService(this IServiceCollection services, string cloudName, string apiKey, string apiSecret)
+        {
+            if (string.IsNullOrWhiteSpace(cloudName)
+                || string.IsNullOrWhiteSpace(apiKey)
+                || string.IsNullOrWhiteSpace(apiSecret))
+            {
+                return services;
+            }
+
+            var cloudinaryCredentials = new Account(cloudName, apiKey, apiSecret);
+            var cloudinary = new Cloudinary(cloudinaryCredentials);
+
+            services.AddSingleton(cloudinary); // Singleton
 
             return services;
         }

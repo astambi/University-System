@@ -6,12 +6,15 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <AssemblyName>University.Web</AssemblyName>
     <RootNamespace>University.Web</RootNamespace>
+    <ApplicationInsightsResourceId>/subscriptions/48db06e8-7020-4e4d-bccb-4368c89a129c/resourcegroups/UniversitySystemWebResourceGroup/providers/microsoft.insights/components/UniversitySystemWeb</ApplicationInsightsResourceId>
+    <ApplicationInsightsAnnotationResourceId>/subscriptions/48db06e8-7020-4e4d-bccb-4368c89a129c/resourcegroups/UniversitySystemWebResourceGroup/providers/microsoft.insights/components/UniversitySystemWeb</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
 
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.1.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="CloudinaryDotNet" Version="1.8.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
@@ -28,6 +31,11 @@
   <ItemGroup>
     <Folder Include="Models\Home\" />
     <Folder Include="wwwroot\lib\qrcode\" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
   </ItemGroup>
 
 </Project>
