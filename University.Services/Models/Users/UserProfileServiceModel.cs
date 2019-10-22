@@ -18,19 +18,20 @@
 
         public int DiplomasCount { get; set; }
 
-        public int ResourcesCount { get; set; }
-
         public int ExamSubmissionsCount { get; set; }
 
         public int ArticlesCount { get; set; }
 
+        public int ResourcesCount { get; set; }
+
         public void ConfigureMapping(IProfileExpression mapper)
             => mapper
             .CreateMap<User, UserProfileServiceModel>()
-            .ForMember(dest => dest.ResourcesCount, opt
-                => opt.MapFrom(u =>
-                u.Courses
-                .Select(sc => sc.Course)
-                .Sum(c => c.Resources.Count)));
+            .ForMember(
+                dest => dest.ResourcesCount,
+                opt => opt.MapFrom(u => u
+                    .Courses
+                    .SelectMany(sc => sc.Course.Resources)
+                    .Count()));
     }
 }

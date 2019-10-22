@@ -6,6 +6,7 @@
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using AutoMapper;
+    using AutoMapper.QueryableExtensions;
     using Microsoft.EntityFrameworkCore;
     using University.Common.Infrastructure.Extensions;
     using University.Data;
@@ -35,9 +36,9 @@
             string search = null,
             int page = 1,
             int pageSize = ServicesConstants.PageSize)
-            => await this.mapper
-            .ProjectTo<ArticleListingServiceModel>(this.GetQuerableBySearchKeyword(search))
+            => await this.GetQuerableBySearchKeyword(search)
             .OrderByDescending(a => a.PublishDate)
+            .ProjectTo<ArticleListingServiceModel>(this.mapper.ConfigurationProvider)
             .GetPageItems(page, pageSize)
             .ToListAsync();
 
@@ -74,18 +75,18 @@
             => await this.db.Articles.AnyAsync(a => a.Id == articleId && a.AuthorId == authorId);
 
         public async Task<ArticleDetailsServiceModel> GetByIdAsync(int id)
-            => await this.mapper
-            .ProjectTo<ArticleDetailsServiceModel>(
-                this.db.Articles
-                .Where(a => a.Id == id))
+            => await this.db
+            .Articles
+            .Where(a => a.Id == id)
+            .ProjectTo<ArticleDetailsServiceModel>(this.mapper.ConfigurationProvider)
             .FirstOrDefaultAsync();
 
         public async Task<ArticleEditServiceModel> GetByIdToEditAsync(int id, string authorId)
-            => await this.mapper
-            .ProjectTo<ArticleEditServiceModel>(
-                this.db.Articles
-                .Where(a => a.Id == id)
-                .Where(a => a.AuthorId == authorId))
+            => await this.db
+            .Articles
+            .Where(a => a.Id == id)
+            .Where(a => a.AuthorId == authorId)
+            .ProjectTo<ArticleEditServiceModel>(this.mapper.ConfigurationProvider)
             .FirstOrDefaultAsync();
 
         public async Task<bool> RemoveAsync(int id, string authorId)

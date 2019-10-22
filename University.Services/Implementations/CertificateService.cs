@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
+    using AutoMapper.QueryableExtensions;
     using Microsoft.EntityFrameworkCore;
     using University.Data;
     using University.Data.Models;
@@ -73,11 +74,10 @@
         }
 
         public async Task<CertificateServiceModel> DownloadAsync(string certificateId)
-            => await this.mapper
-            .ProjectTo<CertificateServiceModel>(
-                this.db
-                .Certificates
-                .Where(c => c.Id == certificateId))
+            => await this.db
+            .Certificates
+            .Where(c => c.Id == certificateId)
+            .ProjectTo<CertificateServiceModel>(this.mapper.ConfigurationProvider)
             .FirstOrDefaultAsync();
 
         public bool IsGradeEligibleForCertificate(decimal? gradeBg)

@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
+    using AutoMapper.QueryableExtensions;
     using Microsoft.EntityFrameworkCore;
     using University.Data;
     using University.Data.Models;
@@ -23,12 +24,11 @@
         }
 
         public async Task<IEnumerable<ResourceServiceModel>> AllByCourseAsync(int courseId)
-            => await this.mapper
-            .ProjectTo<ResourceServiceModel>(
-                this.db
-                .Resources
-                .Where(r => r.CourseId == courseId))
+            => await this.db
+            .Resources
+            .Where(r => r.CourseId == courseId)
             .OrderBy(r => r.FileName)
+            .ProjectTo<ResourceServiceModel>(this.mapper.ConfigurationProvider)
             .ToListAsync();
 
         public async Task<bool> CanBeDownloadedByUserAsync(int id, string userId)

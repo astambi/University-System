@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
+    using AutoMapper.QueryableExtensions;
     using Microsoft.EntityFrameworkCore;
     using University.Common.Infrastructure.Extensions;
     using University.Data;
@@ -26,12 +27,11 @@
         }
 
         public async Task<IEnumerable<OrderListingServiceModel>> AllByUserAsync(string userId)
-            => await this.mapper
-            .ProjectTo<OrderListingServiceModel>(
-                this.db
-                .Orders
-                .Where(o => o.UserId == userId)
-                .OrderByDescending(o => o.OrderDate))
+            => await this.db
+            .Orders
+            .Where(o => o.UserId == userId)
+            .OrderByDescending(o => o.OrderDate)
+            .ProjectTo<OrderListingServiceModel>(this.mapper.ConfigurationProvider)
             .ToListAsync();
 
         public async Task<bool> CanBeDeletedAsync(int id, string userId)
@@ -87,7 +87,7 @@
             var validOrderItems = this.db
                 .Courses
                 .Where(c => itemIds.Contains(c.Id)) // existing course
-                .Where(c => !c.StartDate.HasEnded()) // course has not started
+                .Where(c => DateTime.UtcNow < c.StartDate) // course has not started
                 .Where(c => !c.Students.Any(sc => sc.StudentId == userId)) // user is not enrolled in course
                 .Select(c => new OrderItem
                 {
@@ -138,11 +138,10 @@
             .FirstOrDefaultAsync();
 
         public async Task<OrderListingServiceModel> GetInvoiceAsync(string invoiceId)
-            => await this.mapper
-            .ProjectTo<OrderListingServiceModel>(
-                this.db
-                .Orders
-                .Where(o => o.InvoiceId == invoiceId))
+            => await this.db
+            .Orders
+            .Where(o => o.InvoiceId == invoiceId)
+            .ProjectTo<OrderListingServiceModel>(this.mapper.ConfigurationProvider)
             .FirstOrDefaultAsync();
 
         public async Task<bool> RemoveAsync(int id, string userId)

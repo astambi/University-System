@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
+    using AutoMapper.QueryableExtensions;
     using Microsoft.EntityFrameworkCore;
     using University.Data;
     using University.Services.Admin.Models.Users;
@@ -22,9 +23,10 @@
         }
 
         public async Task<IEnumerable<AdminUserListingServiceModel>> AllAsync()
-            => await this.mapper
-            .ProjectTo<AdminUserListingServiceModel>(this.db.Users)
-            .OrderBy(u => u.Username)
+            => await this.db
+            .Users
+            .OrderBy(u => u.UserName)
+            .ProjectTo<AdminUserListingServiceModel>(this.mapper.ConfigurationProvider)
             .ToListAsync();
     }
 }

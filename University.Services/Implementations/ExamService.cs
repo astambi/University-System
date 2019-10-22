@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
+    using AutoMapper.QueryableExtensions;
     using Microsoft.EntityFrameworkCore;
     using University.Common.Infrastructure.Extensions;
     using University.Data;
@@ -25,13 +26,12 @@
         }
 
         public async Task<IEnumerable<ExamSubmissionServiceModel>> AllByStudentCourseAsync(int courseId, string userId)
-            => await this.mapper
-            .ProjectTo<ExamSubmissionServiceModel>(
-                this.db
-                .ExamSubmissions
-                .Where(e => e.CourseId == courseId)
-                .Where(e => e.StudentId == userId))
+            => await this.db
+            .ExamSubmissions
+            .Where(e => e.CourseId == courseId)
+            .Where(e => e.StudentId == userId)
             .OrderByDescending(e => e.SubmissionDate)
+            .ProjectTo<ExamSubmissionServiceModel>(this.mapper.ConfigurationProvider)
             .ToListAsync();
 
         public async Task<bool> CanBeDownloadedByUserAsync(int id, string userId)

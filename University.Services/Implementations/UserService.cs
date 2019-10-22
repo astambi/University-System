@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
+    using AutoMapper.QueryableExtensions;
     using Microsoft.EntityFrameworkCore;
     using University.Data;
     using University.Data.Models;
@@ -32,34 +33,30 @@
             && !await this.db.Articles.AnyAsync(a => a.AuthorId == id);
 
         public async Task<UserEditServiceModel> GetProfileToEditAsync(string id)
-            => await this.mapper
-            .ProjectTo<UserEditServiceModel>(this.GetUserById(id))
+            => await this.GetUserById(id)
+            .ProjectTo<UserEditServiceModel>(this.mapper.ConfigurationProvider)
             .FirstOrDefaultAsync();
 
         public async Task<UserProfileServiceModel> GetProfileAsync(string id)
-            => await this.mapper
-            .ProjectTo<UserProfileServiceModel>(this.GetUserById(id))
+            => await this.GetUserById(id)
+            .ProjectTo<UserProfileServiceModel>(this.mapper.ConfigurationProvider)
             .FirstOrDefaultAsync();
 
         public async Task<IEnumerable<CourseProfileMaxGradeServiceModel>> GetCoursesAsync(string id)
-        {
-            var coursesQueryable = this.mapper.ProjectTo<CourseProfileServiceModel>(
-                this.GetUserById(id)
-                .SelectMany(u => u.Courses));
-
-            return await this.mapper
-                .ProjectTo<CourseProfileMaxGradeServiceModel>(coursesQueryable)
-                .OrderByDescending(c => c.CourseStartDate)
-                .ThenByDescending(c => c.CourseEndDate)
-                .ToListAsync();
-        }
+            => await this.GetUserById(id)
+            .SelectMany(u => u.Courses)
+            .ProjectTo<CourseProfileServiceModel>(this.mapper.ConfigurationProvider)
+            .OrderByDescending(c => c.CourseStartDate)
+            .ThenByDescending(c => c.CourseEndDate)
+            .ProjectTo<CourseProfileMaxGradeServiceModel>(this.mapper.ConfigurationProvider)
+            .ToListAsync();
 
         public async Task<IEnumerable<CertificatesByCourseServiceModel>> GetCertificatesAsync(string id)
         {
-            var certificatesQueryable = this.mapper
-                .ProjectTo<CertificateDetailsListingServiceModel>(
-                   this.db.Certificates
-                   .Where(c => c.StudentId == id))
+            var certificatesQueryable = this.db
+                .Certificates
+                .Where(c => c.StudentId == id)
+                .ProjectTo<CertificateDetailsListingServiceModel>(this.mapper.ConfigurationProvider)
                 .AsEnumerable();
 
             var certificatesByCourse = certificatesQueryable
@@ -77,18 +74,19 @@
         }
 
         public async Task<IEnumerable<UserDiplomaListingServiceModel>> GetDiplomasAsync(string id)
-            => await this.mapper.ProjectTo<UserDiplomaListingServiceModel>(
-                this.db.Diplomas
-                .Where(d => d.StudentId == id)
-                .OrderBy(d => d.Curriculum.Name))
+            => await this.db
+            .Diplomas
+            .Where(d => d.StudentId == id)
+            .OrderBy(d => d.Curriculum.Name)
+            .ProjectTo<UserDiplomaListingServiceModel>(this.mapper.ConfigurationProvider)
             .ToListAsync();
 
         public async Task<IEnumerable<ExamsByCourseServiceModel>> GetExamsAsync(string id)
         {
-            var examsQueryable = this.mapper
-                .ProjectTo<ExamSubmissionDetailsServiceModel>(
-                    this.db.ExamSubmissions
-                    .Where(e => e.StudentId == id))
+            var examsQueryable = this.db
+                .ExamSubmissions
+                .Where(e => e.StudentId == id)
+                .ProjectTo<ExamSubmissionDetailsServiceModel>(this.mapper.ConfigurationProvider)
                 .AsEnumerable();
 
             var examsByCourse = examsQueryable
@@ -107,11 +105,10 @@
 
         public IEnumerable<ResourcesByCourseServiceModel> GetResources(string id)
         {
-            var resources = this.mapper
-                .ProjectTo<ResourceDetailsServiceModel>(
-                    this.GetUserById(id)
-                    .SelectMany(u => u.Courses)
-                    .SelectMany(sc => sc.Course.Resources))
+            var resources = this.GetUserById(id)
+                .SelectMany(u => u.Courses)
+                .SelectMany(sc => sc.Course.Resources)
+                .ProjectTo<ResourceDetailsServiceModel>(this.mapper.ConfigurationProvider)
                 .AsEnumerable();
 
             var resourcesByCourse = resources

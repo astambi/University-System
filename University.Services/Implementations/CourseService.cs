@@ -252,6 +252,6 @@
             => this.db
             .Courses
             .Where(c => courseIds.Contains(c.Id))
-            .Where(c => !c.StartDate.HasEnded());
+            .Where(c => DateTime.UtcNow < c.StartDate);
     }
 }

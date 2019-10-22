@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
+    using AutoMapper.QueryableExtensions;
     using Microsoft.EntityFrameworkCore;
     using University.Common.Infrastructure.Extensions;
     using University.Data;
@@ -27,10 +28,11 @@
         }
 
         public async Task<IEnumerable<AdminCourseBasicServiceModel>> AllAsync()
-            => await this.mapper.ProjectTo<AdminCourseBasicServiceModel>(
-                this.db.Courses
-                .OrderBy(c => c.Name)
-                .ThenByDescending(c => c.StartDate))
+            => await this.db
+            .Courses
+            .OrderBy(c => c.Name)
+            .ThenByDescending(c => c.StartDate)
+            .ProjectTo<AdminCourseBasicServiceModel>(this.mapper.ConfigurationProvider)
             .ToListAsync();
 
         public async Task<int> CreateAsync(
@@ -67,9 +69,10 @@
         }
 
         public async Task<AdminCourseServiceModel> GetByIdAsync(int id)
-            => await this.mapper
-            .ProjectTo<AdminCourseServiceModel>(this.db.Courses)
+            => await this.db
+            .Courses
             .Where(c => c.Id == id)
+            .ProjectTo<AdminCourseServiceModel>(this.mapper.ConfigurationProvider)
             .FirstOrDefaultAsync();
 
         public async Task<bool> RemoveAsync(int id)

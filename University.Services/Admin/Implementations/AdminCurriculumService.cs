@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
+    using AutoMapper.QueryableExtensions;
     using Microsoft.EntityFrameworkCore;
     using University.Data;
     using University.Data.Models;
@@ -45,9 +46,10 @@
         }
 
         public async Task<IEnumerable<AdminCurriculumServiceModel>> AllAsync()
-            => await this.mapper.ProjectTo<AdminCurriculumServiceModel>(
-                this.db.Curriculums
-                .OrderBy(c => c.Name))
+            => await this.db
+            .Curriculums
+            .OrderBy(c => c.Name)
+            .ProjectTo<AdminCurriculumServiceModel>(this.mapper.ConfigurationProvider)
             .ToListAsync();
 
         public async Task<int> CreateAsync(string name, string description)
@@ -78,23 +80,19 @@
             .FindAsync<CurriculumCourse>(curriculumId, courseId) != null;
 
         public async Task<AdminCurriculumBasicServiceModel> GetByIdAsync(int id)
-            => await this.mapper
-            .ProjectTo<AdminCurriculumBasicServiceModel>(
-                this.db.Curriculums
-                .Where(c => c.Id == id))
+            => await this.db
+            .Curriculums
+            .Where(c => c.Id == id)
+            .ProjectTo<AdminCurriculumBasicServiceModel>(this.mapper.ConfigurationProvider)
             .FirstOrDefaultAsync();
 
         public async Task<IEnumerable<AdminDiplomaGraduateServiceModel>> GetDiplomaGraduatesAsync(int id)
-        {
-            var curriculumDiplomas = this.db
-                .Diplomas
-                .Where(d => d.CurriculumId == id)
-                .OrderBy(u => u.Student.Name);
-
-            return await this.mapper
-                .ProjectTo<AdminDiplomaGraduateServiceModel>(curriculumDiplomas)
-                .ToListAsync();
-        }
+            => await this.db
+            .Diplomas
+            .Where(d => d.CurriculumId == id)
+            .OrderBy(u => u.Student.Name)
+            .ProjectTo<AdminDiplomaGraduateServiceModel>(this.mapper.ConfigurationProvider)
+            .ToListAsync();
 
         public async Task<IEnumerable<AdminUserListingServiceModel>> GetEligibleCandidatesWithoutDiplomasAsync(int id)
         {
@@ -105,7 +103,7 @@
                 .Select(c => c.CourseId)
                 .AsEnumerable();
 
-            var candidates = this.db
+            var candidates = await this.db
                 .Certificates
                 .Where(c => curriculumCourses.Contains(c.CourseId)) // curriculum certificates
                 .Where(c => c.Student
@@ -117,11 +115,11 @@
                 .Select(c => c.Student)
                 .Distinct()
                 .Where(c => !c.Diplomas.Any(d => d.CurriculumId == id))
-                .OrderBy(u => u.Name); // without diploma
-
-            return await this.mapper
-                .ProjectTo<AdminUserListingServiceModel>(candidates)
+                .OrderBy(u => u.Name) // without diploma
+                .ProjectTo<AdminUserListingServiceModel>(this.mapper.ConfigurationProvider)
                 .ToListAsync();
+
+            return candidates;
         }
 
         public async Task<bool> RemoveAsync(int id)
