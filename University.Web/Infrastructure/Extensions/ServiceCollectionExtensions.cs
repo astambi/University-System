@@ -3,11 +3,30 @@
     using System.Linq;
     using System.Reflection;
     using CloudinaryDotNet;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.DependencyInjection;
     using University.Services;
 
     public static class ServiceCollectionExtensions
     {
+        public static IServiceCollection ConfigureIdentityOptions(this IServiceCollection services)
+        {
+            services
+                .Configure<IdentityOptions>(options =>
+                {
+                    // Password settings
+                    options.Password.RequireDigit = false;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                    // User settings
+                    options.User.RequireUniqueEmail = true;
+                });
+
+            return services;
+        }
+
         public static IServiceCollection AddDomainServices(this IServiceCollection services)
         {
             var domainServices = Assembly
@@ -19,7 +38,7 @@
                  {
                      Interface = t.GetInterface($"I{t.Name}"),
                      Implementation = t,
-                     IsSingleton = t.GetInterfaces().Any(i => i.Name == nameof(ISingletonService))
+                     IsSingleton = t.GetInterfaces().Any(i => i == typeof(ISingletonService))
                  })
                  .ToList();
 
@@ -51,6 +70,51 @@
             var cloudinary = new Cloudinary(cloudinaryCredentials);
 
             services.AddSingleton(cloudinary); // Singleton
+
+            return services;
+        }
+
+        public static IServiceCollection AddRoutingOptions(this IServiceCollection services)
+        {
+            services.AddRouting(options =>
+            {
+                options.LowercaseUrls = true;
+                options.LowercaseQueryStrings = true;
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection AddMvcOptions(this IServiceCollection services)
+        {
+            services
+                .AddMvc(options =>
+                {
+                    // Global filters
+                    options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                // Identity
+                .AddRazorPagesOptions(options =>
+                {
+                    options.AllowAreas = true;
+                    options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
+                    options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
+                });
+
+            return services;
+        }
+
+        public static IServiceCollection ConfigureApplicationCookieOptions(this IServiceCollection services)
+        {
+            // Identity
+            services
+                .ConfigureApplicationCookie(options =>
+                {
+                    options.LoginPath = $"/Identity/Account/Login";
+                    options.LogoutPath = $"/Identity/Account/Logout";
+                    options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+                });
 
             return services;
         }

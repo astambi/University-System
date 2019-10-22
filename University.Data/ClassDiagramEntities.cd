@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="University.Data.Models.User">
+    <Position X="3.25" Y="3.5" Width="1.5" />
+    <AssociationLine Name="Certificates" Type="University.Data.Models.Certificate" FixedToPoint="true">
+      <Path>
+        <Point X="3.938" Y="5.377" />
+        <Point X="3.938" Y="6.25" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AACAEAAIAACAAAAAAAAAAAQAEAAAAAAAAAAAAFAAAAA=</HashCode>
+      <FileName>Models\User.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Courses" />
+      <Property Name="Trainings" />
+      <Property Name="Articles" />
+      <Property Name="ExamSubmissions" />
+      <Property Name="Certificates" />
+      <Property Name="Diplomas" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="University.Data.Models.StudentCourse">
+    <Position X="6.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAQAAAAAAAAIAAAAAAAAAAAAAAIAAAAAACAAA=</HashCode>
+      <FileName>Models\StudentCourse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="University.Data.Models.Diploma">
+    <Position X="3.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAQAAgAAAAAAgAAAAAAAAAAAAAAAEAAAACAAA=</HashCode>
+      <FileName>Models\Diploma.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="University.Data.Models.Course">
+    <Position X="9.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAKCAAAAIQCgAAAAAAAABAQgAACAAAAAAABAAEAAAAA=</HashCode>
+      <FileName>Models\Course.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Resources" />
+      <Property Name="Students" />
+      <Property Name="ExamSubmissions" />
+      <Property Name="Certificates" />
+      <Property Name="Curriculums" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="University.Data.Models.Article">
+    <Position X="0.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAgCAAEAAiAAAAAAAAAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>Models\Article.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="University.Data.Models.Resource">
+    <Position X="11.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAGAAAAAAAAAAAAgIAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>Models\Resource.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="University.Data.Models.Certificate">
+    <Position X="3.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAGAAAAQAAgAAAAAIAAAAAAAAAAAAAAIAAAAAACAAA=</HashCode>
+      <FileName>Models\Certificate.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="University.Data.Models.Curriculum">
+    <Position X="6.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACEAAAAAAgAAAAAAAAAAQAAAAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>Models\Curriculum.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Courses" />
+      <Property Name="Diplomas" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="University.Data.Models.ExamSubmission">
+    <Position X="6.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAGAAAAQAAAAAAAgIAAAAAAAAAAAAACAAAAAABCAAA=</HashCode>
+      <FileName>Models\ExamSubmission.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="University.Data.Models.CurriculumCourse">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAIgAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Models\CurriculumCourse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="University.Data.Models.Order">
+    <Position X="14.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAADIAAEAAEAAAAAAAAAAAgAAAAAQAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Models\Order.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="PaymentMethod" />
+      <Property Name="Status" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="OrderItems" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="University.Data.Models.OrderItem">
+    <Position X="11.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAGGAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\OrderItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="University.Data.Models.PaymentType" Collapsed="true">
+    <Position X="13.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAQAAAgAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\PaymentType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="University.Data.Models.Status" Collapsed="true">
+    <Position X="14.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Models\Status.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
