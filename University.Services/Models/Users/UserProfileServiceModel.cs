@@ -24,8 +24,9 @@
 
         public int ArticlesCount { get; set; }
 
-        public void ConfigureMapping(Profile mapper)
-            => mapper.CreateMap<User, UserProfileServiceModel>()
+        public void ConfigureMapping(IProfileExpression mapper)
+            => mapper
+            .CreateMap<User, UserProfileServiceModel>()
             .ForMember(dest => dest.ResourcesCount, opt
                 => opt.MapFrom(u =>
                 u.Courses

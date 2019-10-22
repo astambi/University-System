@@ -23,9 +23,9 @@
 
         public bool HasExamSubmission { get; set; }
 
-        public IEnumerable<CertificateListingServiceModel> Certificates { get; set; }
+        public IEnumerable<CertificateListingServiceModel> Certificates { get; set; } = new List<CertificateListingServiceModel>();
 
-        public void ConfigureMapping(Profile mapper)
+        public void ConfigureMapping(IProfileExpression mapper)
             => mapper
             .CreateMap<StudentCourse, StudentInCourseServiceModel>()
             .ForMember(
@@ -43,12 +43,15 @@
                     .Student
                     .ExamSubmissions
                     .Any(e => e.CourseId == src.CourseId)))
-            .ForMember(
-                dest => dest.Certificates,
-                opt => opt.MapFrom(src => src
-                    .Student
-                    .Certificates
-                    .Where(c => c.CourseId == src.CourseId)
-                    .OrderByDescending(c => c.GradeBg)));
+            /// EF Core 3.0 cannot evaluate query => running second query for the certificates in service
+            //.ForMember(
+            //    dest => dest.Certificates,
+            //    opt => opt.MapFrom(src => src
+            //        .Student
+            //        .Certificates
+            //        .Where(c => c.CourseId == src.CourseId)
+            //        .OrderByDescending(c => c.GradeBg)
+            //        .ToList()))
+            ;
     }
 }

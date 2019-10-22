@@ -88,22 +88,22 @@
         {
             var curriculumDiplomas = this.db
                 .Diplomas
-                .Where(d => d.CurriculumId == id);
+                .Where(d => d.CurriculumId == id)
+                .OrderBy(u => u.Student.Name);
 
             return await this.mapper
                 .ProjectTo<AdminDiplomaGraduateServiceModel>(curriculumDiplomas)
-                .OrderBy(u => u.Student.Name)
                 .ToListAsync();
         }
 
         public async Task<IEnumerable<AdminUserListingServiceModel>> GetEligibleCandidatesWithoutDiplomasAsync(int id)
         {
-            var curriculumCourses = await this.db
+            var curriculumCourses = this.db
                 .Curriculums
                 .Where(c => c.Id == id)
                 .SelectMany(c => c.Courses)
                 .Select(c => c.CourseId)
-                .ToListAsync();
+                .AsEnumerable();
 
             var candidates = this.db
                 .Certificates
@@ -113,15 +113,14 @@
                     .Where(cert => curriculumCourses.Contains(cert.CourseId))
                     .Select(cert => cert.CourseId)
                     .Distinct()
-                    .Count() == curriculumCourses.Count) // all certificates
+                    .Count() == curriculumCourses.Count()) // all certificates
                 .Select(c => c.Student)
                 .Distinct()
-                .Where(c => !c.Diplomas.Any(d => d.CurriculumId == id)); // without diploma
+                .Where(c => !c.Diplomas.Any(d => d.CurriculumId == id))
+                .OrderBy(u => u.Name); // without diploma
 
             return await this.mapper
-                .ProjectTo<AdminUserListingServiceModel>(
-                    candidates
-                    .OrderBy(u => u.Name))
+                .ProjectTo<AdminUserListingServiceModel>(candidates)
                 .ToListAsync();
         }
 

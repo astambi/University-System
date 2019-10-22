@@ -16,23 +16,31 @@
             this.courseService = courseService;
         }
 
-        public async Task<IActionResult> Index(string search = null, int currentPage = 1)
+        public async Task<IActionResult> Index(string searchTerm, int currentPage = 1)
         {
             var pagination = new PaginationViewModel
             {
-                SearchTerm = search,
+                SearchTerm = searchTerm,
                 Action = nameof(Index),
                 RequestedPage = currentPage,
-                TotalItems = await this.courseService.TotalActiveAsync(search)
+                TotalItems = await this.courseService.TotalActiveAsync(searchTerm)
             };
 
-            var courses = await this.courseService.AllActiveAsync(search, pagination.CurrentPage, WebConstants.PageSize);
+            var search = new SearchViewModel
+            {
+                Controller = WebConstants.CoursesController,
+                Action = nameof(Index),
+                SearchTerm = searchTerm,
+                Placeholder = WebConstants.SearchByCourseName
+            };
+
+            var courses = await this.courseService.AllActiveAsync(searchTerm, pagination.CurrentPage, WebConstants.PageSize);
 
             var model = new CoursePageListingViewModel
             {
                 Courses = courses,
                 Pagination = pagination,
-                Search = new SearchViewModel { SearchTerm = search, Placeholder = WebConstants.SearchByCourseName }
+                Search = search
             };
 
             return this.View(model);
@@ -41,8 +49,14 @@
         public IActionResult Privacy()
             => this.View();
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [ResponseCache(
+            Duration = 0,
+            Location = ResponseCacheLocation.None,
+            NoStore = true)]
         public IActionResult Error()
-            => this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier });
+            => this.View(new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier
+            });
     }
 }

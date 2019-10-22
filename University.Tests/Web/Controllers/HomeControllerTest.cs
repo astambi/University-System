@@ -4,6 +4,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using University.Tests.Mocks;
+    using University.Web;
     using University.Web.Controllers;
     using University.Web.Models.Courses;
     using Xunit;
@@ -11,6 +12,7 @@
     public class HomeControllerTest
     {
         private const string TestSearchTerm = "TestSearchTerm";
+        private const string ActionIndex = "Index";
         private const int TestTotalItems = 120;
 
         [Fact]
@@ -50,7 +52,7 @@
 
             Assert.NotNull(model);
             Tests.AssertCourseServiceModelCollection(model.Courses);
-            Tests.AssertSearchViewModel(TestSearchTerm, model.Search);
+            Tests.AssertSearchViewModel(TestSearchTerm, WebConstants.CoursesController, ActionIndex, model.Search);
             Tests.AssertPagination(testPagination, model.Pagination);
 
             Assert.Equal(nameof(HomeController.Index), model.Pagination.Action);

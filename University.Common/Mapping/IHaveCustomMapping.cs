@@ -4,6 +4,6 @@
 
     public interface IHaveCustomMapping
     {
-        void ConfigureMapping(Profile /*IProfileExpression*/ mapper);
+        void ConfigureMapping(IProfileExpression mapper);
     }
 }

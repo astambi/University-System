@@ -10,12 +10,17 @@
     using University.Data.Models;
     using University.Services;
     using University.Services.Implementations;
+    using University.Services.Models.Certificates;
     using University.Services.Models.Courses;
     using University.Services.Models.Users;
     using Xunit;
 
     public class TrainerServiceTest
     {
+        private const string Certificate1 = "Certificate1";
+        private const string Certificate2 = "Certificate2";
+        private const string Certificate3 = "Certificate3";
+
         private const int CourseValid = 10;
         private const int CourseInvalid = 20;
         private const int CourseNotEnded = 30;
@@ -180,7 +185,7 @@
         public async Task StudentsInCourseAsync_ShouldReturnEmptyCollection_GivenInvalidTrainerCourse()
         {
             // Arrange
-            var db = await this.PrepareCoursesWithTrainers();
+            var db = await this.PrepareCourseStudentsWithCertificates();
             var trainerService = this.InitializeTrainerService(db);
 
             // Act
@@ -195,7 +200,7 @@
         public async Task StudentsInCourseAsync_ShouldReturnCorrectData_GivenValidTrainerCourse()
         {
             // Arrange
-            var db = await this.PrepareCoursesWithTrainers();
+            var db = await this.PrepareCourseStudentsWithCertificates();
             var trainerService = this.InitializeTrainerService(db);
 
             var expected = db
@@ -461,7 +466,26 @@
             {
                 var resultUser = resultList[i];
                 var expectedUser = expected.FirstOrDefault(u => u.Id == resultUser.StudentId);
+
                 this.AssertUser(expectedUser, resultUser);
+                this.AssertCertificates(expectedUser.Certificates.ToList(), resultUser.Certificates.ToList());
+            }
+        }
+
+        private void AssertCertificates(List<Certificate> expectedCertificates, List<CertificateListingServiceModel> resultCertificates)
+        {
+            Assert.Equal(expectedCertificates.Count, resultCertificates.Count);
+
+            // Order
+            Assert.Equal(
+                expectedCertificates.OrderByDescending(c => c.GradeBg).Select(c => c.Id),
+                resultCertificates.Select(c => c.Id));
+
+            foreach (var result in resultCertificates)
+            {
+                var expected = expectedCertificates.FirstOrDefault(c => c.Id == result.Id);
+                Assert.Equal(expected.GradeBg, result.GradeBg);
+                Assert.Equal(expected.IssueDate, result.IssueDate);
             }
         }
 
@@ -582,6 +606,61 @@
             var db = Tests.InitializeDatabase();
             await db.Courses.AddRangeAsync(course1, course2, course3, course4);
             await db.Users.AddRangeAsync(trainer1, trainer2, student1, student2, student3);
+            await db.SaveChangesAsync();
+
+            return db;
+        }
+
+        private async Task<UniversityDbContext> PrepareCourseStudentsWithCertificates()
+        {
+            var student1 = new User { Id = Student1, Name = "Student 1", UserName = "UsernameCCC", Email = "email1@gmail.com" };
+            var student2 = new User { Id = Student2, Name = "Student 2", UserName = "UsernameBBB", Email = "email2@gmail.com" };
+            var student3 = new User { Id = Student3, Name = "Student 3", UserName = "UsernameAAA", Email = "email3@gmail.com" };
+
+            var course1 = new Course { Id = CourseValid };
+            var course2 = new Course { Id = 2 };
+
+            var examSubmissionDate1 = new DateTime(2019, 8, 1);
+            var examSubmissionDate2 = new DateTime(2019, 10, 22);
+
+            course1.Students.Add(new StudentCourse { StudentId = student1.Id, CourseId = course1.Id, GradeBg = DataConstants.GradeBgMaxValue });
+            course1.Students.Add(new StudentCourse { StudentId = student2.Id, CourseId = course1.Id, GradeBg = DataConstants.GradeBgCertificateMinValue });
+            course1.Students.Add(new StudentCourse { StudentId = student3.Id, CourseId = course1.Id });
+
+            course2.Students.Add(new StudentCourse { StudentId = student3.Id, CourseId = course2.Id, GradeBg = DataConstants.GradeBgMaxValue });
+
+            student1.ExamSubmissions.Add(new ExamSubmission { Id = 1, CourseId = course1.Id, SubmissionDate = examSubmissionDate1 });
+            student1.ExamSubmissions.Add(new ExamSubmission { Id = 2, CourseId = course1.Id, SubmissionDate = examSubmissionDate2 });
+            student2.ExamSubmissions.Add(new ExamSubmission { Id = 3, CourseId = course1.Id, SubmissionDate = examSubmissionDate2 });
+
+            student1.Certificates.Add(new Certificate
+            {
+                Id = Certificate1,
+                CourseId = course1.Id,
+                StudentId = student1.Id,
+                GradeBg = DataConstants.GradeBgMinValue,
+                IssueDate = examSubmissionDate1
+            });
+            student1.Certificates.Add(new Certificate
+            {
+                Id = Certificate2,
+                CourseId = course1.Id,
+                StudentId = student1.Id,
+                GradeBg = DataConstants.GradeBgMaxValue,
+                IssueDate = examSubmissionDate2
+            });
+            student2.Certificates.Add(new Certificate
+            {
+                Id = Certificate3,
+                CourseId = course1.Id,
+                StudentId = student1.Id,
+                GradeBg = DataConstants.GradeBgCertificateMinValue,
+                IssueDate = examSubmissionDate2
+            });
+
+            var db = Tests.InitializeDatabase();
+            await db.Courses.AddRangeAsync(course1, course2);
+            await db.Users.AddRangeAsync(student1, student2, student3);
             await db.SaveChangesAsync();
 
             return db;

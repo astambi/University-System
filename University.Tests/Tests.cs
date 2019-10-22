@@ -6,21 +6,9 @@
     using AutoMapper;
     using Microsoft.EntityFrameworkCore;
     using University.Data;
-    using University.Data.Models;
-    using University.Services.Admin.Models.Courses;
-    using University.Services.Admin.Models.Curriculums;
-    using University.Services.Admin.Models.Users;
-    using University.Services.Blog.Models;
-    using University.Services.Models.Certificates;
     using University.Services.Models.Courses;
-    using University.Services.Models.Diplomas;
-    using University.Services.Models.Exams;
-    using University.Services.Models.Orders;
-    using University.Services.Models.Resources;
-    using University.Services.Models.ShoppingCart;
-    using University.Services.Models.Users;
     using University.Web;
-    using University.Web.Areas.Admin.Models.Courses;
+    using University.Web.Infrastructure.Mapping;
     using University.Web.Models;
     using Xunit;
 
@@ -35,104 +23,7 @@
 
         private static void InitializeMapper()
         {
-            var config = new MapperConfiguration(cfg =>
-            {
-                //cfg.AddProfile<AutoMapperProfile>();
-
-                cfg.CreateMap<AdminCourseServiceModel, CourseFormModel>();
-
-                cfg.CreateMap<Article, ArticleDetailsServiceModel>();
-                cfg.CreateMap<Article, ArticleEditServiceModel>();
-                cfg.CreateMap<Article, ArticleListingServiceModel>();
-
-                cfg.CreateMap<Certificate, CertificateDetailsListingServiceModel>();
-                cfg.CreateMap<Certificate, CertificateListingServiceModel>();
-                cfg.CreateMap<Certificate, CertificateServiceModel>();
-
-                cfg.CreateMap<Course, AdminCourseBasicServiceModel>();
-                cfg.CreateMap<Course, AdminCourseServiceModel>();
-                cfg.CreateMap<Course, CartItemDetailsServiceModel>();
-                cfg.CreateMap<Course, CourseDetailsServiceModel>();
-                cfg.CreateMap<Course, CourseServiceModel>();
-                cfg.CreateMap<Course, CourseWithDescriptionServiceModel>();
-                cfg.CreateMap<Course, CourseWithResourcesServiceModel>();
-
-                cfg.CreateMap<CourseProfileServiceModel, CourseProfileMaxGradeServiceModel>()
-                    .ForMember(dest => dest.GradeBgMax,
-                        opt => opt.MapFrom(src => src.CertificateGrade != 0 ? src.CertificateGrade : src.GradeBg)); ;
-
-                cfg.CreateMap<Curriculum, AdminCurriculumBasicServiceModel>();
-                cfg.CreateMap<Curriculum, AdminCurriculumServiceModel>()
-                    .ForMember(dest => dest.Courses,
-                        opt => opt.MapFrom(src => src
-                            .Courses
-                            .Where(cc => cc.CurriculumId == src.Id)
-                            .Select(c => c.Course)
-                            .OrderBy(c => c.Name)
-                            .ThenByDescending(c => c.StartDate)));
-
-                cfg.CreateMap<Diploma, AdminDiplomaGraduateServiceModel>();
-                cfg.CreateMap<Diploma, DiplomaServiceModel>();
-                cfg.CreateMap<Diploma, UserDiplomaListingServiceModel>();
-
-                cfg.CreateMap<ExamSubmission, ExamSubmissionDetailsServiceModel>();
-                cfg.CreateMap<ExamSubmission, ExamSubmissionServiceModel>();
-
-                cfg.CreateMap<Order, OrderListingServiceModel>();
-                cfg.CreateMap<OrderItem, OrderItemServiceModel>();
-
-                cfg.CreateMap<Resource, ResourceDetailsServiceModel>();
-                cfg.CreateMap<Resource, ResourceServiceModel>();
-
-                cfg.CreateMap<StudentCourse, CourseProfileServiceModel>()
-                    .ForMember(dest => dest.CertificateId,
-                        opt => opt.MapFrom(src => src
-                            .Course
-                            .Certificates
-                            .Where(c => c.StudentId == src.StudentId)
-                            .OrderByDescending(c => c.GradeBg)
-                            .Select(c => c.Id)
-                            .FirstOrDefault()))
-                    .ForMember(dest => dest.CertificateGrade,
-                        opt => opt.MapFrom(src => src
-                            .Course
-                            .Certificates
-                            .Where(c => c.StudentId == src.StudentId)
-                            .OrderByDescending(c => c.GradeBg)
-                            .Select(c => c.GradeBg)
-                            .FirstOrDefault())); // 0
-                cfg.CreateMap<StudentCourse, StudentInCourseServiceModel>()
-                    .ForMember(
-                        dest => dest.ExamId,
-                        opt => opt.MapFrom(src => src
-                            .Student
-                            .ExamSubmissions
-                            .Where(e => e.CourseId == src.CourseId)
-                            .OrderByDescending(e => e.SubmissionDate)
-                            .Select(e => e.Id)
-                            .FirstOrDefault())) // default 0
-                    .ForMember(
-                        dest => dest.HasExamSubmission,
-                        opt => opt.MapFrom(src => src
-                            .Student
-                            .ExamSubmissions
-                            .Any(e => e.CourseId == src.CourseId)))
-                    .ForMember(
-                        dest => dest.Certificates,
-                        opt => opt.MapFrom(src => src
-                            .Student
-                            .Certificates
-                            .Where(c => c.CourseId == src.CourseId)
-                            .OrderByDescending(c => c.GradeBg)));
-
-                cfg.CreateMap<User, AdminUserListingServiceModel>();
-                cfg.CreateMap<User, UserBasicServiceModel>();
-                cfg.CreateMap<User, UserEditServiceModel>();
-                cfg.CreateMap<User, UserProfileServiceModel>();
-                cfg.CreateMap<User, UserServiceModel>();
-                cfg.CreateMap<User, UserWithBirthdateServiceModel>();
-            });
-
+            var config = new MapperConfiguration(cfg => cfg.AddProfile<AppMappingProfile>());
             Mapper = config.CreateMapper();
         }
 
@@ -201,13 +92,14 @@
             Assert.Equal(expectedPagination.NextPage, pagination.NextPage);
         }
 
-        public static void AssertSearchViewModel(string expectedSearchTerm, SearchViewModel search)
+        public static void AssertSearchViewModel(string expectedSearchTerm, string controller, string action, SearchViewModel search)
         {
             Assert.NotNull(search);
             Assert.IsType<SearchViewModel>(search);
 
             Assert.Equal(expectedSearchTerm, search.SearchTerm);
-            Assert.Equal(FormActionEnum.Search, search.Action);
+            Assert.Equal(controller, search.Controller);
+            Assert.Equal(action, search.Action);
             Assert.Equal(WebConstants.SearchByCourseName, search.Placeholder);
         }
     }

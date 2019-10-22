@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
+    using AutoMapper.QueryableExtensions;
     using Microsoft.EntityFrameworkCore;
     using University.Common.Infrastructure.Extensions;
     using University.Data;
@@ -95,7 +96,7 @@
                 .SelectMany(u => u
                     .Courses
                     .Where(sc => courseIds.Contains(sc.CourseId)) // enrolled courses
-                    .Where(sc => !sc.Course.StartDate.HasEnded())) // courses have not started
+                    .Where(sc => DateTime.UtcNow < sc.Course.StartDate)) // courses have not started
                 .ToListAsync();
 
             foreach (var studentCourse in studentCourses)
@@ -174,8 +175,8 @@
                     .Where(c => !c.Students.Any(sc => sc.StudentId == userId)); // user not enrolled in course
             }
 
-            return await this.mapper
-                .ProjectTo<CartItemDetailsServiceModel>(coursesToEnroll)
+            return await coursesToEnroll
+                .ProjectTo<CartItemDetailsServiceModel>(this.mapper.ConfigurationProvider)
                 .ToListAsync();
         }
 
@@ -211,22 +212,20 @@
             var coursesBySearch = this.GetBySearch(search);
             var coursesByStatus = this.GetByStatus(coursesBySearch, isActive);
 
-            return await this.mapper
-                .ProjectTo<CourseServiceModel>(
-                    coursesByStatus
-                    .OrderByDescending(c => c.StartDate)
-                    .ThenByDescending(c => c.EndDate))
+            return await coursesByStatus
+                .OrderByDescending(c => c.StartDate)
+                .ThenByDescending(c => c.EndDate)
+                .ProjectTo<CourseServiceModel>(this.mapper.ConfigurationProvider)
                 .GetPageItems(page, pageSize)
                 .ToListAsync();
         }
 
         private async Task<TModel> GetByIdAsync<TModel>(int id)
             where TModel : class
-            => await this.mapper
-            .ProjectTo<TModel>(
-                this.db
-                .Courses
-                .Where(c => c.Id == id))
+            => await this.db
+            .Courses
+            .Where(c => c.Id == id)
+            .ProjectTo<TModel>(this.mapper.ConfigurationProvider)
             .FirstOrDefaultAsync();
 
         private IQueryable<Course> GetBySearch(string search)
@@ -238,8 +237,8 @@
             => isActive == null // all
             ? coursesAsQueryable
             : (bool)isActive
-                ? coursesAsQueryable.Where(c => !c.EndDate.HasEnded()) // active
-                : coursesAsQueryable.Where(c => c.EndDate.HasEnded()); // archive
+                ? coursesAsQueryable.Where(c => DateTime.UtcNow <= c.EndDate).AsQueryable() // active
+                : coursesAsQueryable.Where(c => c.EndDate < DateTime.UtcNow).AsQueryable(); // archive
 
         private IEnumerable<int> GetCoursesIdsForUserOrder(int orderId, string userId)
             => this.db

@@ -226,14 +226,14 @@
             var course2Passed = new Course { Id = 202 };
             var course3NotPassed = new Course { Id = 303 };
 
-            var certificateCourse1 = new Certificate { StudentId = student.Id, CourseId = course1Passed.Id };
-            var certificateCourse2 = new Certificate { StudentId = student.Id, CourseId = course2Passed.Id };
+            var certificateCourse1 = new Certificate { Id = "certificateCourse1", StudentId = student.Id, CourseId = course1Passed.Id };
+            var certificateCourse2 = new Certificate { Id = "certificateCourse2", StudentId = student.Id, CourseId = course2Passed.Id };
 
             // Eligible & Existing diploma
             var curriculum1 = new Curriculum { Id = CurriculumCoveredWithDiploma };
             curriculum1.Courses.Add(new CurriculumCourse { CourseId = course1Passed.Id });
 
-            var diplomaCurriculum1 = new Diploma { StudentId = student.Id, CurriculumId = curriculum1.Id };
+            var diplomaCurriculum1 = new Diploma { Id = "diplomaCurriculum1", StudentId = student.Id, CurriculumId = curriculum1.Id };
 
             // Eligible => all required courses passed & no diploma
             var curriculum2 = new Curriculum { Id = CurriculumCoveredWithoutDiploma };
@@ -247,11 +247,11 @@
             curriculum3.Courses.Add(new CurriculumCourse { CourseId = course3NotPassed.Id });
 
             var db = Tests.InitializeDatabase();
-            await db.Certificates.AddRangeAsync(certificateCourse1, certificateCourse2);
+            await db.Users.AddRangeAsync(student);
             await db.Courses.AddRangeAsync(course1Passed, course2Passed, course3NotPassed);
+            await db.Certificates.AddRangeAsync(certificateCourse1, certificateCourse2);
             await db.Curriculums.AddRangeAsync(curriculum1, curriculum2, curriculum3);
             await db.Diplomas.AddRangeAsync(diplomaCurriculum1);
-            await db.Users.AddRangeAsync(student);
             await db.SaveChangesAsync();
 
             return db;

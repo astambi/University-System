@@ -11,5 +11,7 @@
         public DateTime IssueDate { get; set; }
 
         public decimal GradeBg { get; set; }
+
+        public string StudentId { get; set; }
     }
 }

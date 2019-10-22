@@ -80,7 +80,7 @@
                 return this.RedirectToAction(nameof(HomeController.Index));
             }
 
-            var resources = await this.userService.GetResourcesAsync(user.Id);
+            var resources = this.userService.GetResources(user.Id);
 
             return this.View(resources);
         }

@@ -4,9 +4,7 @@
     using AutoMapper;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Identity.UI;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -25,11 +23,11 @@
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
+            //services.Configure<CookiePolicyOptions>(options =>
+            //{
+            //    options.CheckConsentNeeded = context => true;
+            //    options.MinimumSameSitePolicy = SameSiteMode.None;
+            //});
 
             services
                 .AddDbContext<UniversityDbContext>(options => options
@@ -37,7 +35,7 @@
 
             services
                 .AddIdentity<User, IdentityRole>() // App User
-                .AddDefaultUI(UIFramework.Bootstrap4)
+                                                   //.AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<UniversityDbContext>()
                 .AddDefaultTokenProviders(); // Identity
 
@@ -69,6 +67,7 @@
             services.AddSession();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            //services.AddAutoMapper(this.GetType());
 
             services.AddRoutingOptions(); // Lowercase URLs & query strings
 
@@ -77,7 +76,7 @@
             services.ConfigureApplicationCookieOptions(); // Identity
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             // Database migration & seed
             app.UseDatabaseMigration(this.Configuration[WebConstants.AdminPassword]);
@@ -86,9 +85,12 @@
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCookiePolicy();
+            //app.UseCookiePolicy();
+
+            app.UseRouting();
 
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseSession();
 

@@ -25,7 +25,7 @@
 
         Task<IEnumerable<ExamsByCourseServiceModel>> GetExamsAsync(string id);
 
-        Task<IEnumerable<ResourcesByCourseServiceModel>> GetResourcesAsync(string id);
+        IEnumerable<ResourcesByCourseServiceModel> GetResources(string id);
 
         Task<bool> UpdateProfileAsync(string id, string name, DateTime birthdate);
     }

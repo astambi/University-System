@@ -505,24 +505,24 @@
 
             // Not Candicate for Curriculum1 => Existing Diploma
             var student1 = new User { Id = "1111", UserName = "username1", Name = StudentNameC, Email = "email1@gmail.com" };
-            var certificate1 = new Certificate { StudentId = student1.Id, CourseId = course1.Id, };
-            var certificate2 = new Certificate { StudentId = student1.Id, CourseId = course2.Id, };
-            var diploma1 = new Diploma { CurriculumId = curriculum1.Id, StudentId = student1.Id };
+            var certificate1 = new Certificate { Id = "certificate1", StudentId = student1.Id, CourseId = course1.Id, };
+            var certificate2 = new Certificate { Id = "certificate2", StudentId = student1.Id, CourseId = course2.Id, };
+            var diploma1 = new Diploma { Id = "diploma1", CurriculumId = curriculum1.Id, StudentId = student1.Id };
 
             // Not Candidate for Curriculum1 => missing certificate 1
             var student2 = new User { Id = "2222", UserName = "username2", Name = StudentNameC, Email = "email2@gmail.com" };
-            var certificate3 = new Certificate { StudentId = student2.Id, CourseId = course2.Id, };
-            var certificate4 = new Certificate { StudentId = student2.Id, CourseId = course3.Id, };
-            var diploma2 = new Diploma { CurriculumId = curriculum2.Id, StudentId = student2.Id };
+            var certificate3 = new Certificate { Id = "certificate3", StudentId = student2.Id, CourseId = course2.Id, };
+            var certificate4 = new Certificate { Id = "certificate4", StudentId = student2.Id, CourseId = course3.Id, };
+            var diploma2 = new Diploma { Id = "diploma2", CurriculumId = curriculum2.Id, StudentId = student2.Id };
 
             // Student 3 & 4 are candidates for Curriculum1 => all certificates & no diplomas
             var student3 = new User { Id = "3333", UserName = "UsernameBBB", Name = StudentNameB, Email = "email3@gmail.com" };
-            var certificate5 = new Certificate { StudentId = student3.Id, CourseId = course1.Id, };
-            var certificate6 = new Certificate { StudentId = student3.Id, CourseId = course2.Id, };
+            var certificate5 = new Certificate { Id = "certificate5", StudentId = student3.Id, CourseId = course1.Id, };
+            var certificate6 = new Certificate { Id = "certificate6", StudentId = student3.Id, CourseId = course2.Id, };
 
             var student4 = new User { Id = "4444", UserName = "UsernameAAA", Name = StudentNameA, Email = "email4@gmail.com" };
-            var certificate7 = new Certificate { StudentId = student4.Id, CourseId = course1.Id, };
-            var certificate8 = new Certificate { StudentId = student4.Id, CourseId = course2.Id, };
+            var certificate7 = new Certificate { Id = "certificate7", StudentId = student4.Id, CourseId = course1.Id, };
+            var certificate8 = new Certificate { Id = "certificate8", StudentId = student4.Id, CourseId = course2.Id, };
 
             var db = Tests.InitializeDatabase();
             await db.Courses.AddRangeAsync(course1, course2, course3);

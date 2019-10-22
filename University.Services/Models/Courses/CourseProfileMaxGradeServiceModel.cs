@@ -21,12 +21,14 @@
 
         public string CertificateId { get; set; }
 
-        public void ConfigureMapping(Profile mapper)
-            => mapper.CreateMap<CourseProfileServiceModel, CourseProfileMaxGradeServiceModel>()
-            .ForMember(dest => dest.GradeBgMax,
+        public void ConfigureMapping(IProfileExpression mapper)
+            => mapper
+            .CreateMap<CourseProfileServiceModel, CourseProfileMaxGradeServiceModel>()
+            .ForMember(
+                dest => dest.GradeBgMax,
                 opt => opt.MapFrom(src =>
-                src.CertificateGrade != 0
-                ? src.CertificateGrade
-                : src.GradeBg));
-    }
+                    src.CertificateGrade != 0
+                    ? src.CertificateGrade
+                    : src.GradeBg));
+        }
 }

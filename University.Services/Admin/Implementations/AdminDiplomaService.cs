@@ -58,12 +58,12 @@
                 return false;
             }
 
-            var curriculumCourses = await this.db
+            var curriculumCourses = this.db
                 .Curriculums
                 .Where(c => c.Id == curriculumId)
                 .SelectMany(c => c.Courses)
                 .Select(c => c.CourseId)
-                .ToListAsync();
+                .AsEnumerable();
 
             var coursesWithCertificates = await this.db
                 .Certificates

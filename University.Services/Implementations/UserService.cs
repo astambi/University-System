@@ -59,18 +59,19 @@
             var certificatesQueryable = this.mapper
                 .ProjectTo<CertificateDetailsListingServiceModel>(
                    this.db.Certificates
-                   .Where(c => c.StudentId == id));
+                   .Where(c => c.StudentId == id))
+                .AsEnumerable();
 
-            var certificatesByCourse = await certificatesQueryable
+            var certificatesByCourse = certificatesQueryable
                 .GroupBy(c => c.CourseId, c => c)
                 .Select(g => new CertificatesByCourseServiceModel
                 {
                     CourseId = g.Key,
                     CourseName = g.Select(c => c.CourseName).First(),
-                    Certificates = g.OrderByDescending(c => c.IssueDate).ToList()
+                    Certificates = g.OrderByDescending(c => c.IssueDate)
                 })
                 .OrderBy(c => c.CourseName)
-                .ToListAsync();
+                .ToList();
 
             return certificatesByCourse;
         }
@@ -80,47 +81,49 @@
                 this.db.Diplomas
                 .Where(d => d.StudentId == id)
                 .OrderBy(d => d.Curriculum.Name))
-            .ToArrayAsync();
+            .ToListAsync();
 
         public async Task<IEnumerable<ExamsByCourseServiceModel>> GetExamsAsync(string id)
         {
             var examsQueryable = this.mapper
                 .ProjectTo<ExamSubmissionDetailsServiceModel>(
                     this.db.ExamSubmissions
-                    .Where(e => e.StudentId == id));
+                    .Where(e => e.StudentId == id))
+                .AsEnumerable();
 
-            var examsByCourse = await examsQueryable
+            var examsByCourse = examsQueryable
                 .GroupBy(r => r.CourseId, r => r)
                 .Select(g => new ExamsByCourseServiceModel
                 {
                     CourseId = g.Key,
                     CourseName = g.Select(r => r.CourseName).First(),
-                    Exams = g.OrderByDescending(e => e.SubmissionDate).ToList()
+                    Exams = g.OrderByDescending(e => e.SubmissionDate)
                 })
                 .OrderBy(g => g.CourseName)
-                .ToListAsync();
+                .ToList();
 
             return examsByCourse;
         }
 
-        public async Task<IEnumerable<ResourcesByCourseServiceModel>> GetResourcesAsync(string id)
+        public IEnumerable<ResourcesByCourseServiceModel> GetResources(string id)
         {
-            var resourcesQueryable = this.mapper
+            var resources = this.mapper
                 .ProjectTo<ResourceDetailsServiceModel>(
                     this.GetUserById(id)
                     .SelectMany(u => u.Courses)
-                    .SelectMany(sc => sc.Course.Resources));
+                    .SelectMany(sc => sc.Course.Resources))
+                .AsEnumerable();
 
-            var resourcesByCourse = await resourcesQueryable
+            var resourcesByCourse = resources
                 .GroupBy(r => r.CourseId, r => r)
                 .Select(g => new ResourcesByCourseServiceModel
                 {
                     CourseId = g.Key,
                     CourseName = g.Select(r => r.CourseName).First(),
-                    Resources = g.OrderBy(r => r.FileName).ToList()
+                    Resources = g.OrderBy(r => r.FileName)
                 })
                 .OrderBy(g => g.CourseName)
-                .ToListAsync();
+                .ToList();
 
             return resourcesByCourse;
         }

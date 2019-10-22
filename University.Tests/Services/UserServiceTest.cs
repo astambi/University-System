@@ -417,14 +417,14 @@
         }
 
         [Fact]
-        public async Task GetResourcesAsync_ShouldReturnEmptyCollection_GivenInvalidUser()
+        public async Task GetResources_ShouldReturnEmptyCollection_GivenInvalidUser()
         {
             // Arrange
             var db = Tests.InitializeDatabase();
             var userService = this.InitializeUserService(db);
 
             // Act
-            var result = await userService.GetResourcesAsync(UserIdInvalid);
+            var result = userService.GetResources(UserIdInvalid);
 
             // Assert
             Assert.Empty(result);
@@ -432,14 +432,14 @@
         }
 
         [Fact]
-        public async Task GetResourcesAsync_ShouldReturnCorrectDataAndOrder_GivenValidUser()
+        public async Task GetResources_ShouldReturnCorrectDataAndOrder_GivenValidUser()
         {
             // Arrange
             var db = await this.PrepareUserResources();
             var userService = this.InitializeUserService(db);
 
             // Act
-            var result = await userService.GetResourcesAsync(UserIdValid);
+            var result = userService.GetResources(UserIdValid);
 
             // Assert
             Assert.IsAssignableFrom<IEnumerable<ResourcesByCourseServiceModel>>(result);

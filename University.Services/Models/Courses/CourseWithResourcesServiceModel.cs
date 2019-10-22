@@ -11,7 +11,7 @@
     {
         public IEnumerable<ResourceServiceModel> Resources { get; set; }
 
-        public void ConfigureMapping(Profile mapper)
+        public void ConfigureMapping(IProfileExpression mapper)
             => mapper
             .CreateMap<Course, CourseWithResourcesServiceModel>()
             .ForMember(dest => dest.Resources,

@@ -17,7 +17,7 @@
 
         public IEnumerable<AdminCourseBasicServiceModel> Courses { get; set; }
 
-        public void ConfigureMapping(Profile mapper)
+        public void ConfigureMapping(IProfileExpression mapper)
             => mapper.CreateMap<Curriculum, AdminCurriculumServiceModel>()
             .ForMember(
                 dest => dest.Courses,

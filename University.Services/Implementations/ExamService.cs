@@ -87,7 +87,7 @@
             var courseHasEnded = await this.db
                 .Courses
                 .Where(c => c.Id == courseId)
-                .Where(c => c.EndDate.HasEnded())
+                .Where(c => c.EndDate < DateTime.UtcNow)
                 .AnyAsync();
 
             var studentCourse = await this.db.FindAsync<StudentCourse>(studentId, courseId);

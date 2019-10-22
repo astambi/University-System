@@ -7,6 +7,7 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
     using University.Data;
     using University.Data.Models;
 
@@ -35,7 +36,7 @@
             return app;
         }
 
-        public static IApplicationBuilder UseEnvironmentOptions(this IApplicationBuilder app, IHostingEnvironment env)
+        public static IApplicationBuilder UseEnvironmentOptions(this IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -53,17 +54,37 @@
 
         public static IApplicationBuilder UseMvcRoutes(this IApplicationBuilder app)
         {
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                  name: "areas",
-                  template: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-                );
+            //app.UseMvc(routes =>
+            //{
+            //    routes.MapRoute(
+            //      name: "areas",
+            //      template: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+            //    );
 
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            //    routes.MapRoute(
+            //        name: "default",
+            //        template: "{controller=Home}/{action=Index}/{id?}");
+            //});
+
+            app
+              .UseEndpoints(endpoints =>
+              {
+                  endpoints.MapAreaControllerRoute(
+                      name: "admin",
+                      areaName: "admin",
+                      pattern: "Admin/{controller=Home}/{action=Index}/{id?}");
+
+                  endpoints.MapAreaControllerRoute(
+                      name: "blog",
+                      areaName: "blog",
+                      pattern: "Blog/{controller=Home}/{action=Index}/{id?}");
+
+                  endpoints.MapControllerRoute(
+                      name: "default",
+                      pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                  endpoints.MapRazorPages();
+              });
 
             return app;
         }

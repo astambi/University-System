@@ -25,7 +25,7 @@
 
         public decimal? CertificateGrade { get; set; }
 
-        public void ConfigureMapping(Profile mapper)
+        public void ConfigureMapping(IProfileExpression mapper)
             => mapper
             .CreateMap<StudentCourse, CourseProfileServiceModel>()
             .ForMember(

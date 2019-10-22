@@ -87,20 +87,26 @@
 
         public static IServiceCollection AddMvcOptions(this IServiceCollection services)
         {
+            //services
+            //    .AddMvc(options =>
+            //    {
+            //        // Global filters
+            //        options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
+            //    })
+            //    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            //    // Identity
+            //    .AddRazorPagesOptions(options =>
+            //    {
+            //        options.AllowAreas = true;
+            //        options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
+            //        options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
+            //    });
+
             services
-                .AddMvc(options =>
-                {
-                    // Global filters
-                    options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                // Identity
-                .AddRazorPagesOptions(options =>
-                {
-                    options.AllowAreas = true;
-                    options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
-                    options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
-                });
+                .AddControllersWithViews(options => options
+                    .Filters.Add<AutoValidateAntiforgeryTokenAttribute>());
+
+            services.AddRazorPages();
 
             return services;
         }
