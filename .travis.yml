@@ -1,12 +1,12 @@
 language: csharp
 solution: University.sln
 mono: none
-dotnet: 2.2
+dotnet: 3.0
 env:
   global:
     - DOTNET_CLI_TELEMETRY_OPTOUT: 1
     - DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-    - NET_CORE_VERSION: netcoreapp2.2
+    - NET_CORE_VERSION: netcoreapp3.0
 matrix:
   include:
     - os: linux
