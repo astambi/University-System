@@ -51,7 +51,7 @@
             .ProjectTo<CourseProfileMaxGradeServiceModel>(this.mapper.ConfigurationProvider)
             .ToListAsync();
 
-        public async Task<IEnumerable<CertificatesByCourseServiceModel>> GetCertificatesAsync(string id)
+        public IEnumerable<CertificatesByCourseServiceModel> GetCertificates(string id)
         {
             var certificatesQueryable = this.db
                 .Certificates
@@ -81,7 +81,7 @@
             .ProjectTo<UserDiplomaListingServiceModel>(this.mapper.ConfigurationProvider)
             .ToListAsync();
 
-        public async Task<IEnumerable<ExamsByCourseServiceModel>> GetExamsAsync(string id)
+        public IEnumerable<ExamsByCourseServiceModel> GetExams(string id)
         {
             var examsQueryable = this.db
                 .ExamSubmissions

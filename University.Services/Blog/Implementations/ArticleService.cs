@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using AutoMapper;
     using AutoMapper.QueryableExtensions;
@@ -128,20 +127,17 @@
 
         private IQueryable<Article> GetQuerableBySearchKeyword(string search)
         {
-            var articlesAsQuerable = this.db.Articles.AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(search))
+            var articles = this.db.Articles.AsQueryable();
+            if (string.IsNullOrWhiteSpace(search))
             {
-                var keywordPattern = $@"\b{search.Trim()}\b"; // whole words only
-                var options = RegexOptions.Multiline | RegexOptions.IgnoreCase;
-
-                articlesAsQuerable = articlesAsQuerable
-                    .Where(a => Regex.IsMatch(a.Title, keywordPattern, options)
-                             || Regex.IsMatch(a.Content, keywordPattern, options))
-                    .AsQueryable();
+                return articles;
             }
 
-            return articlesAsQuerable;
+            var searchLower = search.ToLower();
+
+            return articles
+                .Where(a => a.Title.ToLower().Contains(searchLower)
+                    || a.Content.ToLower().Contains(searchLower));
         }
     }
 }

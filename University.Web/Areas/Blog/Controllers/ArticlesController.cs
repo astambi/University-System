@@ -35,23 +35,31 @@
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> Index(string search = null, int currentPage = 1)
+        public async Task<IActionResult> Index(string searchTerm, int currentPage = 1)
         {
             var pagination = new PaginationViewModel
             {
-                SearchTerm = search,
+                SearchTerm = searchTerm,
                 Action = nameof(Index),
                 RequestedPage = currentPage,
-                TotalItems = await this.articleService.TotalAsync(search)
+                TotalItems = await this.articleService.TotalAsync(searchTerm)
             };
 
-            var articles = await this.articleService.AllAsync(search, pagination.CurrentPage, WebConstants.PageSize);
+            var search = new SearchViewModel
+            {
+                Controller = WebConstants.ArticlesController,
+                Action = nameof(Index),
+                SearchTerm = searchTerm,
+                Placeholder = WebConstants.SearchByArticleTitleOrContent
+            };
+
+            var articles = await this.articleService.AllAsync(searchTerm, pagination.CurrentPage, WebConstants.PageSize);
 
             var model = new ArticlePageListingViewModel
             {
                 Articles = articles,
                 Pagination = pagination,
-                Search = new SearchViewModel { SearchTerm = search, Placeholder = WebConstants.SearchByArticleTitleOrContent }
+                Search = search
             };
 
             return this.View(model);

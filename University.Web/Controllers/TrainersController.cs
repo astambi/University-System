@@ -37,7 +37,7 @@
         }
 
         [Authorize(Roles = WebConstants.TrainerRole)]
-        public async Task<IActionResult> Courses(string search = null, int currentPage = 1)
+        public async Task<IActionResult> Courses(string searchTerm, int currentPage = 1)
         {
             var userId = this.userManager.GetUserId(this.User);
             if (userId == null)
@@ -46,12 +46,12 @@
                 return this.RedirectToAction(nameof(CoursesController.Index), WebConstants.CoursesController);
             }
 
-            var model = await this.GetTrainerCoursesWithSearchAndPagination(userId, search, currentPage, nameof(Courses));
+            var model = await this.GetTrainerCoursesWithSearchAndPagination(userId, searchTerm, currentPage, nameof(Courses));
 
             return this.View(model);
         }
 
-        public async Task<IActionResult> Details(string id, string search = null, int currentPage = 1) // id = trainer username
+        public async Task<IActionResult> Details(string id, string searchTerm, int currentPage = 1) // id = trainer username
         {
             var trainerUsername = id;
 
@@ -62,7 +62,7 @@
                 return this.RedirectToAction(nameof(CoursesController.Index), WebConstants.CoursesController);
             }
 
-            var courses = await this.GetTrainerCoursesWithSearchAndPagination(trainerId, search, currentPage, nameof(Details));
+            var courses = await this.GetTrainerCoursesWithSearchAndPagination(trainerId, searchTerm, currentPage, nameof(Details));
             var profile = await this.trainerService.GetProfileAsync(trainerId);
 
             var model = new TrainerDetailsViewModel { Courses = courses, Trainer = profile };
@@ -249,17 +249,25 @@
         }
 
         private async Task<CoursePageListingViewModel> GetTrainerCoursesWithSearchAndPagination(
-            string trainerId, string search, int currentPage, string action = nameof(Courses))
+            string trainerId, string searchTerm, int currentPage, string action = nameof(Courses))
         {
             var pagination = new PaginationViewModel
             {
-                SearchTerm = search,
+                SearchTerm = searchTerm,
                 Action = action,
                 RequestedPage = currentPage,
-                TotalItems = await this.trainerService.TotalCoursesAsync(trainerId, search)
+                TotalItems = await this.trainerService.TotalCoursesAsync(trainerId, searchTerm)
             };
 
-            var courses = await this.trainerService.CoursesAsync(trainerId, search, pagination.CurrentPage, WebConstants.PageSize);
+            var search = new SearchViewModel
+            {
+                Controller = WebConstants.TrainersController,
+                Action = action,
+                SearchTerm = searchTerm,
+                Placeholder = WebConstants.SearchByCourseName
+            };
+
+            var courses = await this.trainerService.CoursesAsync(trainerId, searchTerm, pagination.CurrentPage, WebConstants.PageSize);
             var coursesToEvaluate = await this.trainerService.CoursesToEvaluateAsync(trainerId);
 
             var model = new TrainerCoursePageListingViewModel
@@ -267,7 +275,7 @@
                 CoursesToEvaluate = coursesToEvaluate,
                 Courses = courses,
                 Pagination = pagination,
-                Search = new SearchViewModel { SearchTerm = search, Placeholder = WebConstants.SearchByCourseName }
+                Search = search
             };
 
             return model;

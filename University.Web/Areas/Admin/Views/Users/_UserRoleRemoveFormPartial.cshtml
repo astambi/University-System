@@ -24,7 +24,7 @@
                     </p>
                 </div>
                 <div>
-                    <form asp-action="@nameof(UsersController.RoleAddRemoveUserAsync)" method="post">
+                    <form asp-action="@nameof(UsersController.UpdateUserRole)" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <input asp-for="Action" value="@FormActionEnum.Remove" hidden />
                         <input asp-for="UserId" hidden />

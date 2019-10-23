@@ -173,6 +173,6 @@
         }
 
         private IActionResult RedirectToCourses()
-            => this.RedirectToAction(nameof(CoursesController.Index));
+            => this.RedirectToAction(nameof(CoursesController.Index), WebConstants.CoursesController);
     }
 }

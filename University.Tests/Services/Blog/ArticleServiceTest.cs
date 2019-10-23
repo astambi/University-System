@@ -32,6 +32,7 @@
         private const string SanitizedContent = "Sanitized HTML content";
 
         private const string Search = "COde";
+        private const string SearchInvalid = "XXX";
 
         private const int Precion = 50;
 
@@ -299,7 +300,7 @@
         [Theory]
         [InlineData("  ", 10)] // all
         [InlineData(null, 10)] // all
-        [InlineData(Search, 6)] // whole words only
+        [InlineData(Search, 6)]
         public async Task TotalAsync_ShouldReturnCorrectData_Given(string search, int expectedResult)
         {
             // Arrange
@@ -375,10 +376,16 @@
             var article5 = new Article { Id = 5, AuthorId = AuthorValidId, Content = $"{Search.ToUpper()} AAAA", Title = "", PublishDate = this.PublishDate.AddDays(-5) };
             var article6 = new Article { Id = 6, AuthorId = AuthorValidId, Content = $"AAA {Search.ToLower()} bbb", Title = "", PublishDate = this.PublishDate.AddDays(-4) };
 
-            var article7 = new Article { Id = 7, AuthorId = AuthorValidId, Title = $"AAA bbb{Search} ccc", Content = "", PublishDate = this.PublishDate.AddDays(-3) };
-            var article8 = new Article { Id = 8, AuthorId = AuthorValidId, Title = $"AAA {Search}bbb ccc", Content = "", PublishDate = this.PublishDate.AddDays(-2) };
-            var article9 = new Article { Id = 9, AuthorId = AuthorValidId, Content = $"AAA bbb{Search} ccc", Title = "", PublishDate = this.PublishDate.AddDays(-1) };
-            var article10 = new Article { Id = 10, AuthorId = AuthorValidId, Content = $"AAA {Search}bbb ccc", Title = "", PublishDate = this.PublishDate.AddDays(0) };
+            var article7 = new Article { Id = 7, AuthorId = AuthorValidId, Title = $"AAA bbb{SearchInvalid} ccc", Content = "", PublishDate = this.PublishDate.AddDays(-3) };
+            var article8 = new Article { Id = 8, AuthorId = AuthorValidId, Title = $"AAA {SearchInvalid}bbb ccc", Content = "", PublishDate = this.PublishDate.AddDays(-2) };
+            var article9 = new Article { Id = 9, AuthorId = AuthorValidId, Content = $"AAA bbb{SearchInvalid} ccc", Title = "", PublishDate = this.PublishDate.AddDays(-1) };
+            var article10 = new Article { Id = 10, AuthorId = AuthorValidId, Content = $"AAA {SearchInvalid}bbb ccc", Title = "", PublishDate = this.PublishDate.AddDays(0) };
+
+            /// Searching for whole words only => removed as EF 3.0 does not evaluate complex queries on the client
+            //var article7 = new Article { Id = 7, AuthorId = AuthorValidId, Title = $"AAA bbb{Search} ccc", Content = "", PublishDate = this.PublishDate.AddDays(-3) };
+            //var article8 = new Article { Id = 8, AuthorId = AuthorValidId, Title = $"AAA {Search}bbb ccc", Content = "", PublishDate = this.PublishDate.AddDays(-2) };
+            //var article9 = new Article { Id = 9, AuthorId = AuthorValidId, Content = $"AAA bbb{Search} ccc", Title = "", PublishDate = this.PublishDate.AddDays(-1) };
+            //var article10 = new Article { Id = 10, AuthorId = AuthorValidId, Content = $"AAA {Search}bbb ccc", Title = "", PublishDate = this.PublishDate.AddDays(0) };
 
             var author = new User { Id = AuthorValidId, Name = AuthorName };
 

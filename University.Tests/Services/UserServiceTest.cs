@@ -284,14 +284,14 @@
         }
 
         [Fact]
-        public async Task GetCertificatesAsync_ShouldReturnEmptyCollection_GivenInvalidUser()
+        public void GetCertificates_ShouldReturnEmptyCollection_GivenInvalidUser()
         {
             // Arrange
             var db = Tests.InitializeDatabase();
             var userService = this.InitializeUserService(db);
 
             // Act
-            var result = await userService.GetCertificatesAsync(UserIdInvalid);
+            var result = userService.GetCertificates(UserIdInvalid);
 
             // Assert
             Assert.Empty(result);
@@ -299,14 +299,14 @@
         }
 
         [Fact]
-        public async Task GetCertificatesAsync_ShouldReturnCorrectDataAndOrder_GivenValidUser()
+        public async Task GetCertificates_ShouldReturnCorrectDataAndOrder_GivenValidUser()
         {
             // Arrange
             var db = await this.PrepareUserCertificates();
             var userService = this.InitializeUserService(db);
 
             // Act
-            var result = await userService.GetCertificatesAsync(UserIdValid);
+            var result = userService.GetCertificates(UserIdValid);
 
             // Assert
             Assert.IsAssignableFrom<IEnumerable<CertificatesByCourseServiceModel>>(result);
@@ -370,14 +370,14 @@
         }
 
         [Fact]
-        public async Task GetExamsAsync_ShouldReturnEmptyCollection_GivenInvalidUser()
+        public void GetExams_ShouldReturnEmptyCollection_GivenInvalidUser()
         {
             // Arrange
             var db = Tests.InitializeDatabase();
             var userService = this.InitializeUserService(db);
 
             // Act
-            var result = await userService.GetExamsAsync(UserIdInvalid);
+            var result = userService.GetExams(UserIdInvalid);
 
             // Assert
             Assert.Empty(result);
@@ -385,14 +385,14 @@
         }
 
         [Fact]
-        public async Task GetExamsAsync_ShouldReturnCorrectDataAndOrder_GivenValidUser()
+        public async Task GetExams_ShouldReturnCorrectDataAndOrder_GivenValidUser()
         {
             // Arrange
             var db = await this.PrepareUserExams();
             var userService = this.InitializeUserService(db);
 
             // Act
-            var result = await userService.GetExamsAsync(UserIdValid);
+            var result = userService.GetExams(UserIdValid);
 
             // Assert
             Assert.IsAssignableFrom<IEnumerable<ExamsByCourseServiceModel>>(result);
@@ -417,7 +417,7 @@
         }
 
         [Fact]
-        public async Task GetResources_ShouldReturnEmptyCollection_GivenInvalidUser()
+        public void GetResources_ShouldReturnEmptyCollection_GivenInvalidUser()
         {
             // Arrange
             var db = Tests.InitializeDatabase();

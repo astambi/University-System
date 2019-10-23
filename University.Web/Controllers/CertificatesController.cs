@@ -33,7 +33,7 @@
             if (certificate == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.CertificateNotFoundMsg);
-                return this.RedirectToAction(nameof(HomeController.Index));
+                return this.RedirectToHomeIndex();
             }
 
             certificate.DownloadUrl = this.HttpContext.Request.GetRequestUrl();
@@ -52,8 +52,8 @@
             var diploma = await this.diplomaService.GetByIdAsync(id);
             if (diploma == null)
             {
-                this.TempData.AddErrorMessage(WebConstants.CertificateNotFoundMsg);
-                return this.RedirectToAction(nameof(HomeController.Index));
+                this.TempData.AddErrorMessage(WebConstants.DiplomaNotFoundMsg);
+                return this.RedirectToHomeIndex();
             }
 
             diploma.DownloadUrl = this.HttpContext.Request.GetRequestUrl();
@@ -88,10 +88,13 @@
             if (pdf == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.CertificateNotFoundMsg);
-                return this.RedirectToAction(nameof(HomeController.Index));
+                return this.RedirectToHomeIndex();
             }
 
             return this.File(pdf, WebConstants.ApplicationPdf, fileName);
         }
+
+        private IActionResult RedirectToHomeIndex()
+            => this.RedirectToAction(nameof(HomeController.Index), WebConstants.HomeController);
     }
 }

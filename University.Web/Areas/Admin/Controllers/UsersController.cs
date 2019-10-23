@@ -3,6 +3,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using AutoMapper;
+    using AutoMapper.QueryableExtensions;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
@@ -19,15 +21,18 @@
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly UserManager<User> userManager;
         private readonly IAdminUserService adminUserService;
+        private readonly IMapper mapper;
 
         public UsersController(
             RoleManager<IdentityRole> roleManager,
             UserManager<User> userManager,
-            IAdminUserService adminUserService)
+            IAdminUserService adminUserService,
+            IMapper mapper)
         {
             this.roleManager = roleManager;
             this.userManager = userManager;
             this.adminUserService = adminUserService;
+            this.mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
@@ -101,7 +106,7 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> RoleAddRemoveUserAsync(AdminUserRoleFormModel model)
+        public async Task<IActionResult> UpdateUserRole(AdminUserRoleFormModel model)
         {
             var user = await this.userManager.FindByIdAsync(model.UserId);
             var roleExists = await this.roleManager.RoleExistsAsync(model.Role);
@@ -155,13 +160,8 @@
                 {
                     Role = role,
                     UsersInRole = (await this.userManager.GetUsersInRoleAsync(role))
-                        .Select(u => new AdminUserListingServiceModel
-                        {
-                            Id = u.Id,
-                            Name = u.Name,
-                            Email = u.Email,
-                            Username = u.UserName
-                        })
+                        .AsQueryable()
+                        .ProjectTo<AdminUserListingServiceModel>(this.mapper.ConfigurationProvider)
                         .OrderBy(u => u.Name)
                         .ToList()
                 });

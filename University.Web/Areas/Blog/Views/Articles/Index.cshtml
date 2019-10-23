@@ -7,6 +7,7 @@
 <section class="d-flex flex-wrap justify-content-between align-items-center">
     <h1>Articles &amp; Tutorials</h1>
     <partial name="_SearchPartial" for="Search" />
+
     @if (User.IsInRole(WebConstants.BloggerRole))
     {
         <a asp-action="Create" class="btn btn-outline-success">

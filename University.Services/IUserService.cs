@@ -19,11 +19,11 @@
 
         Task<IEnumerable<CourseProfileMaxGradeServiceModel>> GetCoursesAsync(string id);
 
-        Task<IEnumerable<CertificatesByCourseServiceModel>> GetCertificatesAsync(string id);
+        IEnumerable<CertificatesByCourseServiceModel> GetCertificates(string id);
 
         Task<IEnumerable<UserDiplomaListingServiceModel>> GetDiplomasAsync(string id);
 
-        Task<IEnumerable<ExamsByCourseServiceModel>> GetExamsAsync(string id);
+        IEnumerable<ExamsByCourseServiceModel> GetExams(string id);
 
         IEnumerable<ResourcesByCourseServiceModel> GetResources(string id);
 

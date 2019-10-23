@@ -31,7 +31,7 @@
             if (user == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RedirectToAction(nameof(HomeController.Index));
+                return this.RedirectToHomeIndex();
             }
 
             var courses = await this.userService.GetCoursesAsync(user.Id);
@@ -45,12 +45,12 @@
             if (user == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RedirectToAction(nameof(HomeController.Index));
+                return this.RedirectToHomeIndex();
             }
 
             var model = new UserCertificatesDiplomasViewModel
             {
-                Certificates = await this.userService.GetCertificatesAsync(user.Id),
+                Certificates = this.userService.GetCertificates(user.Id),
                 Diplomas = await this.userService.GetDiplomasAsync(user.Id)
             };
 
@@ -63,10 +63,10 @@
             if (user == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RedirectToAction(nameof(HomeController.Index));
+                return this.RedirectToHomeIndex();
             }
 
-            var exams = await this.userService.GetExamsAsync(user.Id);
+            var exams = this.userService.GetExams(user.Id);
 
             return this.View(exams);
         }
@@ -77,7 +77,7 @@
             if (user == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RedirectToAction(nameof(HomeController.Index));
+                return this.RedirectToHomeIndex();
             }
 
             var resources = this.userService.GetResources(user.Id);
@@ -91,7 +91,7 @@
             if (user == null)
             {
                 this.TempData.AddErrorMessage(WebConstants.InvalidUserMsg);
-                return this.RedirectToAction(nameof(HomeController.Index));
+                return this.RedirectToHomeIndex();
             }
 
             var userProfile = await this.userService.GetProfileAsync(user.Id);
@@ -106,5 +106,8 @@
             => (await this.userManager.GetRolesAsync(user))
             .Select(r => r.ToFriendlyName())
             .OrderBy(r => r);
+
+        private IActionResult RedirectToHomeIndex()
+            => this.RedirectToAction(nameof(HomeController.Index), WebConstants.HomeController);
     }
 }
