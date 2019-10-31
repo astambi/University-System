@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.Text;
     using System.Text.Encodings.Web;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;
@@ -10,6 +11,7 @@
     using Microsoft.AspNetCore.Identity.UI.Services;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.RazorPages;
+    using Microsoft.AspNetCore.WebUtilities;
     using Microsoft.Extensions.Logging;
     using University.Data;
     using University.Data.Models;
@@ -111,13 +113,17 @@
                     this._logger.LogInformation("User created a new account with password.");
 
                     var code = await this._userManager.GenerateEmailConfirmationTokenAsync(user);
+                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code)); // NB!
+
                     var callbackUrl = this.Url.Page(
                         "/Account/ConfirmEmail",
                         pageHandler: null,
                         values: new { userId = user.Id, code = code },
                         protocol: this.Request.Scheme);
 
-                    await this._emailSender.SendEmailAsync(this.Input.Email, "Confirm your email",
+                    await this._emailSender.SendEmailAsync(
+                        this.Input.Email,
+                        "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                     await this._signInManager.SignInAsync(user, isPersistent: false);

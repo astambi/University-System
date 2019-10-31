@@ -3,12 +3,14 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.Text;
     using System.Text.Encodings.Web;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.UI.Services;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.RazorPages;
+    using Microsoft.AspNetCore.WebUtilities;
     using University.Data;
     using University.Data.Models;
     using University.Services;
@@ -187,18 +189,23 @@
 
             var userId = await this._userManager.GetUserIdAsync(user);
             var email = await this._userManager.GetEmailAsync(user);
+
             var code = await this._userManager.GenerateEmailConfirmationTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code)); // NB!
+
             var callbackUrl = this.Url.Page(
                 "/Account/ConfirmEmail",
                 pageHandler: null,
                 values: new { userId = userId, code = code },
                 protocol: this.Request.Scheme);
+
             await this._emailSender.SendEmailAsync(
                 email,
                 "Confirm your email",
                 $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
             this.StatusMessage = "Verification email sent. Please check your email.";
+
             return this.RedirectToPage();
         }
     }

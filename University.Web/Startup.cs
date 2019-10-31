@@ -10,6 +10,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using University.Data;
     using University.Data.Models;
+    using University.Services.Models.EmailSender;
     using University.Web.Infrastructure.Extensions;
 
     public class Startup
@@ -34,12 +35,14 @@
                     .UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection")));
 
             services
-                .AddIdentity<User, IdentityRole>() // App User
-                                                   //.AddDefaultUI(UIFramework.Bootstrap4)
+                .AddIdentity<User, IdentityRole>(options => options
+                    .SignIn.RequireConfirmedAccount = false) // App User
+                                                             //.AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<UniversityDbContext>()
                 .AddDefaultTokenProviders(); // Identity
 
             services.ConfigureIdentityOptions(); // Password & User settings
+            services.Configure<DataProtectionTokenProviderOptions>(o => o.TokenLifespan = TimeSpan.FromHours(3));
 
             // External Authentication providers
             services
@@ -61,6 +64,9 @@
                 this.Configuration[WebConstants.AuthCloudinaryCloudName],
                 this.Configuration[WebConstants.AuthCloudinaryApiKey],
                 this.Configuration[WebConstants.AuthCloudinaryApiSecret]);
+
+            // Email Sender
+            services.Configure<EmailSenderOptions>(this.Configuration.GetSection("Authentication:SendGrid"));
 
             services.AddMemoryCache();
 

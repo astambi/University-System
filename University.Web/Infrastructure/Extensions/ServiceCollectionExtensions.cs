@@ -79,7 +79,9 @@
             services.AddRouting(options =>
             {
                 options.LowercaseUrls = true;
-                options.LowercaseQueryStrings = true;
+                /// NB! Lowercase query strings modify tokens sent via email 
+                /// and prevent password confirmation / reset
+                options.LowercaseQueryStrings = false;
             });
 
             return services;
