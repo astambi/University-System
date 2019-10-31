@@ -520,7 +520,7 @@
 
         private async Task<UniversityDbContext> PrepareTrainerCoursesToEvaluate()
         {
-            var today = DateTime.Now;
+            var today = new DateTime(2019, 10, 31, 23, 00, 00);
             var endDate = today.ToEndDateUtc();
 
             var trainer1 = new User { Id = TrainerValid };
@@ -535,7 +535,7 @@
                 new Course{Id = 3, Name = "RRR", TrainerId = TrainerValid, EndDate = endDate.AddDays(-1) },  // to evaluate 
                 new Course{Id = 4, Name = "DDD", TrainerId = TrainerValid, EndDate = endDate.AddDays(-10) },  // to evaluate
                 new Course{Id = 5, Name = "CCC", TrainerId = TrainerValid, EndDate = endDate.AddDays(-28) }, // to evaluate
-                new Course{Id = 6, Name = "BBB", TrainerId = TrainerValid, EndDate = endDate.AddMonths(-1) }, // to evaluate
+                new Course{Id = 6, Name = "BBB", TrainerId = TrainerValid, EndDate = endDate.AddMonths(-1).AddDays(1) }, // to evaluate
 
                 new Course{Id = 7, Name = "AAA", TrainerId = TrainerValid, EndDate = endDate.AddMonths(-1).AddDays(-1) }, // overdue
 
