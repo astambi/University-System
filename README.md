@@ -151,14 +151,24 @@ The public part of the University is visible by any user with or without authent
 
 ## Back-end: ASP.NET Core
 
+- Migrated from ASP.NET Core 2.2 to 3.0
+- Refactored complex LINQ queries that Entity Framework Core 3.0 no longer evaluates on the client (see Breaking changes included in EF Core 3.0 https://docs.microsoft.com/en-us/ef/core/what-is-new/ef-core-3.0/breaking-changes)
+
 ## Database: MS SQL Server
 
 ## Cloud Storage: Cloudinary https://github.com/cloudinary/CloudinaryDotNet
 
+## Email Sender: SendGrid https://github.com/sendgrid/sendgrid-csharp
+
 ## Dependencies:
 
+- AutoMapper https://github.com/AutoMapper/AutoMapper
 - SelectPdf Html To Pdf Converter for .NET - Free Community Edition https://github.com/selectpdf/selectpdf-free-html-to-pdf-converter
 - HtmlSanitizer https://github.com/mganss/HtmlSanitizer
+
+## Authentication
+
+- NB! Credentials for Google, Facebook, SendGrid, Cloudinary should be added to secrets
 
 ## Unit tests:
 

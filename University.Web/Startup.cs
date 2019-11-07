@@ -49,23 +49,28 @@
                 .AddAuthentication()
                 .AddFacebook(options =>
                 {
+                    /// Facebook AppId & AppSecret intentionally removed from appsettings => add credentials to secrets.json
                     options.AppId = this.Configuration[WebConstants.AuthFacebookAppId];
                     options.AppSecret = this.Configuration[WebConstants.AuthFacebookAppSecret];
                 })
                 .AddGoogle(options =>
                 {
+                    /// Google ClientId & ClientSecret intentionally removed from appsettings => add credentials to secrets.json
                     options.ClientId = this.Configuration[WebConstants.AuthGoogleClientId];
                     options.ClientSecret = this.Configuration[WebConstants.AuthGoogleClientSecret];
                 });
 
             // App Services
             services.AddDomainServices();
+
+            /// Cloudinary ApiKey & ApiSecret intentionally removed from appsettings => add credentials to secrets.json
             services.AddCloudinaryService(
                 this.Configuration[WebConstants.AuthCloudinaryCloudName],
                 this.Configuration[WebConstants.AuthCloudinaryApiKey],
                 this.Configuration[WebConstants.AuthCloudinaryApiSecret]);
 
             // Email Sender
+            /// SendGrid ApiKey intentionally removed from appsettings => add credentials to secrets.json
             services.Configure<EmailSenderOptions>(this.Configuration.GetSection("Authentication:SendGrid"));
 
             services.AddMemoryCache();
