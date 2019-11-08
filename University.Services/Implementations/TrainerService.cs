@@ -58,7 +58,7 @@
 
         public async Task<IEnumerable<CourseServiceModel>> CoursesToEvaluateAsync(string trainerId)
             => await this.GetTrainerCourses(trainerId)
-            .Where(c => c.EndDate < DateTime.UtcNow && DateTime.UtcNow <= c.EndDate.AddMonths(1))
+            .Where(c => c.EndDate < DateTime.UtcNow && DateTime.UtcNow <= c.EndDate.AddDays(ServicesConstants.EvaluationPeriodInDays))
             .OrderBy(c => c.Name)
             .ProjectTo<CourseServiceModel>(this.mapper.ConfigurationProvider)
             .ToListAsync();

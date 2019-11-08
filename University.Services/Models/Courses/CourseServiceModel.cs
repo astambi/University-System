@@ -43,6 +43,6 @@
 
         public bool CanBeEvaluated // should be evaluated not later than 1 month after course end
             => this.EndDate.HasEnded()
-            && !this.EndDate.AddMonths(1).HasEnded();
+            && !this.EndDate.AddDays(ServicesConstants.EvaluationPeriodInDays).HasEnded();
     }
 }

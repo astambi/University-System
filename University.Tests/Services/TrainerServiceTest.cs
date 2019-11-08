@@ -41,7 +41,9 @@
         private const string TrainerUsername = "TrainerUsername";
         private const string TrainerEmail = "email@gmail.com";
 
-        private const int Precision = 20;
+        private const int Precision = 100;
+
+        private readonly DateTime Today = DateTime.UtcNow;
 
         [Fact]
         public async Task IsTrainerForCourseAsync_ShouldReturnFalse_GivenInvalidTrainerCourse()
@@ -365,8 +367,7 @@
             var expected = db
                 .Courses
                 .Where(c => c.TrainerId == TrainerValid)
-                .Where(c => c.EndDate.HasEnded())
-                .Where(c => !c.EndDate.AddMonths(1).HasEnded())
+                .Where(c => c.EndDate < this.Today && this.Today <= c.EndDate.AddDays(ServicesConstants.EvaluationPeriodInDays))
                 .OrderBy(c => c.Name)
                 .ToList();
 
@@ -378,6 +379,7 @@
             Assert.IsAssignableFrom<IEnumerable<CourseServiceModel>>(result);
 
             Assert.Equal(new[] { 6, 5, 4, 3 }, result.Select(c => c.Id).ToList()); // correct order
+            Assert.Equal(expected.Select(c => c.Id).ToList(), result.Select(c => c.Id).ToList()); // correct order
 
             Assert.Equal(expected.Count, result.Count());
             for (var i = 0; i < resultList.Count; i++)
@@ -520,8 +522,7 @@
 
         private async Task<UniversityDbContext> PrepareTrainerCoursesToEvaluate()
         {
-            var today = new DateTime(2019, 10, 31, 23, 00, 00);
-            var endDate = today.ToEndDateUtc();
+            var endDate = this.Today.ToEndDateUtc();
 
             var trainer1 = new User { Id = TrainerValid };
             var trainer2 = new User { Id = TrainerInvalid2 };
@@ -529,17 +530,16 @@
 
             var courses = new List<Course>
             {
-                new Course{Id = 1, Name = "XXX", TrainerId = TrainerValid, EndDate = endDate.AddDays(0) },  // active 
                 new Course{Id = 2, Name = "YYY", TrainerId = TrainerValid, EndDate = endDate.AddDays(1) },  // active 
+                new Course{Id = 1, Name = "XXX", TrainerId = TrainerValid, EndDate = endDate.AddDays(0) },  // to evaluate 
 
                 new Course{Id = 3, Name = "RRR", TrainerId = TrainerValid, EndDate = endDate.AddDays(-1) },  // to evaluate 
                 new Course{Id = 4, Name = "DDD", TrainerId = TrainerValid, EndDate = endDate.AddDays(-10) },  // to evaluate
                 new Course{Id = 5, Name = "CCC", TrainerId = TrainerValid, EndDate = endDate.AddDays(-28) }, // to evaluate
-                new Course{Id = 6, Name = "BBB", TrainerId = TrainerValid, EndDate = endDate.AddMonths(-1).AddDays(1) }, // to evaluate
+                new Course{Id = 6, Name = "BBB", TrainerId = TrainerValid, EndDate = endDate.AddDays(1 - ServicesConstants.EvaluationPeriodInDays) }, // to evaluate
 
-                new Course{Id = 7, Name = "AAA", TrainerId = TrainerValid, EndDate = endDate.AddMonths(-1).AddDays(-1) }, // overdue
-
-                new Course{Id = 8, Name = "AAA", TrainerId = TrainerInvalid2, EndDate = endDate.AddMonths(-1).AddDays(-1) }, // overdue
+                //new Course{Id = 7, Name = "AAA", TrainerId = TrainerValid, EndDate = endDate.AddDays(0 - ServicesConstants.EvaluationPeriodInDays) }, // overdue
+                new Course{Id = 8, Name = "AAA", TrainerId = TrainerInvalid2, EndDate = endDate.AddDays(-1 - ServicesConstants.EvaluationPeriodInDays) }, // overdue
                 new Course{Id = 9, Name = "BBB", TrainerId = TrainerInvalid2, EndDate = endDate.AddDays(-35) }, // overdue
             };
 
