@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>aspnet-University.Web-B713F917-19B4-449E-A521-DB4AFCA05A83</UserSecretsId>
     <!--<AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>-->
     <AssemblyName>University.Web</AssemblyName>
@@ -15,21 +15,24 @@
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="CloudinaryDotNet" Version="1.8.0" />
     <PackageReference Include="coveralls.io" Version="1.4.2" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.8.2" />
-    <PackageReference Include="Microsoft.ApplicationInsights.PerfCounterCollector" Version="2.11.2" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.12.1" />
+    <PackageReference Include="Microsoft.ApplicationInsights.PerfCounterCollector" Version="2.12.1" />
     <!--<PackageReference Include="Microsoft.AspNetCore.App" />-->
     <!--<PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />-->
 
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
 
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="3.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="3.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="3.1.1" />
 
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.0" />
   </ItemGroup>
 
 
